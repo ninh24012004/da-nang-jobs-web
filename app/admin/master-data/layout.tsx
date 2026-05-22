@@ -7,8 +7,7 @@ import {
     Zap,
     Briefcase,
     MapPin,
-    TrendingUp,
-    Settings2
+    TrendingUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,12 +24,17 @@ const masterDataTabs = [
     },
     {
         name: "Loại công việc",
-        href: "/admin/master-data/job-types",
+        href: "/admin/master-data/tags",
         icon: Briefcase
     },
     {
         name: "Cấp bậc",
-        href: "/admin/master-data/levels",
+        href: "/admin/master-data/positions",
+        icon: TrendingUp
+    },
+    {
+        name: "Kinh nghiệm",
+        href: "/admin/master-data/experience-levels",
         icon: TrendingUp
     },
     {
