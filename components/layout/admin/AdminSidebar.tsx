@@ -10,13 +10,13 @@ import {
     LogOut
 } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
+import LogoIcon from "@/components/icons/LogoIcon";
 
 const navItems = [
     { name: "Tổng quan", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Quản lý người dùng", href: "/admin/users", icon: Users },
+    { name: "Quản lý nhà tuyển dụng", href: "/admin/employer", icon: Users },
     { name: "Quản lý tin tuyển dụng", href: "/admin/jobs", icon: FileText },
-    { name: "Quản lý hồ sơ ứng viên", href: "/admin/resumes", icon: FileText },
-    { name: "Quản lý ứng tuyển", href: "/admin/applications", icon: FileText },
     { name: "Quản lý dữ liệu nền", href: "/admin/master-data", icon: FileText }
 ];
 
@@ -32,7 +32,7 @@ export default function AdminSidebar() {
         <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-100 bg-[#F8FAFC] flex flex-col shadow-sm">
             {/* Header */}
             <div className="p-6 mb-2">
-                <h1 className="text-xl font-bold text-gray-900">Đà Nẵng Admin</h1>
+                <LogoIcon />
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-1">
                     ENTERPRISE CONSOLE
                 </p>
@@ -82,7 +82,7 @@ export default function AdminSidebar() {
                 })}
 
                 <button
-                    onClick={logout}
+                    onClick={() => logout("/candidate/login")}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all text-left cursor-pointer"
                 >
                     <LogOut className="h-5 w-5 text-gray-400" />

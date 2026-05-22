@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginApi } from "@/services/authService";
+import { loginApi, logoutApi } from "@/services/authService";
 import { LoginRequest, UserRole } from "@/types/auth";
 
 export default function useAuth() {
@@ -68,23 +68,36 @@ export default function useAuth() {
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("tokenType");
-        localStorage.removeItem("user");
-        localStorage.removeItem("remember");
+    const logout = async (redirectTo: string = "/candidate/login") => {
+        const refreshToken =
+            localStorage.getItem("refreshToken") ||
+            sessionStorage.getItem("refreshToken");
 
-        sessionStorage.removeItem("accessToken");
-        sessionStorage.removeItem("refreshToken");
-        sessionStorage.removeItem("tokenType");
-        sessionStorage.removeItem("user");
+        try {
+            if (refreshToken) {
+                await logoutApi(refreshToken);
+            }
+        } catch (error) {
+            console.error("Logout API error:", error);
+        } finally {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("tokenType");
+            localStorage.removeItem("user");
+            localStorage.removeItem("remember");
 
-        // Clear cookies
-        document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-        document.cookie = "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            sessionStorage.removeItem("accessToken");
+            sessionStorage.removeItem("refreshToken");
+            sessionStorage.removeItem("tokenType");
+            sessionStorage.removeItem("user");
 
-        router.push("/candidate/login");
+            document.cookie =
+                "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            document.cookie =
+                "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+            router.push(redirectTo);
+        }
     };
 
     return {
