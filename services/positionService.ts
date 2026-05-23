@@ -1,6 +1,6 @@
 import api from "./api";
 import { PositionRequest, PositionResponse } from "@/types/position";
-import { ApiResponse } from "@/types/auth";
+import { ApiResponse } from "@/types/apiResponse";
 
 export const positionService = {
     getAllPositions: async () => {

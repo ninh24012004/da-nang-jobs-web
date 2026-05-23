@@ -5,7 +5,7 @@ import {
     WardRequest,
     WardResponse,
 } from "@/types/location";
-import { ApiResponse } from "@/types/auth";
+import { ApiResponse } from "@/types/apiResponse";
 
 export const locationService = {
     getAllDistricts: async () => {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
@@ -17,6 +18,7 @@ import {
 } from "@/services/authService";
 import GoogleIcon from "../icons/GoogleIcon";
 import Divider from "../ui/Divider";
+import EmployerLogo from "../icons/EmployerLogo";
 
 interface RegisterFormProps {
     userType: "candidate" | "employer";
@@ -34,6 +36,7 @@ const initialErrors = {
 };
 
 export default function RegisterForm({ userType }: RegisterFormProps) {
+    const router = useRouter();
     const [step, setStep] = useState<Step>("register");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -193,7 +196,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
         try {
             await verifyCodeApi(email.trim(), code);
             toast.success("Đăng ký tài khoản thành công");
-            window.location.href = loginPath;
+            router.push(loginPath);
         } catch (error: any) {
             toast.error(error?.response?.data?.message || "Xác thực mã thất bại");
             setErrors({
@@ -216,7 +219,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
             <div className="flex w-full flex-col justify-center px-6 sm:px-12 md:w-1/2 md:px-16 lg:px-24">
                 <div className="mx-auto w-full max-w-md">
                     <div className="mb-4">
-                        <LogoIcon />
+                        {userType === "candidate" ? <LogoIcon /> : <EmployerLogo />}
                     </div>
 
                     <div className="mb-8">

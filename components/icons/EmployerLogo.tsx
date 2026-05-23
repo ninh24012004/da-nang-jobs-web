@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-export default function LogoIcon() {
+export default function EmployerLogo() {
     return (
         <Link
-            href="/candidate"
+            href="/employer"
             className="group inline-block select-none"
         >
             <h1 className="text-4xl font-bold tracking-tight">

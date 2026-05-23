@@ -4,7 +4,7 @@ import {
     CategoryResponse, 
     CategoryTreeResponse 
 } from "@/types/category";
-import { ApiResponse } from "@/types/auth";
+import { ApiResponse } from "@/types/apiResponse";
 
 export const categoryService = {
     getCategoryTree: async () => {

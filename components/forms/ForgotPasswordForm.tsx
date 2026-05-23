@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 
-import LogoIcon from "@/components/icons/LogoIcon";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import {
@@ -14,6 +14,8 @@ import {
     verifyPasswordResetCodeApi,
     changePasswordApi,
 } from "@/services/authService";
+import EmployerLogo from "../icons/EmployerLogo";
+import LogoIcon from "../icons/LogoIcon";
 
 type Step = "email" | "verification" | "password";
 
@@ -22,6 +24,7 @@ interface ForgotPasswordFormProps {
 }
 
 export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps) {
+    const router = useRouter();
     const [step, setStep] = useState<Step>("email");
     const [email, setEmail] = useState("");
     const [code, setCode] = useState("");
@@ -178,7 +181,7 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
             toast.success("Đổi mật khẩu thành công");
             // Redirect to login after successful password change
             setTimeout(() => {
-                window.location.href = `/${userType}/login`;
+                router.push(`/${userType}/login`);
             }, 1500);
         } catch (error: any) {
             toast.error(error?.response?.data?.message || "Đổi mật khẩu thất bại");
@@ -212,7 +215,7 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
             <div className="flex w-full flex-col justify-center sm:px-12 md:w-1/2 md:px-16 lg:px-24">
                 <div className="mx-auto w-full max-w-md">
                     <div className="mb-4">
-                        <LogoIcon />
+                        {userType === "candidate" ? <LogoIcon /> : <EmployerLogo />}
                     </div>
 
                     <div className="mb-8">

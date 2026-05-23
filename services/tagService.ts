@@ -1,6 +1,6 @@
 import api from "./api";
 import { TagRequest, TagResponse } from "@/types/tag";
-import { ApiResponse } from "@/types/auth";
+import { ApiResponse } from "@/types/apiResponse";
 
 export const tagService = {
     getAllTags: async () => {

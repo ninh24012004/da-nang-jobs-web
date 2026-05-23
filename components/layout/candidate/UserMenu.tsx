@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -14,6 +17,7 @@ interface Props {
 }
 
 export default function UserMenu({ user }: Props) {
+    const router = useRouter();
     const [open, setOpen] = useState(false);
 
     return (
@@ -30,7 +34,7 @@ export default function UserMenu({ user }: Props) {
                         <Image
                             src={
                                 user?.avatar ||
-                                "/images/background/avatar-default.png"
+                                "/images/avatar-default.png"
                             }
                             alt={user?.fullName || "User"}
                             width={40}
@@ -56,7 +60,11 @@ export default function UserMenu({ user }: Props) {
                     Bạn là nhà tuyển dụng?
                 </span>
 
-                <button className="text-green-600 hover:underline text-sm font-semibold cursor-pointer">
+                <button className="text-green-600 hover:underline text-sm font-semibold cursor-pointer"
+                    onClick={() => {
+                        router.push("/employer/login");
+                    }}
+                >
                     Đăng tuyển ngay
                 </button>
             </div>

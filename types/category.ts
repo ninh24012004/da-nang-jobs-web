@@ -1,4 +1,4 @@
-import { ApiResponse } from "./auth";
+import { ApiResponse } from "./apiResponse";
 
 export interface CategoryResponse {
     id: number;
@@ -18,7 +18,6 @@ export interface CategoryTreeResponse {
     children: CategoryTreeResponse[];
 }
 
-// UI specific types (mapping from API)
 export interface Category {
     id: number;
     categoryName: string;
