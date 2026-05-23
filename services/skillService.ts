@@ -1,6 +1,6 @@
 import api from "./api";
 import { SkillRequest, SkillResponse } from "@/types/skill";
-import { ApiResponse } from "@/types/auth";
+import { ApiResponse } from "@/types/apiResponse";
 
 export const skillService = {
     getAllSkills: async () => {

@@ -1,5 +1,6 @@
 import api from "./api";
-import { ApiResponse, UserRole, LoginRequest, LoginResponse } from "@/types/auth";
+import { UserRole, LoginRequest, LoginResponse } from "@/types/auth";
+import { ApiResponse } from "@/types/apiResponse";
 
 const authApi: Record<UserRole, string> = {
     CANDIDATE: "/auth/candidate/login",

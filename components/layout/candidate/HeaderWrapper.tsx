@@ -17,9 +17,8 @@ export default function HeaderWrapper() {
         "/candidate/login",
         "/candidate/register",
         "/candidate/forgot-password",
-        "/employer/login",
-        "/employer/register",
-        "/employer/forgot-password",
+        "/employer",
+        "/admin"
     ];
 
     useEffect(() => {

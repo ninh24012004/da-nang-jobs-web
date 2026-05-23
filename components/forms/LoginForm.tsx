@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -13,6 +14,7 @@ import Divider from "@/components/ui/Divider";
 import Checkbox from "@/components/ui/Checkbox";
 import useAuth from "@/hooks/useAuth";
 import { UserRole } from "@/types/auth";
+import EmployerLogo from "../icons/EmployerLogo";
 
 type UserType = "candidate" | "employer";
 
@@ -62,6 +64,7 @@ const loginConfig = {
 };
 
 export default function LoginForm({ userType }: LoginFormProps) {
+    const router = useRouter();
     const config = loginConfig[userType];
 
     const [email, setEmail] = useState("");
@@ -85,19 +88,44 @@ export default function LoginForm({ userType }: LoginFormProps) {
         try {
             const user = JSON.parse(userStr);
 
-            if (user.roleName !== config.role) {
-                logout("");
+            if (user.roleName === "ADMIN") {
+                router.push("/admin/dashboard");
+                return;
+            }
+
+            if (userType === "candidate") {
+                if (user.roleName === "CANDIDATE") {
+                    router.push("/candidate");
+                    return;
+                }
+
+                logout("/candidate/login");
 
                 toast.info(
-                    userType === "candidate"
-                        ? "Vui lòng đăng nhập lại với tài khoản ứng viên"
-                        : "Vui lòng đăng nhập lại với tài khoản nhà tuyển dụng"
+                    "Vui lòng đăng nhập bằng tài khoản ứng viên"
                 );
+
+                return;
+            }
+
+            if (userType === "employer") {
+                if (user.roleName === "EMPLOYER") {
+                    router.push("/employer");
+                    return;
+                }
+
+                logout("/employer/login");
+
+                toast.info(
+                    "Vui lòng đăng nhập bằng tài khoản nhà tuyển dụng"
+                );
+
+                return;
             }
         } catch (error) {
             console.error("Error parsing user data:", error);
         }
-    }, [config.role, logout, userType]);
+    }, [userType, logout]);
 
     const handleSubmit = async (
         e: React.FormEvent<HTMLFormElement>
@@ -149,7 +177,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
             <div className="flex w-full flex-col justify-center sm:px-12 md:w-1/2 md:px-16 lg:px-24">
                 <div className="mx-auto w-full max-w-md">
                     <div className="mb-4">
-                        <LogoIcon />
+                        {userType === "candidate" ? <LogoIcon /> : <EmployerLogo />}
                     </div>
 
                     <div className="mb-8">

@@ -1,6 +1,6 @@
 import api from "./api";
 import { ExperienceLevelRequest, ExperienceLevelResponse } from "@/types/experienceLevel";
-import { ApiResponse } from "@/types/auth";
+import { ApiResponse } from "@/types/apiResponse";
 
 export const experienceLevelService = {
     getAllExperienceLevels: async () => {
