@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       isFirstRender.current = false;
       return;
     }
-    fetchTrends(selectedDays).catch(() => {});
+    fetchTrends(selectedDays).catch(() => { });
   }, [selectedDays, fetchTrends]);
 
   // Quick Action Handlers
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
 
   // Salary formatting helper
   const formatSalary = (min: number, max: number, type: string) => {
-    if (type === "NEGOTIABLE" || !min) return "Thỏa thuận";
+    if (type === "NEGOTIABLE" || type === "Lương thỏa thuận" || !min) return "Thỏa thuận";
     return `${(min / 1000000).toFixed(0)} - ${(max / 1000000).toFixed(0)} Tr`;
   };
 
@@ -300,7 +300,7 @@ export default function AdminDashboard() {
       if (parts.length === 3) {
         displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     return (
       <div className="absolute top-14 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-3 rounded-2xl border border-gray-100 shadow-xl z-20 pointer-events-none min-w-[180px] text-left transition-all duration-200">
@@ -437,7 +437,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* SVG Area Chart */}
-        <div className="flex-1 w-full relative pt-2">
+        <div className="flex-1 w-full relative pt-2 overflow-hidden">
           {isTrendsLoading ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 gap-2">
               <Loader2 className="animate-spin text-[#006B7A]" size={28} />
@@ -453,7 +453,7 @@ export default function AdminDashboard() {
             <>
               {renderTooltip()}
               <svg
-                className="w-full h-full overflow-visible"
+                className="w-full h-full overflow-hidden"
                 viewBox="0 0 500 200"
                 preserveAspectRatio="none"
                 onMouseMove={handleMouseMove}
@@ -627,17 +627,26 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* 1. Welcome Card Banner */}
-      <div className="bg-gradient-to-r from-[#006B7A] via-[#008899] to-[#009fb2] rounded-3xl p-6 shadow-md text-white relative overflow-hidden select-none">
-        <div className="absolute right-0 bottom-0 w-80 h-80 bg-white/5 rounded-full blur-2xl -mr-16 -mb-16"></div>
-        <div className="absolute left-1/3 top-0 w-40 h-40 bg-white/5 rounded-full blur-xl -mt-16"></div>
-
-        <div className="max-w-xl space-y-2 relative z-10">
-          <h1 className="text-2xl font-extrabold tracking-tight">Xin chào, Administrator!</h1>
-          <p className="text-xs text-teal-50 font-medium leading-relaxed">
-            Hệ thống DaNangJobs đã đồng bộ thông tin thời gian thực. Theo dõi tổng quan hiệu suất, duyệt các yêu cầu đăng ký, tin tuyển dụng, và quản lý các hoạt động diễn ra trên nền tảng.
+      {/* 1. Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-extrabold text-gray-800 tracking-tight">Bảng điều khiển</h1>
+          <p className="text-gray-400 mt-1 text-xs font-medium">
+            Tổng quan hoạt động nền tảng DaNangJobs · Cập nhật thời gian thực
           </p>
         </div>
+        <button
+          onClick={() => loadDashboardData()}
+          disabled={statsLoading}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#006B7A] hover:bg-[#005a66] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 disabled:opacity-60 cursor-pointer"
+        >
+          {statsLoading ? (
+            <Loader2 size={13} className="animate-spin" />
+          ) : (
+            <TrendingUp size={13} />
+          )}
+          Làm mới
+        </button>
       </div>
 
       {/* 2. Stats Grid Row - Dynamic 6 Cards Layout */}
@@ -811,7 +820,7 @@ export default function AdminDashboard() {
                   const totalApps = summary.applicationsByStatus.reduce((acc, curr) => acc + curr.count, 0) || 1;
                   return summary.applicationsByStatus.map((status, idx) => {
                     const percentage = ((status.count / totalApps) * 100).toFixed(1);
-                    
+
                     let label = status.statusName;
                     let bgColor = "bg-gray-50 border-gray-150 text-gray-500";
                     let progressColor = "bg-gray-400";

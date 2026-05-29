@@ -39,7 +39,7 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<EmployerStatus | "ALL">(mode === "PENDING" ? "PENDING" : "ALL");
+  const [statusFilter, setStatusFilter] = useState<EmployerStatus | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
 
@@ -238,16 +238,45 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
 
   return (
     <div className="space-y-6">
-      {/* Search Input */}
-      <div className="relative w-full sm:w-80 shadow-inner">
-        <input
-          type="text"
-          placeholder="Tìm theo tên công ty, MST, Hotline..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-gray-50/50 border border-gray-200 focus:border-[#006B7A] focus:ring-1 focus:ring-[#006B7A] rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-700 outline-none transition-all"
-        />
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+      {/* 2. Tabs and Search controls */}
+      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs flex flex-col lg:flex-row gap-4 items-center justify-between">
+        {/* Navigation Tabs */}
+        <div className="flex bg-gray-50/80 p-1.5 rounded-2xl border border-gray-200/50 w-full lg:w-auto overflow-x-auto custom-scrollbar gap-1">
+          {([
+            { id: "ALL", label: "Tất cả" },
+            { id: "PENDING", label: "Chờ duyệt" },
+            { id: "APPROVED", label: "Đã duyệt" },
+            { id: "REJECTED", label: "Từ chối" },
+            { id: "BLOCKED", label: "Đã khóa" }
+          ] as const).map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => {
+                setStatusFilter(tab.id);
+                setPage(0);
+              }}
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold rounded-xl transition-all duration-300 flex-shrink-0 cursor-pointer ${
+                statusFilter === tab.id
+                  ? "bg-white text-[#006B7A] shadow-md scale-[1.02]"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100/50"
+              }`}
+            >
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Search Bar */}
+        <div className="relative w-full lg:w-80 shadow-inner">
+          <input
+            type="text"
+            placeholder="Tìm theo tên công ty, MST, Hotline..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-gray-50/50 border border-gray-200 focus:border-[#006B7A] focus:ring-1 focus:ring-[#006B7A] rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-700 outline-none transition-all font-medium"
+          />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        </div>
       </div>
 
 
@@ -359,17 +388,38 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                         <span>Xem chi tiết</span>
                       </button>
 
-                      {mode === "ALL" ? (
-                        (c.status as any) === "BLOCKED" ? (
+                      {c.status === "PENDING" ? (
+                        <>
                           <button
-                            onClick={() => handleToggleBlock(c, false)}
+                            onClick={() => handleApprove(c as EmployerUpdateResponse)}
                             disabled={actionLoading}
-                            className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl transition-all active:scale-[0.98] cursor-pointer font-extrabold shadow-xs inline-flex items-center gap-1"
+                            className="bg-[#006B7A] hover:bg-[#005a66] text-white px-3 py-1.5 rounded-xl shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer font-extrabold"
                           >
-                            <Unlock size={12} />
-                            Mở khóa
+                            <Check size={13} />
+                            Duyệt
                           </button>
-                        ) : (
+                          <button
+                            onClick={() => {
+                              setSelectedCompany(c);
+                              setIsRejectModalOpen(true);
+                            }}
+                            disabled={actionLoading}
+                            className="bg-rose-50 hover:bg-rose-100 text-rose-650 px-3 py-1.5 rounded-xl border border-rose-100 transition-all active:scale-[0.98] cursor-pointer font-extrabold"
+                          >
+                            Từ chối
+                          </button>
+                        </>
+                      ) : c.status === "BLOCKED" ? (
+                        <button
+                          onClick={() => handleToggleBlock(c, false)}
+                          disabled={actionLoading}
+                          className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl transition-all active:scale-[0.98] cursor-pointer font-extrabold shadow-xs inline-flex items-center gap-1"
+                        >
+                          <Unlock size={12} />
+                          Mở khóa
+                        </button>
+                      ) : (
+                        ((c.status as any) === "APPROVED" || (c.status as any) === "REJECTED") && (
                           <button
                             onClick={() => handleToggleBlock(c, true)}
                             disabled={actionLoading}
@@ -378,29 +428,6 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                             <Lock size={12} />
                             Khóa tài khoản
                           </button>
-                        )
-                      ) : (
-                        c.status === "PENDING" && (
-                          <>
-                            <button
-                              onClick={() => handleApprove(c as EmployerUpdateResponse)}
-                              disabled={actionLoading}
-                              className="bg-[#006B7A] hover:bg-[#005a66] text-white px-3 py-1.5 rounded-xl shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer font-extrabold"
-                            >
-                              <Check size={13} />
-                              Duyệt
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedCompany(c);
-                                setIsRejectModalOpen(true);
-                              }}
-                              disabled={actionLoading}
-                              className="bg-rose-50 hover:bg-rose-100 text-rose-650 px-3 py-1.5 rounded-xl border border-rose-100 transition-all active:scale-[0.98] cursor-pointer font-extrabold"
-                            >
-                              Từ chối
-                            </button>
-                          </>
                         )
                       )}
                     </td>
@@ -581,47 +608,42 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
               >
                 Đóng
               </button>
-              {mode === "ALL" ? (
-                (selectedCompany.status as any) === "BLOCKED" ? (
+              {selectedCompany.status === "PENDING" ? (
+                <>
                   <button
-                    onClick={() => handleToggleBlock(selectedCompany, false)}
+                    onClick={() => setIsRejectModalOpen(true)}
                     disabled={actionLoading}
-                    className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-5 py-2.5 rounded-xl font-extrabold transition-all active:scale-[0.98] cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                    className="bg-rose-50 hover:bg-rose-100 text-rose-650 px-5 py-2.5 rounded-xl font-bold border border-rose-100 transition-all active:scale-[0.98] cursor-pointer"
                   >
-                    <Unlock size={14} />
-                    <span>Mở khóa tài khoản</span>
+                    Từ chối phê duyệt
                   </button>
-                ) : (
                   <button
-                    onClick={() => handleToggleBlock(selectedCompany, true)}
+                    onClick={() => handleApprove(selectedCompany as EmployerUpdateResponse)}
                     disabled={actionLoading}
-                    className="bg-red-50 hover:bg-red-100 text-red-650 border border-red-200 px-5 py-2.5 rounded-xl font-extrabold transition-all active:scale-[0.98] cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                    className="bg-[#006B7A] hover:bg-[#005a66] text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
                   >
-                    <Lock size={14} />
-                    <span>Khóa tài khoản</span>
+                    <Check size={15} />
+                    <span>Phê duyệt hồ sơ</span>
                   </button>
-                )
+                </>
+              ) : (selectedCompany.status as any) === "BLOCKED" ? (
+                <button
+                  onClick={() => handleToggleBlock(selectedCompany, false)}
+                  disabled={actionLoading}
+                  className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-5 py-2.5 rounded-xl font-extrabold transition-all active:scale-[0.98] cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                >
+                  <Unlock size={14} />
+                  <span>Mở khóa tài khoản</span>
+                </button>
               ) : (
-                selectedCompany.status === "PENDING" && (
-                  <>
-                    <button
-                      onClick={() => setIsRejectModalOpen(true)}
-                      disabled={actionLoading}
-                      className="bg-rose-50 hover:bg-rose-100 text-rose-650 px-5 py-2.5 rounded-xl font-bold border border-rose-100 transition-all active:scale-[0.98] cursor-pointer"
-                    >
-                      Từ chối phê duyệt
-                    </button>
-
-                    <button
-                      onClick={() => handleApprove(selectedCompany as EmployerUpdateResponse)}
-                      disabled={actionLoading}
-                      className="bg-[#006B7A] hover:bg-[#005a66] text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <Check size={15} />
-                      <span>Phê duyệt hồ sơ</span>
-                    </button>
-                  </>
-                )
+                <button
+                  onClick={() => handleToggleBlock(selectedCompany, true)}
+                  disabled={actionLoading}
+                  className="bg-red-50 hover:bg-red-100 text-red-650 border border-red-200 px-5 py-2.5 rounded-xl font-extrabold transition-all active:scale-[0.98] cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                >
+                  <Lock size={14} />
+                  <span>Khóa tài khoản</span>
+                </button>
               )}
             </div>
           </div>

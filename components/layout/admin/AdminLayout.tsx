@@ -11,7 +11,7 @@ export default function AdminLayout({
             <AdminSidebar />
             <div className="flex-1 ml-64 flex flex-col h-screen overflow-hidden">
                 <AdminHeader />
-                <main className="px-6 py-6 bg-[#F8FAFC] flex-1 overflow-y-auto custom-scrollbar">
+                <main className="px-7 py-6 bg-[#F8FAFC] flex-1 overflow-y-auto custom-scrollbar">
                     {children}
                 </main>
             </div>

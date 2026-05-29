@@ -9,7 +9,7 @@ import EmployerFooter from "@/components/layout/employer/EmployerFooter";
 
 export default function CandidatePage() {
   return (
-    <div className="bg-white min-h-screen flex flex-col font-sans antialiased text-gray-800">
+    <div className="bg-white min-h-screen flex flex-col text-gray-800">
       {/* Note: HeaderWrapper renders CandidateHeader automatically on all non-auth candidate routes */}
 
       <main className="flex-grow">

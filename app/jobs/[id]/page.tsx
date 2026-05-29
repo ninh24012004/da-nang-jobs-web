@@ -508,7 +508,7 @@ export default function JobDetailPage({ params }: PageProps) {
                 <div className="space-y-0.5">
                   <p className="text-[9px] text-gray-400 font-black uppercase tracking-wide">Mức lương</p>
                   <p className="text-sm font-extrabold text-[#006B7A]">
-                    {job.salaryType === "NEGOTIABLE" 
+                    {job.salaryType === "NEGOTIABLE" || job.salaryType === "Lương thỏa thuận"
                       ? "Thỏa thuận" 
                       : `${(job.minimumSalary / 1000000).toFixed(0)} - ${(job.maximumSalary / 1000000).toFixed(0)} Triệu VND`}
                   </p>
@@ -683,7 +683,7 @@ export default function JobDetailPage({ params }: PageProps) {
                     <div className="flex items-center gap-1 text-teal-600 font-bold">
                       <DollarSign size={13} className="text-teal-600 flex-shrink-0" />
                       <span>
-                        {sj.salaryType === "NEGOTIABLE" 
+                        {sj.salaryType === "NEGOTIABLE" || sj.salaryType === "Lương thỏa thuận"
                           ? "Thỏa thuận" 
                           : `${(sj.minimumSalary / 1000000).toFixed(0)} - ${(sj.maximumSalary / 1000000).toFixed(0)} triệu`}
                       </span>

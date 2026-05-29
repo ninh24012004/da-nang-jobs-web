@@ -64,17 +64,6 @@ export default function ProfileDropdown({ user, onClose }: Props) {
           </div>
           <ChevronRight size={14} className="text-gray-300 group-hover/header:translate-x-0.5 group-hover/header:text-[#006b7a] transition-all" />
         </div>
-
-        {/* Profile Completeness Bar */}
-        <div className="mt-3.5 pt-2 border-t border-gray-100/50">
-          <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 mb-1">
-            <span>Độ hoàn thiện CV cá nhân:</span>
-            <span className="text-[#006b7a]">85%</span>
-          </div>
-          <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-teal-500 to-[#006b7a] rounded-full" style={{ width: "85%" }} />
-          </div>
-        </div>
       </Link>
 
       {/* Dropdown Menu Items */}

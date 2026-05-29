@@ -28,7 +28,8 @@ import {
   Trash2,
   Download,
   ExternalLink,
-  FileCheck
+  FileCheck,
+  ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -40,6 +41,9 @@ import { useSkills } from "@/hooks/useSkills";
 import { useCloudinary } from "@/hooks/useCloudinary";
 import { useJobs } from "@/hooks/useJobs";
 import { useResumes } from "@/hooks/useResumes";
+
+import { categoryService } from "@/services/categoryService";
+import { CategoryTreeResponse } from "@/types/category";
 
 // Import types
 import { CandidateResponse } from "@/types/candidate";
@@ -111,6 +115,10 @@ function CandidateProfileContent() {
   const [allSkills, setAllSkills] = useState<SkillResponse[]>([]);
   const [allJobs, setAllJobs] = useState<JobResponse[]>([]);
 
+  // Category Tree states
+  const [categoriesTree, setCategoriesTree] = useState<CategoryTreeResponse[]>([]);
+  const [expandedCategoryGroups, setExpandedCategoryGroups] = useState<number[]>([]);
+
   // Search filters inside settings
   const [categorySearch, setCategorySearch] = useState("");
   const [skillSearch, setSkillSearch] = useState("");
@@ -177,6 +185,10 @@ function CandidateProfileContent() {
         // Load Categories
         const categoriesData = await fetchFlatCategories();
         setAllCategories(categoriesData || []);
+
+        // Load Category Tree
+        const catTreeData = await categoryService.getCategoryTree();
+        if (catTreeData) setCategoriesTree(catTreeData);
 
         // Load Skills
         const skillsData = await fetchSkills();
@@ -394,6 +406,76 @@ function CandidateProfileContent() {
       return { ...prev, categoryIds: newCategoryIds };
     });
   };
+
+  // Category tree helper methods
+  const getDescendantIds = (node: CategoryTreeResponse): number[] => {
+    let ids = [node.id];
+    if (node.children) {
+      for (const child of node.children) {
+        ids = [...ids, ...getDescendantIds(child)];
+      }
+    }
+    return ids;
+  };
+
+  const getCategorySelectionStatus = (node: CategoryTreeResponse, selectedList: number[]): "none" | "partial" | "all" => {
+    const descendantIds = getDescendantIds(node);
+    const selectedCount = descendantIds.filter(id => selectedList.includes(id)).length;
+    if (selectedCount === 0) return "none";
+    if (selectedCount === descendantIds.length) return "all";
+    return "partial";
+  };
+
+  const handleToggleCategoryGroup = (node: CategoryTreeResponse) => {
+    if (!isEditing) return;
+    const descendantIds = getDescendantIds(node);
+    const status = getCategorySelectionStatus(node, formData.categoryIds);
+
+    let updatedCats: number[];
+    if (status === "all") {
+      updatedCats = formData.categoryIds.filter(id => !descendantIds.includes(id));
+    } else {
+      const next = [...formData.categoryIds];
+      descendantIds.forEach(id => {
+        if (!next.includes(id)) next.push(id);
+      });
+      updatedCats = next;
+    }
+    setFormData(prev => ({ ...prev, categoryIds: updatedCats }));
+  };
+
+  const handleToggleSubcategory = (subcatId: number) => {
+    if (!isEditing) return;
+    let updatedCats: number[];
+    if (formData.categoryIds.includes(subcatId)) {
+      updatedCats = formData.categoryIds.filter(id => id !== subcatId);
+    } else {
+      updatedCats = [...formData.categoryIds, subcatId];
+    }
+    setFormData(prev => ({ ...prev, categoryIds: updatedCats }));
+  };
+
+  const getMatchingCategories = (nodes: CategoryTreeResponse[], query: string, path: string[] = []): { id: number; name: string; path: string }[] => {
+    let matches: { id: number; name: string; path: string }[] = [];
+    const lowerQuery = query.toLowerCase().trim();
+    if (!lowerQuery) return [];
+
+    for (const node of nodes) {
+      const currentPath = [...path, node.categoryName];
+      if (node.categoryName.toLowerCase().includes(lowerQuery)) {
+        matches.push({
+          id: node.id,
+          name: node.categoryName,
+          path: currentPath.join(" > ")
+        });
+      }
+      if (node.children && node.children.length > 0) {
+        matches = [...matches, ...getMatchingCategories(node.children, query, currentPath)];
+      }
+    }
+    return matches;
+  };
+
 
   // Toggle Skill selection
   const handleToggleSkill = (skillId: number) => {
@@ -904,31 +986,223 @@ function CandidateProfileContent() {
                   />
                 )}
 
-                <div className="max-h-80 overflow-y-auto border border-gray-150 rounded-2xl p-3.5 space-y-1.5 custom-scrollbar bg-gray-50/20">
-                  {filteredCategories.length === 0 ? (
-                    <p className="text-[11px] text-gray-400 font-medium py-6 text-center">Không tìm thấy danh mục nào phù hợp.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {filteredCategories.map((c) => {
-                        const isSelected = formData.categoryIds.includes(c.id);
-                        return (
-                          <div
-                            key={c.id}
-                            onClick={() => handleToggleCategory(c.id)}
-                            className={`p-2.5 rounded-xl border text-xs font-semibold transition-all select-none flex items-center justify-between gap-1.5 ${
-                              isEditing ? "cursor-pointer active:scale-97" : ""
-                            } ${
-                              isSelected
-                                ? "bg-teal-50 border-[#006B7A] text-[#006B7A] font-bold"
-                                : "bg-white border-gray-200 text-gray-650 hover:bg-gray-50"
-                            }`}
-                          >
-                            <span className="truncate">{c.categoryName}</span>
-                            {isSelected && <Check size={12} className="text-[#006B7A] flex-shrink-0" />}
+                <div className="max-h-96 overflow-y-auto p-4 space-y-3.5 custom-scrollbar bg-gray-50/20 rounded-2xl">
+                  {isEditing ? (
+                    categorySearch.trim() !== "" ? (
+                      /* Searching: Show flat filtered categories with hierarchical paths */
+                      (() => {
+                        const matches = getMatchingCategories(categoriesTree, categorySearch);
+                        return matches.length === 0 ? (
+                          <p className="text-[11px] text-gray-400 font-medium py-6 text-center">Không tìm thấy danh mục nào phù hợp.</p>
+                        ) : (
+                          <div className="grid grid-cols-1 gap-2 text-left">
+                            {matches.map((match) => {
+                              const isSelected = formData.categoryIds.includes(match.id);
+                              return (
+                                <label
+                                  key={match.id}
+                                  className={`flex items-center gap-3 p-3.5 rounded-xl hover:bg-teal-50/10 cursor-pointer transition-all select-none ${isSelected ? "bg-teal-50/30" : "bg-white"}`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => handleToggleSubcategory(match.id)}
+                                    className="rounded border-gray-300 text-[#006B7A] focus:ring-[#006B7A] w-4 h-4 cursor-pointer"
+                                  />
+                                  <div className="space-y-0.5">
+                                    <span className="text-xs font-bold text-gray-800 leading-snug">{match.name}</span>
+                                    <p className="text-[10px] text-gray-400 font-semibold">{match.path}</p>
+                                  </div>
+                                </label>
+                              );
+                            })}
                           </div>
                         );
-                      })}
-                    </div>
+                      })()
+                    ) : (
+                      /* Not searching: Show Tree with Collapsible Groups & Checkboxes (Supports 3 levels) */
+                      categoriesTree.length === 0 ? (
+                        <div className="py-6 text-center text-gray-400 font-light text-xs animate-pulse">
+                          Đang tải sơ đồ ngành nghề...
+                        </div>
+                      ) : (
+                        <div className="space-y-2.5 animate-fadeIn">
+                          {categoriesTree.map((catGroup) => {
+                            const isExpanded = expandedCategoryGroups.includes(catGroup.id);
+                            const status = getCategorySelectionStatus(catGroup, formData.categoryIds);
+                            const isAnySelected = status === "all" || status === "partial";
+
+                            return (
+                              <div key={catGroup.id} className="rounded-2xl bg-white overflow-hidden shadow-2xs">
+                                {/* Parent Row - Level 1 */}
+                                <div
+                                  onClick={() => {
+                                    setExpandedCategoryGroups(prev =>
+                                      prev.includes(catGroup.id)
+                                        ? prev.filter(id => id !== catGroup.id)
+                                        : [...prev, catGroup.id]
+                                    );
+                                  }}
+                                  className="flex items-center justify-between p-3.5 hover:bg-gray-55/50 cursor-pointer select-none transition-colors"
+                                >
+                                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                    {/* Green Custom Checkbox */}
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleCategoryGroup(catGroup);
+                                      }}
+                                      className="focus:outline-none flex-shrink-0 cursor-pointer flex items-center justify-center transition-all bg-transparent border-none p-0"
+                                    >
+                                      {status === "all" ? (
+                                        <div className="w-[18px] h-[18px] border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A] text-white shadow-3xs">
+                                          <Check size={11} className="stroke-[3.5]" />
+                                        </div>
+                                      ) : status === "partial" ? (
+                                        <div className="w-[18px] h-[18px] border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A]/15 text-[#006B7A]">
+                                          <div className="w-2 h-0.5 bg-[#006B7A] rounded-full"></div>
+                                        </div>
+                                      ) : (
+                                        <div className="w-[18px] h-[18px] border border-gray-300 rounded hover:border-[#006B7A] bg-white"></div>
+                                      )}
+                                    </button>
+                                    <span className={`text-[12px] font-bold truncate leading-none ${isAnySelected ? "text-[#006B7A]" : "text-gray-700"}`}>
+                                      {catGroup.categoryName}
+                                    </span>
+                                  </div>
+
+                                  <div className={`text-gray-400 transition-transform ${isExpanded ? "transform rotate-180" : ""}`}>
+                                    <ChevronDown size={14} className="stroke-[2.5]" />
+                                  </div>
+                                </div>
+
+                                {/* Children Panel - Level 2 & Level 3 */}
+                                {isExpanded && (
+                                  <div className="bg-gray-50/30 border-t border-gray-100 p-3.5 pl-6.5 space-y-3 animate-fadeIn">
+                                    {!catGroup.children || catGroup.children.length === 0 ? (
+                                      <p className="text-[11px] text-gray-400 font-medium py-1">Chưa có danh mục con</p>
+                                    ) : (
+                                      catGroup.children.map((subcat) => {
+                                        const hasLevel3 = subcat.children && subcat.children.length > 0;
+                                        const subcatStatus = getCategorySelectionStatus(subcat, formData.categoryIds);
+                                        const isAnySubcatSelected = subcatStatus === "all" || subcatStatus === "partial";
+
+                                        if (hasLevel3) {
+                                          return (
+                                            <div key={subcat.id} className="bg-white rounded-xl p-3 space-y-2.5 text-left shadow-3xs">
+                                              {/* Level 2 Subcategory Header */}
+                                              <div
+                                                onClick={() => handleToggleCategoryGroup(subcat)}
+                                                className="flex items-center gap-2 pb-2 border-b border-gray-100 select-none cursor-pointer hover:opacity-80 transition-opacity"
+                                              >
+                                                <button
+                                                  type="button"
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleToggleCategoryGroup(subcat);
+                                                  }}
+                                                  className="focus:outline-none flex-shrink-0 cursor-pointer flex items-center justify-center transition-all bg-transparent border-none p-0"
+                                                >
+                                                  {subcatStatus === "all" ? (
+                                                    <div className="w-[16px] h-[16px] border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A] text-white shadow-3xs">
+                                                      <Check size={10} className="stroke-[4]" />
+                                                    </div>
+                                                  ) : subcatStatus === "partial" ? (
+                                                    <div className="w-[16px] h-[16px] border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A]/15 text-[#006B7A]">
+                                                      <div className="w-1.5 h-0.5 bg-[#006B7A] rounded-full"></div>
+                                                    </div>
+                                                  ) : (
+                                                    <div className="w-[16px] h-[16px] border border-gray-300 rounded hover:border-[#006B7A] bg-white"></div>
+                                                  )}
+                                                </button>
+                                                <span className={`text-[11.5px] font-bold ${isAnySubcatSelected ? "text-[#006B7A]" : "text-gray-700"}`}>
+                                                  {subcat.categoryName}
+                                                </span>
+                                              </div>
+
+                                              {/* Level 3 Leaves grid */}
+                                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-1.5">
+                                                {subcat.children!.map((level3Node) => {
+                                                  const isLevel3Selected = formData.categoryIds.includes(level3Node.id);
+                                                  return (
+                                                    <div
+                                                      key={level3Node.id}
+                                                      onClick={() => handleToggleSubcategory(level3Node.id)}
+                                                      className="flex items-center gap-2 cursor-pointer select-none py-0.5 text-left"
+                                                    >
+                                                      <div className="focus:outline-none flex-shrink-0 flex items-center justify-center transition-all bg-transparent border-none p-0">
+                                                        {isLevel3Selected ? (
+                                                          <div className="w-3.5 h-3.5 border border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A] text-white shadow-3xs">
+                                                            <Check size={8} className="stroke-[4.5]" />
+                                                          </div>
+                                                        ) : (
+                                                          <div className="w-3.5 h-3.5 border border-gray-300 rounded hover:border-[#006B7A] bg-white"></div>
+                                                        )}
+                                                      </div>
+                                                      <span className={`text-[11px] transition-colors leading-tight ${isLevel3Selected ? "font-bold text-[#006B7A]" : "font-medium text-gray-500 hover:text-gray-700"}`}>
+                                                        {level3Node.categoryName}
+                                                      </span>
+                                                    </div>
+                                                  );
+                                                })}
+                                              </div>
+                                            </div>
+                                          );
+                                        }
+
+                                        // If no level 3, render simple leaf subcategory (Level 2)
+                                        const isSubcatSelected = subcatStatus === "all";
+                                        return (
+                                          <div
+                                            key={subcat.id}
+                                            onClick={() => handleToggleSubcategory(subcat.id)}
+                                            className="flex items-center gap-2.5 cursor-pointer select-none py-1 text-left pl-1.5"
+                                          >
+                                            <div className="focus:outline-none flex-shrink-0 flex items-center justify-center transition-all bg-transparent border-none p-0">
+                                              {isSubcatSelected ? (
+                                                <div className="w-4 h-4 border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A] text-white shadow-3xs">
+                                                  <Check size={9} className="stroke-[4]" />
+                                                </div>
+                                              ) : (
+                                                <div className="w-4 h-4 border border-gray-300 rounded hover:border-[#006B7A] bg-white"></div>
+                                              )}
+                                            </div>
+                                            <span className={`text-[11.5px] transition-colors ${isSubcatSelected ? "font-bold text-[#006B7A]" : "font-semibold text-gray-600 hover:text-gray-800"}`}>
+                                              {subcat.categoryName}
+                                            </span>
+                                          </div>
+                                        );
+                                      })
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )
+                    )
+                  ) : (
+                    /* Read-Only View: Show only Selected categories in a premium layout */
+                    formData.categoryIds.length === 0 ? (
+                      <p className="text-xs text-gray-400 font-light text-center py-6">
+                        Chưa chọn ngành nghề nào quan tâm.
+                      </p>
+                    ) : (
+                      <div className="flex flex-wrap gap-2 text-left">
+                        {allCategories
+                          .filter((c) => formData.categoryIds.includes(c.id))
+                          .map((c) => (
+                            <span
+                              key={c.id}
+                              className="px-3.5 py-1.5 rounded-xl bg-teal-50 border border-teal-150 text-[#006B7A] text-xs font-bold shadow-3xs"
+                            >
+                              {c.categoryName}
+                            </span>
+                          ))}
+                      </div>
+                    )
                   )}
                 </div>
               </div>
@@ -1107,7 +1381,7 @@ function CandidateProfileContent() {
                         <div className="flex items-center gap-1.5">
                           <span className="p-1 bg-gray-100 rounded-md text-gray-400 flex-shrink-0"><DollarSign size={11} /></span>
                           <span className="text-[#006B7A] font-bold">
-                            {job.salaryType === "NEGOTIABLE" 
+                            {job.salaryType === "NEGOTIABLE" || job.salaryType === "Lương thỏa thuận"
                               ? "Thỏa thuận" 
                               : `${(job.minimumSalary / 1000000).toFixed(0)} - ${(job.maximumSalary / 1000000).toFixed(0)} Tr VND`}
                           </span>
@@ -1577,7 +1851,9 @@ function CandidateProfileContent() {
                   disabled={isResumeActionSubmitting}
                   onClick={async () => {
                     try {
-                      await deleteResume(resumeToDelete);
+                      if (resumeToDelete !== null) {
+                        await deleteResume(resumeToDelete);
+                      }
                       toast.success("Xóa hồ sơ CV thành công!");
                       setResumeToDelete(null);
                     } catch (err: any) {
