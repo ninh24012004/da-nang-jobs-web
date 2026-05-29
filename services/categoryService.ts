@@ -1,41 +1,94 @@
 import api from "./api";
-import { 
-    CategoryRequest, 
-    CategoryResponse, 
-    CategoryTreeResponse 
+import { ApiResponse } from "@/types/apiResponse";
+import {
+  CategoryRequest,
+  CategoryResponse,
+  CategoryTreeResponse,
 } from "@/types/category";
-import { ApiResponse } from "@/types/auth";
+import { getCachedOrFetch } from "@/lib/cache";
 
 export const categoryService = {
-    getCategoryTree: async () => {
-        const response = await api.get<ApiResponse<CategoryTreeResponse[]>>("/categories/tree");
-        return response.data;
-    },
+  /**
+   * Lấy cây danh mục ngành nghề
+   * GET /categories/tree
+   */
+  getCategoryTree: async (): Promise<CategoryTreeResponse[]> => {
+    return getCachedOrFetch("cache_categories_tree", async () => {
+      const response = await api.get<ApiResponse<CategoryTreeResponse[]>>("/categories/tree");
+      return response.data.data;
+    });
+  },
 
-    createCategory: async (data: CategoryRequest) => {
-        const response = await api.post<ApiResponse<CategoryResponse>>("/categories", data);
-        return response.data;
-    },
+  /**
+   * Lấy toàn bộ danh mục (dạng flat list, từ tree)
+   * GET /categories/tree
+   */
+  getAllCategories: async (): Promise<CategoryResponse[]> => {
+    return getCachedOrFetch("cache_categories_flat", async () => {
+      const response = await api.get<ApiResponse<CategoryTreeResponse[]>>("/categories/tree");
+      const flatList: CategoryResponse[] = [];
+      const flatten = (nodes: CategoryTreeResponse[]) => {
+        for (const node of nodes) {
+          flatList.push({
+            id: node.id,
+            categoryName: node.categoryName,
+            parentId: node.parentId ?? null,
+          });
+          if (node.children && node.children.length > 0) {
+            flatten(node.children);
+          }
+        }
+      };
+      flatten(response.data.data ?? []);
+      return flatList;
+    });
+  },
 
-    updateCategory: async (id: number, data: CategoryRequest) => {
-        const response = await api.put<ApiResponse<CategoryResponse>>(`/categories/${id}`, data);
-        return response.data;
-    },
+  /**
+   * Tìm kiếm danh mục theo từ khóa
+   * GET /categories/search?keyword=...
+   */
+  searchCategories: async (keyword: string): Promise<CategoryResponse[]> => {
+    const response = await api.get<ApiResponse<CategoryResponse[]>>("/categories/search", {
+      params: { keyword },
+    });
+    return response.data.data;
+  },
 
-    deleteCategory: async (id: number) => {
-        const response = await api.delete<ApiResponse<void>>(`/categories/${id}`);
-        return response.data;
-    },
+  /**
+   * Lấy danh mục theo id
+   * GET /categories/:id
+   */
+  getCategoryById: async (id: number): Promise<CategoryResponse> => {
+    const response = await api.get<ApiResponse<CategoryResponse>>(`/categories/${id}`);
+    return response.data.data;
+  },
 
-    getCategoryById: async (id: number) => {
-        const response = await api.get<ApiResponse<CategoryResponse>>(`/categories/${id}`);
-        return response.data;
-    },
+  /**
+   * Tạo mới danh mục
+   * POST /categories
+   */
+  createCategory: async (data: CategoryRequest): Promise<CategoryResponse> => {
+    const response = await api.post<ApiResponse<CategoryResponse>>("/categories", data);
+    return response.data.data;
+  },
 
-    searchCategories: async (keyword: string) => {
-        const response = await api.get<ApiResponse<CategoryResponse[]>>(`/categories/search`, {
-            params: { keyword }
-        });
-        return response.data;
-    },
+  /**
+   * Cập nhật danh mục
+   * PUT /categories/:id
+   */
+  updateCategory: async (id: number, data: CategoryRequest): Promise<CategoryResponse> => {
+    const response = await api.put<ApiResponse<CategoryResponse>>(`/categories/${id}`, data);
+    return response.data.data;
+  },
+
+  /**
+   * Xóa danh mục
+   * DELETE /categories/:id
+   */
+  deleteCategory: async (id: number): Promise<void> => {
+    await api.delete<ApiResponse<void>>(`/categories/${id}`);
+  },
 };
+
+export default categoryService;

@@ -1,54 +1,36 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Plus, LayoutGrid, Search, AlertCircle, Trash2, Loader2, X } from "lucide-react";
-import { toast } from "sonner";
-import { Category, CategoryFormData, CategoryTreeResponse } from "@/types/category";
+import { Category, CategoryFormData } from "@/types/category";
 import CategoryTree from "@/components/admin/category/CategoryTree";
 import CategoryTreeItem from "@/components/admin/category/CategoryTreeItem";
 import CategoryForm from "@/components/admin/category/CategoryForm";
 import { cn } from "@/lib/utils";
-import { categoryService } from "@/services/categoryService";
+import { useCategories } from "@/hooks/useCategories";
 
 export default function CategoriesPage() {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const {
+        categories,
+        searchResults,
+        isLoading,
+        isSearching,
+        isSubmitting,
+        fetchCategories,
+        searchCategories,
+        createCategory,
+        updateCategory,
+        deleteCategory,
+        setSearchResults,
+    } = useCategories();
+
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [idToDelete, setIdToDelete] = useState<number | null>(null);
 
     // Search States
     const [searchTerm, setSearchTerm] = useState("");
-    const [searchResults, setSearchResults] = useState<Category[]>([]);
-    const [isSearching, setIsSearching] = useState(false);
-
-    // Map API Tree to UI Tree
-    const mapTree = (tree: CategoryTreeResponse[], parentId: number | null = null): Category[] => {
-        return tree.map(node => ({
-            id: node.id,
-            categoryName: node.categoryName,
-            parentId: parentId,
-            children: node.children ? mapTree(node.children, node.id) : []
-        }));
-    };
-
-    const fetchCategories = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            const response = await categoryService.getCategoryTree();
-            if (response.success) {
-                setCategories(mapTree(response.data));
-            } else {
-                toast.error(response.message);
-            }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Không thể tải danh mục");
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
 
     useEffect(() => {
         fetchCategories();
@@ -58,32 +40,15 @@ export default function CategoriesPage() {
     useEffect(() => {
         if (!searchTerm.trim()) {
             setSearchResults([]);
-            setIsSearching(false);
             return;
         }
 
-        const delayDebounceFn = setTimeout(async () => {
-            try {
-                setIsSearching(true);
-                const response = await categoryService.searchCategories(searchTerm);
-                if (response.success) {
-                    const results = response.data.map(item => ({
-                        id: item.id,
-                        categoryName: item.categoryName,
-                        parentId: item.parentCategoryId,
-                        children: []
-                    }));
-                    setSearchResults(results);
-                }
-            } catch (error) {
-                console.error("Search error:", error);
-            } finally {
-                setIsSearching(false);
-            }
+        const delayDebounceFn = setTimeout(() => {
+            searchCategories(searchTerm);
         }, 500);
 
         return () => clearTimeout(delayDebounceFn);
-    }, [searchTerm]);
+    }, [searchTerm, searchCategories, setSearchResults]);
 
     const handleSelectCategory = (category: Category) => {
         setSelectedCategory(category);
@@ -105,35 +70,13 @@ export default function CategoriesPage() {
     };
 
     const handleSave = async (data: CategoryFormData) => {
-        try {
-            setIsSubmitting(true);
+        const res = selectedCategory?.id && selectedCategory.id !== 0
+            ? await updateCategory(selectedCategory.id, data)
+            : await createCategory(data);
 
-            const requestData = {
-                categoryName: data.categoryName,
-                parentCategoryId: data.parentId
-            };
-
-            let response;
-            if (selectedCategory?.id && selectedCategory.id !== 0) {
-                // Update
-                response = await categoryService.updateCategory(selectedCategory.id, requestData);
-            } else {
-                // Create
-                response = await categoryService.createCategory(requestData);
-            }
-
-            if (response.success) {
-                toast.success(response.message);
-                setIsEditing(false);
-                setSelectedCategory(null);
-                fetchCategories(); // Refresh tree
-            } else {
-                toast.error(response.message);
-            }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Lỗi khi lưu danh mục");
-        } finally {
-            setIsSubmitting(false);
+        if (res.success) {
+            setIsEditing(false);
+            setSelectedCategory(null);
         }
     };
 
@@ -144,26 +87,14 @@ export default function CategoriesPage() {
 
     const confirmDelete = async () => {
         if (!idToDelete) return;
-        try {
-            setIsSubmitting(true);
-            const response = await categoryService.deleteCategory(idToDelete);
-
-            if (response.success) {
-                toast.success(response.message);
-                setShowDeleteModal(false);
-                setIdToDelete(null);
-                if (selectedCategory?.id === idToDelete) {
-                    setIsEditing(false);
-                    setSelectedCategory(null);
-                }
-                fetchCategories(); // Refresh tree
-            } else {
-                toast.error(response.message);
+        const res = await deleteCategory(idToDelete);
+        if (res.success) {
+            setShowDeleteModal(false);
+            setIdToDelete(null);
+            if (selectedCategory?.id === idToDelete) {
+                setIsEditing(false);
+                setSelectedCategory(null);
             }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Lỗi khi xóa danh mục");
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -205,7 +136,7 @@ export default function CategoriesPage() {
                                         <Search className="w-4 h-4 text-gray-400" />
                                     )}
                                 </div>
-                                <input 
+                                <input
                                     type="text"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -216,7 +147,7 @@ export default function CategoriesPage() {
                                     )}
                                 />
                                 {searchTerm && (
-                                    <button 
+                                    <button
                                         onClick={() => setSearchTerm("")}
                                         className="absolute right-2 p-1 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-all"
                                     >
@@ -375,8 +306,12 @@ export default function CategoriesPage() {
                         {/* Footer */}
                         <div className="flex gap-3 border-t border-gray-100 px-8 py-6">
                             <button
-                                onClick={() => setShowDeleteModal(false)}
-                                className="flex-1 rounded-2xl border border-gray-200 bg-white py-3.5 font-semibold text-gray-700 transition-all hover:bg-gray-50"
+                                onClick={() => {
+                                    setShowDeleteModal(false);
+                                    setIdToDelete(null);
+                                }}
+                                disabled={isSubmitting}
+                                className="flex-1 rounded-2xl border border-gray-200 bg-white py-3.5 font-semibold text-gray-700 transition-all hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-70"
                             >
                                 Hủy
                             </button>

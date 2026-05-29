@@ -1,32 +1,25 @@
-import { ApiResponse } from "./auth";
-
 export interface CategoryResponse {
-    id: number;
-    categoryName: string;
-    parentCategoryId: number | null;
-    createdAt: string;
+  id: number;
+  categoryName: string;
+  parentId: number | null;
 }
 
 export interface CategoryRequest {
-    categoryName: string;
-    parentCategoryId: number | null;
+  categoryName: string;
+  parentId: number | null;
 }
 
 export interface CategoryTreeResponse {
-    id: number;
-    categoryName: string;
-    children: CategoryTreeResponse[];
+  id: number;
+  categoryName: string;
+  parentId?: number | null;
+  children?: CategoryTreeResponse[];
 }
 
-// UI specific types (mapping from API)
-export interface Category {
-    id: number;
-    categoryName: string;
-    parentId: number | null;
-    children?: Category[];
-}
+// Alias dùng trong component tree (tương đương CategoryTreeResponse)
+export type Category = CategoryTreeResponse;
 
 export type CategoryFormData = {
-    categoryName: string;
-    parentId: number | null;
+  categoryName: string;
+  parentId: number | null;
 };
