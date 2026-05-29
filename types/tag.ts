@@ -1,12 +1,10 @@
 export interface TagResponse {
-    id: number;
-    tagName: string;
+  id: number;
+  tagName: string;
 }
 
 export interface TagRequest {
-    tagName: string;
+  tagName: string;
 }
 
-export interface TagFormData {
-    tagName: string;
-}
+export type TagFormData = TagRequest;

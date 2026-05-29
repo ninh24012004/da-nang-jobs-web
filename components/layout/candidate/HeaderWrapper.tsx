@@ -11,6 +11,7 @@ export default function HeaderWrapper() {
     const [user, setUser] = useState<{
         fullName: string;
         avatar?: string;
+        email?: string;
     } | null>(null);
 
     const hideHeaderPaths = [

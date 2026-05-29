@@ -215,7 +215,15 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
             <div className="flex w-full flex-col justify-center sm:px-12 md:w-1/2 md:px-16 lg:px-24">
                 <div className="mx-auto w-full max-w-md">
                     <div className="mb-4">
-                        {userType === "candidate" ? <LogoIcon /> : <EmployerLogo />}
+                        {userType === "candidate" ? (
+                            <Link href="/candidate">
+                                <LogoIcon />
+                            </Link>
+                        ) : (
+                            <Link href="/employer">
+                                <EmployerLogo />
+                            </Link>
+                        )}
                     </div>
 
                     <div className="mb-8">

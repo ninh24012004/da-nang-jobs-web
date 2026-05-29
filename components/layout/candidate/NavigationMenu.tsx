@@ -9,7 +9,11 @@ const NAV_ITEMS = [
     },
     {
         label: "Công ty",
-        href: "/companies",
+        href: "/candidate/companies",
+    },
+    {
+        label: "Hồ sơ & CV",
+        href: "/candidate/profile?tab=profile",
     },
 ];
 
