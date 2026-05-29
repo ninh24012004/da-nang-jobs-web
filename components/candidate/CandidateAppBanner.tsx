@@ -1,6 +1,6 @@
 "use client";
 
-import { Smartphone, CheckCircle, ArrowRight } from "lucide-react";
+import { CheckCircle, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
 export default function CandidateAppBanner() {
@@ -20,31 +20,31 @@ export default function CandidateAppBanner() {
           {/* Left descriptions and actions */}
           <div className="lg:w-1/2 space-y-6 text-white z-10">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-400 uppercase tracking-widest bg-[#006b7a]/20 border border-[#006b7a]/30 px-3 py-1.5 rounded-full">
-              <Smartphone size={14} className="text-teal-400 animate-pulse" />
-              <span>Tiện ích di động</span>
+              <CheckCircle size={14} className="text-teal-400" />
+              <span>Cơ hội nghề nghiệp</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-              Tìm việc hiệu quả cùng ứng dụng di động Đà Nẵng Job
+              Tìm việc làm nhanh chóng &amp; dễ dàng hơn bao giờ hết
             </h2>
 
-            <p className="text-gray-350 text-sm sm:text-base font-light leading-relaxed">
-              Tạo hồ sơ cá nhân nhanh chóng, tự động nhận thông báo cơ hội việc làm mới theo định vị địa lý, và kết nối chat trực tiếp với nhà tuyển dụng địa phương ngay lập tức.
+            <p className="text-gray-300 text-sm sm:text-base font-light leading-relaxed">
+              Tạo hồ sơ cá nhân trực tuyến chỉ trong vài phút, ứng tuyển nhanh chóng vào các doanh nghiệp hàng đầu tại Đà Nẵng và tương tác trực tiếp với nhà tuyển dụng.
             </p>
 
             {/* Bullets lists */}
             <div className="space-y-3.5 pt-2 text-xs sm:text-sm font-medium text-gray-200">
               <div className="flex items-center gap-3">
                 <CheckCircle size={16} className="text-teal-400 flex-shrink-0" />
-                <span>Nhận gợi ý việc làm tự động theo quận/huyện địa phương</span>
+                <span>Hàng ngàn việc làm chất lượng cập nhật mỗi ngày</span>
               </div>
               <div className="flex items-center gap-3">
                 <CheckCircle size={16} className="text-teal-400 flex-shrink-0" />
-                <span>Nộp hồ sơ trực tuyến trong chưa đầy 1 giây</span>
+                <span>Nộp hồ sơ trực tuyến chỉ bằng 1 cú nhấp chuột</span>
               </div>
               <div className="flex items-center gap-3">
                 <CheckCircle size={16} className="text-teal-400 flex-shrink-0" />
-                <span>Tương tác phỏng vấn trực tuyến thông suốt an toàn</span>
+                <span>Thông tin tuyển dụng minh bạch, chính xác và an toàn</span>
               </div>
             </div>
 
@@ -54,49 +54,44 @@ export default function CandidateAppBanner() {
                 onClick={handleProfileRedirect}
                 className="flex items-center justify-center gap-1.5 w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#006b7a] hover:bg-[#005a66] text-white font-bold text-sm shadow-lg shadow-[#006b7a]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
-                <span>Tạo hồ sơ của bạn</span>
+                <span>Tạo hồ sơ cá nhân</span>
                 <ArrowRight size={14} />
               </button>
-
-              {/* Downloads app stores badges */}
-              <div className="flex items-center justify-center gap-3 w-full sm:w-auto pt-2 sm:pt-0">
-                <a
-                  href="https://apps.apple.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:scale-[1.03] active:scale-[0.97] transition-all"
-                >
-                  <img
-                    src="https://static.topcv.vn/srp/website/images/app/appstore.jpg"
-                    alt="App Store download"
-                    className="h-9 rounded-md object-contain"
-                  />
-                </a>
-                <a
-                  href="https://play.google.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:scale-[1.03] active:scale-[0.97] transition-all"
-                >
-                  <img
-                    src="https://static.topcv.vn/srp/website/images/app/googleplay.jpg"
-                    alt="Google Play download"
-                    className="h-9 rounded-md object-contain"
-                  />
-                </a>
-              </div>
             </div>
           </div>
 
-          {/* Right graphics column */}
+          {/* Right graphics column - Job card mockup */}
           <div className="lg:w-1/2 w-full flex justify-center z-10">
-            <div className="relative group max-w-md">
+            <div className="relative group max-w-sm w-full bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-6 shadow-xl">
               <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-[#006b7a]/15 rounded-2xl blur-xl group-hover:scale-105 transition-transform duration-500 pointer-events-none"></div>
-              <img
-                src="https://tuyendung.topcv.vn/images/service/Macbook Pro Flying Mockup.png"
-                alt="Đà Nẵng Job Mobile Application Mockup"
-                className="relative max-h-72 sm:max-h-80 w-auto object-contain transform group-hover:-translate-y-1 transition-all duration-500"
-              />
+              
+              <div className="relative flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-300 font-bold text-lg flex-shrink-0">
+                  DN
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-white font-bold text-base">Tuyển dụng Lập trình viên ReactJS</h4>
+                  <p className="text-teal-400 text-xs font-semibold">Công ty Cổ phần Công nghệ Đà Nẵng</p>
+                </div>
+              </div>
+              <div className="relative mt-6 space-y-3">
+                <div className="flex justify-between items-center text-xs text-gray-300">
+                  <span>Mức lương:</span>
+                  <span className="text-teal-300 font-bold">15 - 25 triệu</span>
+                </div>
+                <div className="flex justify-between items-center text-xs text-gray-300">
+                  <span>Địa điểm:</span>
+                  <span className="text-white">Q. Hải Châu, TP. Đà Nẵng</span>
+                </div>
+                <div className="flex justify-between items-center text-xs text-gray-300">
+                  <span>Hình thức:</span>
+                  <span className="text-white">Toàn thời gian</span>
+                </div>
+              </div>
+              <div className="relative mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                <span className="text-[10px] text-gray-400">Đăng tuyển 2 giờ trước</span>
+                <span className="px-3 py-1.5 rounded-lg bg-teal-500 text-white font-bold text-[11px] select-none">Ứng tuyển ngay</span>
+              </div>
             </div>
           </div>
         </div>

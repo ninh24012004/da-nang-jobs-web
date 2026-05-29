@@ -155,7 +155,10 @@ export const CandidateHeader: React.FC<HeaderProps> = ({
                             {/* Profile Info if Authenticated */}
                             {isAuthenticated && user && (
                                 <div className="bg-gray-50/70 border border-gray-100 rounded-2xl p-4">
-                                    <div className="flex items-center gap-3">
+                                    <Link
+                                        href="/candidate/profile?tab=profile"
+                                        className="flex items-center gap-3 hover:opacity-90 transition-opacity"
+                                    >
                                         <div className="h-12 w-12 rounded-full bg-[#006b7a] text-white flex items-center justify-center font-bold text-base shadow-sm overflow-hidden flex-shrink-0 border border-white">
                                             {user.avatar ? (
                                                 <img src={user.avatar} alt={user.fullName} className="h-full w-full object-cover" />
@@ -174,18 +177,7 @@ export const CandidateHeader: React.FC<HeaderProps> = ({
                                                 {user.email || "candidate@gmail.com"}
                                             </p>
                                         </div>
-                                    </div>
-
-                                    {/* CV Progress indicator */}
-                                    <div className="mt-4 pt-3 border-t border-gray-200/50">
-                                        <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 mb-1">
-                                            <span>Độ hoàn thiện CV cá nhân:</span>
-                                            <span className="text-[#006b7a]">85%</span>
-                                        </div>
-                                        <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-                                            <div className="h-full bg-gradient-to-r from-teal-500 to-[#006b7a] rounded-full" style={{ width: "85%" }} />
-                                        </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             )}
 

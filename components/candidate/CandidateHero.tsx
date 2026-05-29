@@ -220,11 +220,11 @@ export default function CandidateHero() {
 
         {/* Headlines */}
         <div className="space-y-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight select-none">
-            Tìm Việc Làm Mơ Ước Tại{" "}
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight select-none">
+            Tìm Việc Làm Mơ Ước Tại{" "} <br></br>
             <span className="bg-gradient-to-r from-teal-400 via-[#006b7a] to-teal-300 bg-clip-text text-transparent">
               ĐÀ NẴNG
-            </span>
+            </span> 
           </h1>
           <p className="text-gray-300 text-sm sm:text-lg max-w-2xl mx-auto font-light leading-relaxed select-none">
             Hơn 5.000+ tin tuyển dụng chất lượng cao, xác thực uy tín được cập nhật liên tục từ các doanh nghiệp hàng đầu tại thành phố đáng sống.
