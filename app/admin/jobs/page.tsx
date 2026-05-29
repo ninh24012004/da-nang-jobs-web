@@ -228,6 +228,16 @@ export default function AdminJobsPage() {
 
   return (
     <div className="space-y-6 select-none relative">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-extrabold text-gray-800 tracking-tight">Quản lý tin tuyển dụng</h1>
+          <p className="text-gray-400 mt-1 text-xs font-medium">
+            Duyệt, từ chối và kiểm soát hiển thị tất cả tin tuyển dụng trên hệ thống.
+          </p>
+        </div>
+      </div>
+
       {/* 1. Quick Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Card 1: ALL */}
@@ -417,7 +427,7 @@ export default function AdminJobsPage() {
                     </td>
 
                     <td className="p-4 font-mono font-bold text-[#006B7A] text-xs">
-                      {j.salaryType === "Lương thỏa thuận" ? (
+                      {j.salaryType === "Lương thỏa thuận" || j.salaryType === "NEGOTIABLE" ? (
                         "Thỏa thuận"
                       ) : (
                         `${j.minimumSalary?.toLocaleString()} - ${j.maximumSalary?.toLocaleString()}đ`
@@ -630,7 +640,7 @@ export default function AdminJobsPage() {
                   <p className="font-bold text-gray-800 text-sm bg-gray-50 px-3.5 py-2.5 rounded-xl border border-gray-100 inline-flex items-center gap-1.5">
                     <DollarSign size={14} className="text-[#006B7A]" />
                     <span>
-                      {selectedJob.salaryType === "Lương thỏa thuận" ? (
+                      {selectedJob.salaryType === "Lương thỏa thuận" || selectedJob.salaryType === "NEGOTIABLE" ? (
                         "Lương thỏa thuận"
                       ) : (
                         `${selectedJob.minimumSalary?.toLocaleString()} - ${selectedJob.maximumSalary?.toLocaleString()} VNĐ`

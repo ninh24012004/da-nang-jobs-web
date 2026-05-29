@@ -4,10 +4,15 @@ import AdminUserTable from "@/components/admin/user/AdminUserTable";
 
 export default function AdminUsersPage() {
     return (
-        <div className="p-6">
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-800">Quản lý người dùng</h1>
-                <p className="text-gray-600 mt-2">Quản lý, tìm kiếm và thay đổi trạng thái người dùng trong hệ thống</p>
+        <div className="space-y-6">
+            {/* Page Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-extrabold text-gray-800 tracking-tight">Quản lý người dùng</h1>
+                    <p className="text-gray-400 mt-1 text-xs font-medium">
+                        Tìm kiếm, theo dõi và cập nhật trạng thái tài khoản ứng viên trên hệ thống.
+                    </p>
+                </div>
             </div>
 
             <AdminUserTable />

@@ -1,19 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import HeaderWrapper from "@/components/layout/candidate/HeaderWrapper";
 import Script from "next/script";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Đà Nẵng Job",
@@ -26,11 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="vi" className="h-full antialiased">
+      <body className="min-h-full flex flex-col" style={{ fontFamily: '"Be Vietnam Pro", sans-serif' }}>
         <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
         <HeaderWrapper />
         {children}

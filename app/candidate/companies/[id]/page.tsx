@@ -107,7 +107,7 @@ export default function CompanyDetailPage() {
   }, [company, allJobs]);
 
   const formatSalary = (type: string, min?: number, max?: number) => {
-    if (type === "Lương thỏa thuận") return "Thỏa thuận";
+    if (type === "Lương thỏa thuận" || type === "NEGOTIABLE") return "Thỏa thuận";
     if (!min && !max) return "Thỏa thuận";
     const toMillions = (val: number) => (val / 1000000).toFixed(0);
     if (min && max) return `${toMillions(min)} - ${toMillions(max)} triệu`;

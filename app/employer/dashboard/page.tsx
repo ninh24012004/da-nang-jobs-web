@@ -9,7 +9,7 @@ import {
   Search, Eye, Edit2, Check, X, Calendar, MapPin, DollarSign,
   Briefcase, GraduationCap, ChevronRight, Phone, Mail, Award,
   ExternalLink, BarChart3, TrendingUp, Users, ShieldAlert, Award as AwardIcon,
-  CheckCircle2, Clock, Globe, Trash2, Loader2
+  CheckCircle2, Clock, Globe, Trash2, Loader2, ChevronDown, Grid
 } from "lucide-react";
 import { toast } from "sonner";
 import { useEmployers } from "@/hooks/useEmployers";
@@ -22,6 +22,8 @@ import { useSkills } from "@/hooks/useSkills";
 import { useTags } from "@/hooks/useTags";
 import { JobResponse, ApproveJobStatus, VisibilityJobStatus } from "@/types/job";
 import { applicationService } from "@/services/applicationService";
+import { categoryService } from "@/services/categoryService";
+import { CategoryTreeResponse } from "@/types/category";
 
 function DashboardContent() {
   const router = useRouter();
@@ -98,6 +100,8 @@ function DashboardContent() {
   const [categorySearch, setCategorySearch] = useState("");
   const [skillSearch, setSkillSearch] = useState("");
   const [tagSearch, setTagSearch] = useState("");
+  const [categoriesTree, setCategoriesTree] = useState<CategoryTreeResponse[]>([]);
+  const [expandedCategoryGroups, setExpandedCategoryGroups] = useState<number[]>([]);
 
   const [actionLoading, setActionLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
@@ -309,23 +313,25 @@ function DashboardContent() {
         }
       }
 
-      if (cachedData) {
+      if (cachedData && cachedData.categoriesTree && cachedData.categoriesTree.length > 0) {
         setPositions(cachedData.positions || []);
         setExperienceLevels(cachedData.experienceLevels || []);
         setDistricts(cachedData.districts || []);
         setWards(cachedData.wards || []);
         setCategories(cachedData.categories || []);
+        setCategoriesTree(cachedData.categoriesTree || []);
         setSkills(cachedData.skills || []);
         setTags(cachedData.tags || []);
         return;
       }
 
-      const [posRes, expRes, distRes, wardRes, catRes, skillRes, tagRes] = await Promise.all([
+      const [posRes, expRes, distRes, wardRes, catRes, catTreeRes, skillRes, tagRes] = await Promise.all([
         fetchPositions().catch(() => []),
         fetchExperienceLevels().catch(() => []),
         fetchDistricts().catch(() => []),
         fetchAllWards().catch(() => []),
         fetchFlatCategories().catch(() => []),
+        categoryService.getCategoryTree().catch(() => []),
         fetchSkills().catch(() => []),
         fetchTags().catch(() => []),
       ]);
@@ -336,6 +342,7 @@ function DashboardContent() {
         districts: distRes ?? [],
         wards: wardRes ?? [],
         categories: catRes ?? [],
+        categoriesTree: catTreeRes ?? [],
         skills: skillRes ?? [],
         tags: tagRes ?? [],
       };
@@ -345,6 +352,7 @@ function DashboardContent() {
       setDistricts(masterObj.districts);
       setWards(masterObj.wards);
       setCategories(masterObj.categories);
+      setCategoriesTree(masterObj.categoriesTree);
       setSkills(masterObj.skills);
       setTags(masterObj.tags);
 
@@ -369,6 +377,73 @@ function DashboardContent() {
       setJobsLoading(false);
     }
   }
+
+  // Category tree helper methods
+  const getDescendantIds = (node: CategoryTreeResponse): number[] => {
+    let ids = [node.id];
+    if (node.children) {
+      for (const child of node.children) {
+        ids = [...ids, ...getDescendantIds(child)];
+      }
+    }
+    return ids;
+  };
+
+  const getCategorySelectionStatus = (node: CategoryTreeResponse, selectedList: number[]): "none" | "partial" | "all" => {
+    const descendantIds = getDescendantIds(node);
+    const selectedCount = descendantIds.filter(id => selectedList.includes(id)).length;
+    if (selectedCount === 0) return "none";
+    if (selectedCount === descendantIds.length) return "all";
+    return "partial";
+  };
+
+  const handleToggleCategoryGroup = (node: CategoryTreeResponse) => {
+    const descendantIds = getDescendantIds(node);
+    const status = getCategorySelectionStatus(node, formCategoryIds);
+
+    let updatedCats: number[];
+    if (status === "all") {
+      updatedCats = formCategoryIds.filter(id => !descendantIds.includes(id));
+    } else {
+      const next = [...formCategoryIds];
+      descendantIds.forEach(id => {
+        if (!next.includes(id)) next.push(id);
+      });
+      updatedCats = next;
+    }
+    setFormCategoryIds(updatedCats);
+  };
+
+  const handleToggleSubcategory = (subcatId: number) => {
+    let updatedCats: number[];
+    if (formCategoryIds.includes(subcatId)) {
+      updatedCats = formCategoryIds.filter(id => id !== subcatId);
+    } else {
+      updatedCats = [...formCategoryIds, subcatId];
+    }
+    setFormCategoryIds(updatedCats);
+  };
+
+  const getMatchingCategories = (nodes: CategoryTreeResponse[], query: string, path: string[] = []): { id: number; name: string; path: string }[] => {
+    let matches: { id: number; name: string; path: string }[] = [];
+    const lowerQuery = query.toLowerCase().trim();
+    if (!lowerQuery) return [];
+
+    for (const node of nodes) {
+      const currentPath = [...path, node.categoryName];
+      if (node.categoryName.toLowerCase().includes(lowerQuery)) {
+        matches.push({
+          id: node.id,
+          name: node.categoryName,
+          path: currentPath.join(" > ")
+        });
+      }
+      if (node.children && node.children.length > 0) {
+        matches = [...matches, ...getMatchingCategories(node.children, query, currentPath)];
+      }
+    }
+    return matches;
+  };
 
   const resetForm = () => {
     setEditingJobId(null);
@@ -1130,7 +1205,7 @@ function DashboardContent() {
                               </span>
                             </td>
                             <td className="p-4 text-gray-805 font-bold">
-                              {job.salaryType === "Lương thỏa thuận" ? (
+                              {job.salaryType === "Lương thỏa thuận" || job.salaryType === "NEGOTIABLE" ? (
                                 "Thỏa thuận"
                               ) : (
                                 `${job.minimumSalary?.toLocaleString()} - ${job.maximumSalary?.toLocaleString()}đ`
@@ -1748,31 +1823,203 @@ function DashboardContent() {
                         )}
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto p-2.5 bg-gray-50 border border-gray-200 rounded-2xl custom-scrollbar">
-                      {categories
-                        .filter((cat) => cat.categoryName.toLowerCase().includes(categorySearch.toLowerCase()))
-                        .map((cat) => {
-                          const isChecked = formCategoryIds.includes(cat.id);
-                        return (
-                          <label key={cat.id} className={`flex items-center gap-1 px-3 py-1.5 rounded-xl border text-xs font-bold cursor-pointer select-none transition-all active:scale-[0.97] ${
-                            isChecked ? "bg-teal-50 border-teal-200 text-[#006b7a]" : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
-                          }`}>
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setFormCategoryIds(prev => [...prev, cat.id]);
-                                } else {
-                                  setFormCategoryIds(prev => prev.filter(id => id !== cat.id));
-                                }
-                              }}
-                              className="sr-only"
-                            />
-                            <span>{cat.categoryName}</span>
-                          </label>
-                        );
-                      })}
+
+                    <div className="max-h-80 overflow-y-auto p-4 space-y-3.5 custom-scrollbar bg-gray-50/20 rounded-2xl">
+                      {categorySearch.trim() !== "" ? (
+                        /* Searching: Show flat filtered categories with hierarchical paths */
+                        (() => {
+                          const matches = getMatchingCategories(categoriesTree, categorySearch);
+                          return matches.length === 0 ? (
+                            <p className="text-[11px] text-gray-400 font-medium py-6 text-center">Không tìm thấy danh mục nào phù hợp.</p>
+                          ) : (
+                            <div className="grid grid-cols-1 gap-2 text-left">
+                              {matches.map((match) => {
+                                const isSelected = formCategoryIds.includes(match.id);
+                                return (
+                                  <label
+                                    key={match.id}
+                                    className={`flex items-center gap-3 p-3.5 rounded-xl hover:bg-teal-50/10 cursor-pointer transition-all select-none ${isSelected ? "bg-teal-50/30" : "bg-white"}`}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={isSelected}
+                                      onChange={() => handleToggleSubcategory(match.id)}
+                                      className="rounded border-gray-300 text-[#006B7A] focus:ring-[#006B7A] w-4 h-4 cursor-pointer"
+                                    />
+                                    <div className="space-y-0.5">
+                                      <span className="text-xs font-bold text-gray-800 leading-snug">{match.name}</span>
+                                      <p className="text-[10px] text-gray-400 font-semibold">{match.path}</p>
+                                    </div>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          );
+                        })()
+                      ) : (
+                        /* Not searching: Show Tree with Collapsible Groups & Checkboxes (Supports 3 levels) */
+                        categoriesTree.length === 0 ? (
+                          <div className="py-6 text-center text-gray-400 font-light text-xs animate-pulse">
+                            Đang tải sơ đồ ngành nghề...
+                          </div>
+                        ) : (
+                          <div className="space-y-2.5 animate-fadeIn">
+                            {categoriesTree.map((catGroup) => {
+                              const isExpanded = expandedCategoryGroups.includes(catGroup.id);
+                              const status = getCategorySelectionStatus(catGroup, formCategoryIds);
+                              const isAnySelected = status === "all" || status === "partial";
+
+                              return (
+                                <div key={catGroup.id} className="rounded-2xl bg-white overflow-hidden shadow-2xs">
+                                  {/* Parent Row - Level 1 */}
+                                  <div
+                                    onClick={() => {
+                                      setExpandedCategoryGroups(prev =>
+                                        prev.includes(catGroup.id)
+                                          ? prev.filter(id => id !== catGroup.id)
+                                          : [...prev, catGroup.id]
+                                      );
+                                    }}
+                                    className="flex items-center justify-between p-3.5 hover:bg-gray-50/50 cursor-pointer select-none transition-colors"
+                                  >
+                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                      {/* Green Custom Checkbox */}
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleToggleCategoryGroup(catGroup);
+                                        }}
+                                        className="focus:outline-none flex-shrink-0 cursor-pointer flex items-center justify-center transition-all bg-transparent border-none p-0"
+                                      >
+                                        {status === "all" ? (
+                                          <div className="w-[18px] h-[18px] border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A] text-white shadow-3xs">
+                                            <Check size={11} className="stroke-[3.5]" />
+                                          </div>
+                                        ) : status === "partial" ? (
+                                          <div className="w-[18px] h-[18px] border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A]/15 text-[#006B7A]">
+                                            <div className="w-2 h-0.5 bg-[#006B7A] rounded-full"></div>
+                                          </div>
+                                        ) : (
+                                          <div className="w-[18px] h-[18px] border border-gray-300 rounded hover:border-[#006B7A] bg-white"></div>
+                                        )}
+                                      </button>
+                                      <span className={`text-[12px] font-bold truncate leading-none ${isAnySelected ? "text-[#006B7A]" : "text-gray-700"}`}>
+                                        {catGroup.categoryName}
+                                      </span>
+                                    </div>
+
+                                    <div className={`text-gray-400 transition-transform ${isExpanded ? "transform rotate-180" : ""}`}>
+                                      <ChevronDown size={14} className="stroke-[2.5]" />
+                                    </div>
+                                  </div>
+
+                                  {/* Children Panel - Level 2 & Level 3 */}
+                                  {isExpanded && (
+                                    <div className="bg-gray-50/30 border-t border-gray-100 p-3.5 pl-6.5 space-y-3 animate-fadeIn">
+                                      {!catGroup.children || catGroup.children.length === 0 ? (
+                                        <p className="text-[11px] text-gray-400 font-medium py-1">Chưa có danh mục con</p>
+                                      ) : (
+                                        catGroup.children.map((subcat) => {
+                                          const hasLevel3 = subcat.children && subcat.children.length > 0;
+                                          const subcatStatus = getCategorySelectionStatus(subcat, formCategoryIds);
+                                          const isAnySubcatSelected = subcatStatus === "all" || subcatStatus === "partial";
+
+                                          if (hasLevel3) {
+                                            return (
+                                              <div key={subcat.id} className="bg-white rounded-xl p-3 space-y-2.5 text-left shadow-3xs">
+                                                {/* Level 2 Subcategory Header */}
+                                                <div
+                                                  onClick={() => handleToggleCategoryGroup(subcat)}
+                                                  className="flex items-center gap-2 pb-2 border-b border-gray-100 select-none cursor-pointer hover:opacity-80 transition-opacity"
+                                                >
+                                                  <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      handleToggleCategoryGroup(subcat);
+                                                    }}
+                                                    className="focus:outline-none flex-shrink-0 cursor-pointer flex items-center justify-center transition-all bg-transparent border-none p-0"
+                                                  >
+                                                    {subcatStatus === "all" ? (
+                                                      <div className="w-[16px] h-[16px] border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A] text-white shadow-3xs">
+                                                        <Check size={10} className="stroke-[4]" />
+                                                      </div>
+                                                    ) : subcatStatus === "partial" ? (
+                                                      <div className="w-[16px] h-[16px] border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A]/15 text-[#006B7A]">
+                                                        <div className="w-1.5 h-0.5 bg-[#006B7A] rounded-full"></div>
+                                                      </div>
+                                                    ) : (
+                                                      <div className="w-[16px] h-[16px] border border-gray-300 rounded hover:border-[#006B7A] bg-white"></div>
+                                                    )}
+                                                  </button>
+                                                  <span className={`text-[11.5px] font-bold ${isAnySubcatSelected ? "text-[#006B7A]" : "text-gray-700"}`}>
+                                                    {subcat.categoryName}
+                                                  </span>
+                                                </div>
+
+                                                {/* Level 3 Leaves grid */}
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-1.5">
+                                                  {subcat.children!.map((level3Node) => {
+                                                    const isLevel3Selected = formCategoryIds.includes(level3Node.id);
+                                                    return (
+                                                      <div
+                                                        key={level3Node.id}
+                                                        onClick={() => handleToggleSubcategory(level3Node.id)}
+                                                        className="flex items-center gap-2 cursor-pointer select-none py-0.5 text-left"
+                                                      >
+                                                        <div className="focus:outline-none flex-shrink-0 flex items-center justify-center transition-all bg-transparent border-none p-0">
+                                                          {isLevel3Selected ? (
+                                                            <div className="w-3.5 h-3.5 border border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A] text-white shadow-3xs">
+                                                              <Check size={8} className="stroke-[4.5]" />
+                                                            </div>
+                                                          ) : (
+                                                            <div className="w-3.5 h-3.5 border border-gray-300 rounded hover:border-[#006B7A] bg-white"></div>
+                                                          )}
+                                                        </div>
+                                                        <span className={`text-[11px] transition-colors leading-tight ${isLevel3Selected ? "font-bold text-[#006B7A]" : "font-medium text-gray-500 hover:text-gray-700"}`}>
+                                                          {level3Node.categoryName}
+                                                        </span>
+                                                      </div>
+                                                    );
+                                                  })}
+                                                </div>
+                                              </div>
+                                            );
+                                          }
+
+                                          // If no level 3, render simple leaf subcategory (Level 2)
+                                          const isSubcatSelected = subcatStatus === "all";
+                                          return (
+                                            <div
+                                              key={subcat.id}
+                                              onClick={() => handleToggleSubcategory(subcat.id)}
+                                              className="flex items-center gap-2.5 cursor-pointer select-none py-1 text-left pl-1.5"
+                                            >
+                                              <div className="focus:outline-none flex-shrink-0 flex items-center justify-center transition-all bg-transparent border-none p-0">
+                                                {isSubcatSelected ? (
+                                                  <div className="w-4 h-4 border-2 border-[#006B7A] rounded flex items-center justify-center bg-[#006B7A] text-white shadow-3xs">
+                                                    <Check size={9} className="stroke-[4]" />
+                                                  </div>
+                                                ) : (
+                                                  <div className="w-4 h-4 border border-gray-300 rounded hover:border-[#006B7A] bg-white"></div>
+                                                )}
+                                              </div>
+                                              <span className={`text-[11.5px] transition-colors ${isSubcatSelected ? "font-bold text-[#006B7A]" : "font-semibold text-gray-600 hover:text-gray-800"}`}>
+                                                {subcat.categoryName}
+                                              </span>
+                                            </div>
+                                          );
+                                        })
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
 
