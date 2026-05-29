@@ -38,6 +38,11 @@ api.interceptors.response.use(
         ) {
             originalRequest._retry = true;
 
+            // If request had no authorization, it is a guest request. Reject immediately.
+            if (!originalRequest.headers.Authorization) {
+                return Promise.reject(error);
+            }
+
             try {
                 const storage =
                     localStorage.getItem("refreshToken")

@@ -1,12 +1,10 @@
 export interface ExperienceLevelResponse {
-    id: number;
-    levelName: string;
+  id: number;
+  levelName: string;
 }
 
 export interface ExperienceLevelRequest {
-    levelName: string;
+  levelName: string;
 }
 
-export interface ExperienceLevelFormData {
-    levelName: string;
-}
+export type ExperienceLevelFormData = ExperienceLevelRequest;

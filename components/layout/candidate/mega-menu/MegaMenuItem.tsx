@@ -20,8 +20,8 @@ export default function MegaMenuItem({
             href={href}
             className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-150
             ${active
-                    ? "text-green-600 bg-green-50"
-                    : "text-gray-800 hover:text-green-600 hover:bg-gray-50"
+                    ? "text-[#006b7a] bg-[#006b7a]/5 font-bold"
+                    : "text-gray-800 hover:text-[#006b7a] hover:bg-gray-50"
                 }`}
         >
             <span className="w-5 h-5 text-gray-400">

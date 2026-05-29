@@ -13,7 +13,7 @@ import {
     AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import { locationService } from "@/services/locationService";
+import { useLocations } from "@/hooks/useLocations";
 import {
     DistrictResponse,
     WardResponse,
@@ -23,14 +23,26 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function LocationsPage() {
-    const [districts, setDistricts] = useState<DistrictResponse[]>([]);
-    const [wards, setWards] = useState<WardResponse[]>([]);
+    const {
+        districts,
+        wards,
+        isLoadingDistricts,
+        isLoadingWards,
+        isSubmitting,
+        fetchDistricts,
+        fetchWards,
+        createDistrict,
+        updateDistrict,
+        deleteDistrict,
+        createWard,
+        updateWard,
+        deleteWard,
+        setWards,
+    } = useLocations();
+
     const [activeDistrict, setActiveDistrict] = useState<DistrictResponse | null>(null);
     const [districtSearch, setDistrictSearch] = useState("");
     const [wardSearch, setWardSearch] = useState("");
-    const [isLoadingDistricts, setIsLoadingDistricts] = useState(true);
-    const [isLoadingWards, setIsLoadingWards] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [showDistrictModal, setShowDistrictModal] = useState(false);
     const [showWardModal, setShowWardModal] = useState(false);
     const [showDistrictDeleteModal, setShowDistrictDeleteModal] = useState(false);
@@ -47,43 +59,6 @@ export default function LocationsPage() {
         districtId: 0
     });
 
-    const fetchDistricts = useCallback(async () => {
-        try {
-            setIsLoadingDistricts(true);
-            const response = await locationService.getAllDistricts();
-            if (response.success) {
-                setDistricts(response.data);
-            } else {
-                toast.error(response.message);
-            }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Không thể tải danh sách quận/huyện");
-        } finally {
-            setIsLoadingDistricts(false);
-        }
-    }, []);
-
-    const fetchWards = useCallback(async (districtId: number | null) => {
-        if (districtId === null) {
-            setWards([]);
-            return;
-        }
-
-        try {
-            setIsLoadingWards(true);
-            const response = await locationService.getWardsByDistrict(districtId);
-            if (response.success) {
-                setWards(response.data);
-            } else {
-                toast.error(response.message);
-            }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Không thể tải danh sách phường/xã");
-        } finally {
-            setIsLoadingWards(false);
-        }
-    }, []);
-
     useEffect(() => {
         fetchDistricts();
     }, [fetchDistricts]);
@@ -94,7 +69,7 @@ export default function LocationsPage() {
         } else {
             setWards([]);
         }
-    }, [activeDistrict, fetchWards]);
+    }, [activeDistrict, fetchWards, setWards]);
 
     const filteredDistricts = districts.filter((district) =>
         district.districtName.toLowerCase().includes(districtSearch.toLowerCase())
@@ -144,24 +119,13 @@ export default function LocationsPage() {
             return;
         }
 
-        try {
-            setIsSubmitting(true);
-            const response = editingDistrict
-                ? await locationService.updateDistrict(editingDistrict.id, districtForm)
-                : await locationService.createDistrict(districtForm);
+        const res = editingDistrict
+            ? await updateDistrict(editingDistrict.id, districtForm)
+            : await createDistrict(districtForm);
 
-            if (response.success) {
-                toast.success(response.message);
-                setShowDistrictModal(false);
-                setEditingDistrict(null);
-                fetchDistricts();
-            } else {
-                toast.error(response.message);
-            }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Lỗi khi lưu quận/huyện");
-        } finally {
-            setIsSubmitting(false);
+        if (res.success) {
+            setShowDistrictModal(false);
+            setEditingDistrict(null);
         }
     };
 
@@ -177,28 +141,17 @@ export default function LocationsPage() {
             return;
         }
 
-        try {
-            setIsSubmitting(true);
-            const response = editingWard
-                ? await locationService.updateWard(editingWard.id, wardForm)
-                : await locationService.createWard(wardForm);
+        const res = editingWard
+            ? await updateWard(editingWard.id, wardForm)
+            : await createWard(wardForm);
 
-            if (response.success) {
-                toast.success(response.message);
-                setShowWardModal(false);
-                setEditingWard(null);
-                fetchWards(wardForm.districtId);
-                if (activeDistrict?.id !== wardForm.districtId) {
-                    const nextActive = districts.find((item) => item.id === wardForm.districtId);
-                    if (nextActive) setActiveDistrict(nextActive);
-                }
-            } else {
-                toast.error(response.message);
+        if (res.success) {
+            setShowWardModal(false);
+            setEditingWard(null);
+            if (activeDistrict?.id !== wardForm.districtId) {
+                const nextActive = districts.find((item) => item.id === wardForm.districtId);
+                if (nextActive) setActiveDistrict(nextActive);
             }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Lỗi khi lưu phường/xã");
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -215,45 +168,23 @@ export default function LocationsPage() {
     const confirmDeleteDistrict = async () => {
         if (!districtToDelete) return;
 
-        try {
-            setIsSubmitting(true);
-            const response = await locationService.deleteDistrict(districtToDelete.id);
-            if (response.success) {
-                toast.success(response.message);
-                setShowDistrictDeleteModal(false);
-                if (activeDistrict?.id === districtToDelete.id) {
-                    setActiveDistrict(null);
-                }
-                fetchDistricts();
-                setDistrictToDelete(null);
-            } else {
-                toast.error(response.message);
+        const res = await deleteDistrict(districtToDelete.id);
+        if (res.success) {
+            setShowDistrictDeleteModal(false);
+            if (activeDistrict?.id === districtToDelete.id) {
+                setActiveDistrict(null);
             }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Lỗi khi xóa quận/huyện");
-        } finally {
-            setIsSubmitting(false);
+            setDistrictToDelete(null);
         }
     };
 
     const confirmDeleteWard = async () => {
         if (!wardToDelete) return;
 
-        try {
-            setIsSubmitting(true);
-            const response = await locationService.deleteWard(wardToDelete.id);
-            if (response.success) {
-                toast.success(response.message);
-                setShowWardDeleteModal(false);
-                fetchWards(wardToDelete.districtId);
-                setWardToDelete(null);
-            } else {
-                toast.error(response.message);
-            }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Lỗi khi xóa phường/xã");
-        } finally {
-            setIsSubmitting(false);
+        const res = await deleteWard(wardToDelete.id, wardToDelete.districtId);
+        if (res.success) {
+            setShowWardDeleteModal(false);
+            setWardToDelete(null);
         }
     };
 

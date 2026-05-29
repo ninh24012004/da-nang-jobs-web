@@ -1,12 +1,10 @@
 export interface PositionResponse {
-    id: number;
-    positionName: string;
+  id: number;
+  positionName: string;
 }
 
 export interface PositionRequest {
-    positionName: string;
+  positionName: string;
 }
 
-export interface PositionFormData {
-    positionName: string;
-}
+export type PositionFormData = PositionRequest;

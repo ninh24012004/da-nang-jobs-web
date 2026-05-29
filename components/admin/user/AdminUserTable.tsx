@@ -1,77 +1,54 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { userService } from "@/services/userService";
+import { useUsers } from "@/hooks/useUsers";
 import { UserResponse, UserStatus } from "@/types/user";
+import { 
+  Search, 
+  Users, 
+  Filter, 
+  Loader2, 
+  AlertTriangle,
+  Lock,
+  Unlock,
+  UserCheck
+} from "lucide-react";
 
 type AdminUser = UserResponse;
 
 export default function AdminUserTable() {
-    const [users, setUsers] = useState<AdminUser[]>([]);
     const [page, setPage] = useState(0);
     const [size] = useState(10);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalElements, setTotalElements] = useState(0);
-    const [loading, setLoading] = useState(false);
     const [query, setQuery] = useState("");
     const [role, setRole] = useState("");
     const [statusFilter, setStatusFilter] = useState<UserStatus | "">("");
-    const [error, setError] = useState("");
-    const [loadingStatusId, setLoadingStatusId] = useState<number | null>(null);
+
+    const {
+        users,
+        totalPages,
+        totalElements,
+        isLoading: loading,
+        error,
+        loadingStatusId,
+        fetchUsers,
+        changeUserStatus,
+    } = useUsers();
 
     useEffect(() => {
-        fetchUsers();
-    }, [page, role, statusFilter]);
-
-    async function fetchUsers() {
-        setLoading(true);
-        setError("");
-
-        try {
-            let res;
-
-            if (query) {
-                res = await userService.searchUsers(query, page, size);
-            } else if (role) {
-                res = await userService.getUsersByRole(role, page, size);
-            } else if (statusFilter) {
-                res = await userService.getUserByStatus(statusFilter, page, size);
-            } else {
-                res = await userService.getAllUsers(page, size);
-            }
-
-            setUsers(res.content || []);
-            setTotalPages(res.totalPages || 1);
-            setTotalElements(res.totalElements || 0);
-        } catch (err: any) {
-            setError(
-                err.response?.data?.message ||
-                err.message ||
-                "Lỗi khi tải danh sách người dùng"
-            );
-        } finally {
-            setLoading(false);
-        }
-    }
+        fetchUsers({ query, role, statusFilter, page, size });
+    }, [page, role, statusFilter, fetchUsers]);
 
     async function handleStatusChange(userId: number, newStatus: UserStatus) {
-        setLoadingStatusId(userId);
-
-        try {
-            await userService.changeUserStatus([userId], newStatus);
-            await fetchUsers();
-        } catch (err: any) {
-            alert(err.response?.data?.message || "Lỗi khi thay đổi trạng thái");
-        } finally {
-            setLoadingStatusId(null);
-        }
+        await changeUserStatus(userId, newStatus, () => {
+            fetchUsers({ query, role, statusFilter, page, size });
+        });
     }
 
     function handleSearch() {
         setPage(0);
         setRole("");
         setStatusFilter("");
-        fetchUsers();
+        fetchUsers({ query, role: "", statusFilter: "", page: 0, size });
     }
 
     function handleRoleFilter(newRole: string) {
@@ -88,85 +65,133 @@ export default function AdminUserTable() {
         setStatusFilter(newStatus);
     }
 
+    const getStatusBadge = (status: UserStatus) => {
+        switch (status) {
+            case "ACTIVE":
+                return (
+                    <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-bold border border-emerald-100 shadow-xs">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+                        Hoạt động
+                    </span>
+                );
+            case "BLOCKED":
+                return (
+                    <span className="inline-flex items-center gap-1.5 bg-red-50 text-red-650 px-3 py-1.5 rounded-full text-xs font-bold border border-red-100 shadow-xs">
+                        <span className="h-1.5 w-1.5 rounded-full bg-red-650 shadow-[0_0_6px_rgba(220,38,38,0.8)]" />
+                        Đã Khóa
+                    </span>
+                );
+            case "INACTIVE":
+                return (
+                    <span className="inline-flex items-center gap-1.5 bg-gray-50 text-gray-500 px-3 py-1.5 rounded-full text-xs font-bold border border-gray-150 shadow-xs">
+                        <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
+                        Chưa Kích Hoạt
+                    </span>
+                );
+            default:
+                return (
+                    <span className="inline-flex items-center gap-1.5 bg-gray-50 text-gray-500 px-3 py-1.5 rounded-full text-xs font-bold border border-gray-150 shadow-xs">
+                        {status}
+                    </span>
+                );
+        }
+    };
+
     return (
-        <div>
-            <div className="bg-white p-4 rounded shadow mb-4">
-                <div className="flex items-center gap-3 flex-wrap">
+        <div className="space-y-6">
+            {/* Search and Filters controls */}
+            <div className="bg-white p-4 rounded-3xl border border-gray-100 shadow-xs flex flex-col md:flex-row gap-4 items-center justify-between">
+                {/* Search Input Group */}
+                <div className="relative w-full md:w-96 shadow-inner flex-shrink-0">
                     <input
-                        placeholder="Tìm kiếm theo email, tên..."
+                        type="text"
+                        placeholder="Tìm kiếm theo email, họ tên..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                        className="border border-gray-300 px-3 py-2 rounded flex-1 min-w-64"
+                        className="w-full bg-gray-50/50 border border-gray-200 focus:border-[#006B7A] focus:ring-1 focus:ring-[#006B7A] rounded-xl pl-10 pr-24 py-2.5 text-xs text-gray-700 outline-none transition-all font-medium"
                     />
-
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <button
                         onClick={handleSearch}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-[#006B7A] hover:bg-[#005a66] text-white px-4 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all active:scale-[0.98] cursor-pointer"
                     >
                         Tìm kiếm
                     </button>
+                </div>
 
-                    <select
-                        value={role}
-                        onChange={(e) => handleRoleFilter(e.target.value)}
-                        className="border border-gray-300 px-3 py-2 rounded"
-                    >
-                        <option value="">Tất cả vai trò</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="CANDIDATE">Candidate</option>
-                        <option value="EMPLOYER">Employer</option>
-                    </select>
+                {/* Filters Group */}
+                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto md:justify-end">
+                    {/* Role Filter */}
+                    <div className="flex items-center gap-1.5 bg-gray-50 p-1.5 rounded-xl border border-gray-200/50">
+                        <Filter size={12} className="text-gray-400 ml-1.5" />
+                        <select
+                            value={role}
+                            onChange={(e) => handleRoleFilter(e.target.value)}
+                            className="bg-transparent text-xs font-bold text-gray-600 outline-none pr-3 cursor-pointer"
+                        >
+                            <option value="">Tất cả vai trò</option>
+                            <option value="ADMIN">Quản trị viên (Admin)</option>
+                            <option value="CANDIDATE">Ứng viên (Candidate)</option>
+                            <option value="EMPLOYER">Nhà tuyển dụng (Employer)</option>
+                        </select>
+                    </div>
 
-                    <select
-                        value={statusFilter}
-                        onChange={(e) =>
-                            handleStatusFilter(e.target.value as UserStatus | "")
-                        }
-                        className="border border-gray-300 px-3 py-2 rounded"
-                    >
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="ACTIVE">ACTIVE</option>
-                        <option value="INACTIVE">INACTIVE</option>
-                        <option value="BLOCKED">BLOCKED</option>
-                    </select>
+                    {/* Status Filter */}
+                    <div className="flex items-center gap-1.5 bg-gray-50 p-1.5 rounded-xl border border-gray-200/50">
+                        <Filter size={12} className="text-gray-400 ml-1.5" />
+                        <select
+                            value={statusFilter}
+                            onChange={(e) =>
+                                handleStatusFilter(e.target.value as UserStatus | "")
+                            }
+                            className="bg-transparent text-xs font-bold text-gray-600 outline-none pr-3 cursor-pointer"
+                        >
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="ACTIVE">Hoạt động (ACTIVE)</option>
+                            <option value="INACTIVE">Chưa kích hoạt (INACTIVE)</option>
+                            <option value="BLOCKED">Đã khóa (BLOCKED)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-                    <p className="font-semibold">Lỗi: {error}</p>
+                <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-2xl text-xs font-semibold flex items-center gap-2">
+                    <AlertTriangle size={16} />
+                    <span>{error}</span>
                 </div>
             )}
 
-            <div className="bg-white rounded shadow overflow-hidden">
+            {/* Data Table */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-xs overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-100 border-b">
+                    <table className="w-full text-left border-collapse text-xs font-semibold text-gray-700">
+                        <thead className="bg-gray-50 border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-widest">
                             <tr>
-                                <th className="p-3 w-12">Avatar</th>
-                                <th className="p-3">Họ tên</th>
-                                <th className="p-3">Email</th>
-                                <th className="p-3">Vai trò</th>
-                                <th className="p-3">Trạng thái</th>
-                                <th className="p-3">Hành động</th>
+                                <th className="p-4 w-16 text-center">Avatar</th>
+                                <th className="p-4">Họ tên</th>
+                                <th className="p-4">Email</th>
+                                <th className="p-4">Vai trò</th>
+                                <th className="p-4">Trạng thái</th>
+                                <th className="p-4 text-right">Thao tác</th>
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody className="divide-y divide-gray-100">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="p-4 text-center">
-                                        Đang tải...
+                                    <td colSpan={6} className="p-16 text-center text-gray-400">
+                                        <div className="flex flex-col items-center gap-3">
+                                            <Loader2 className="h-8 w-8 animate-spin text-[#006B7A]" />
+                                            <span className="text-[11px] font-bold text-gray-400">Đang tải danh sách người dùng...</span>
+                                        </div>
                                     </td>
                                 </tr>
                             ) : users.length === 0 ? (
                                 <tr>
-                                    <td
-                                        colSpan={6}
-                                        className="p-4 text-center text-gray-500"
-                                    >
-                                        Không có người dùng
+                                    <td colSpan={6} className="p-16 text-center text-gray-400 font-medium">
+                                        Không tìm thấy người dùng nào phù hợp!
                                     </td>
                                 </tr>
                             ) : (
@@ -175,51 +200,42 @@ export default function AdminUserTable() {
                                         u.status === "BLOCKED" ? "ACTIVE" : "BLOCKED";
 
                                     return (
-                                        <tr
-                                            key={u.id}
-                                            className="border-b hover:bg-gray-50"
-                                        >
-                                            <td className="p-3">
-                                                <img
-                                                    src={
-                                                        u.avatarUrl && u.avatarUrl.trim() !== ""
-                                                            ? u.avatarUrl
-                                                            : "/images/avatar-default.png"
-                                                    }
-                                                    alt="avatar"
-                                                    className="w-10 h-10 rounded-full object-cover"
-                                                />
+                                        <tr key={u.id} className="hover:bg-[#F8FAFC]/80 transition-all duration-200 group border-b border-gray-100">
+                                            <td className="p-4 text-center">
+                                                <div className="h-10 w-10 mx-auto rounded-full border border-gray-100 overflow-hidden flex items-center justify-center shadow-inner relative transition-transform group-hover:scale-105">
+                                                    {u.avatarUrl && u.avatarUrl.trim() !== "" ? (
+                                                        <img
+                                                            src={u.avatarUrl}
+                                                            alt="avatar"
+                                                            className="h-full w-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="absolute inset-0 bg-gradient-to-br from-[#006B7A] to-[#009fb2] text-white flex items-center justify-center font-bold tracking-wider uppercase font-mono text-xs shadow-inner">
+                                                            {u.fullName ? u.fullName.slice(0, 2).toUpperCase() : "US"}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </td>
 
-                                            <td className="p-3 font-medium">
+                                            <td className="p-4 font-extrabold text-gray-800 text-sm leading-snug group-hover:text-[#006B7A] transition-colors">
                                                 {u.fullName}
                                             </td>
 
-                                            <td className="p-3 text-gray-600">
+                                            <td className="p-4 text-gray-600 font-mono">
                                                 {u.email}
                                             </td>
 
-                                            <td className="p-3">
-                                                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                                            <td className="p-4">
+                                                <span className="bg-teal-50 text-[#006B7A] px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-teal-100">
                                                     {u.roleName}
                                                 </span>
                                             </td>
 
-                                            <td className="p-3">
-                                                <span
-                                                    className={
-                                                        u.status === "ACTIVE"
-                                                            ? "bg-green-100 text-green-700 px-2 py-1 rounded text-xs"
-                                                            : u.status === "BLOCKED"
-                                                                ? "bg-red-100 text-red-700 px-2 py-1 rounded text-xs"
-                                                                : "bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
-                                                    }
-                                                >
-                                                    {u.status}
-                                                </span>
+                                            <td className="p-4">
+                                                {getStatusBadge(u.status)}
                                             </td>
 
-                                            <td className="p-3">
+                                            <td className="p-4 text-right">
                                                 <button
                                                     onClick={() =>
                                                         handleStatusChange(
@@ -230,17 +246,28 @@ export default function AdminUserTable() {
                                                     disabled={
                                                         loadingStatusId === u.id
                                                     }
-                                                    className={
+                                                    className={`px-3 py-1.5 rounded-xl transition-all active:scale-[0.98] font-bold inline-flex items-center gap-1 cursor-pointer disabled:opacity-50 ${
                                                         nextStatus === "BLOCKED"
-                                                            ? "bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 disabled:opacity-50"
-                                                            : "bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 disabled:opacity-50"
-                                                    }
+                                                            ? "bg-red-50 hover:bg-red-100 text-red-650 border border-red-200"
+                                                            : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200"
+                                                    }`}
                                                 >
-                                                    {loadingStatusId === u.id
-                                                        ? "Đang xử lý..."
-                                                        : nextStatus === "BLOCKED"
-                                                            ? "BLOCKED"
-                                                            : "ACTIVE"}
+                                                    {loadingStatusId === u.id ? (
+                                                        <>
+                                                            <Loader2 size={12} className="animate-spin" />
+                                                            <span>Đang xử lý...</span>
+                                                        </>
+                                                    ) : nextStatus === "BLOCKED" ? (
+                                                        <>
+                                                            <Lock size={12} />
+                                                            <span>Khóa tài khoản</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Unlock size={12} />
+                                                            <span>Mở khóa</span>
+                                                        </>
+                                                    )}
                                                 </button>
                                             </td>
                                         </tr>
@@ -252,16 +279,17 @@ export default function AdminUserTable() {
                 </div>
             </div>
 
-            <div className="flex items-center justify-between mt-4 px-4">
-                <div className="text-sm text-gray-600">
-                    Trang {page + 1} / {totalPages} (Tổng: {totalElements} người dùng)
+            {/* Pagination controls */}
+            <div className="flex items-center justify-between px-2 text-xs font-semibold">
+                <div className="text-gray-500">
+                    Trang {page + 1} / {totalPages} (Tổng cộng: {totalElements} người dùng)
                 </div>
 
-                <div className="space-x-2">
+                <div className="flex gap-2">
                     <button
                         onClick={() => setPage((p) => Math.max(0, p - 1))}
-                        disabled={page === 0}
-                        className="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={page === 0 || loading}
+                        className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-600 rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                     >
                         Trang trước
                     </button>
@@ -270,8 +298,8 @@ export default function AdminUserTable() {
                         onClick={() =>
                             setPage((p) => Math.min(totalPages - 1, p + 1))
                         }
-                        disabled={page >= totalPages - 1}
-                        className="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={page >= totalPages - 1 || loading}
+                        className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-600 rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                     >
                         Trang sau
                     </button>

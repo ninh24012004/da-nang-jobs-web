@@ -1,65 +1,83 @@
 import api from "./api";
-import {
-    DistrictRequest,
-    DistrictResponse,
-    WardRequest,
-    WardResponse,
-} from "@/types/location";
 import { ApiResponse } from "@/types/apiResponse";
+import {
+  DistrictRequest,
+  DistrictResponse,
+  WardRequest,
+  WardResponse,
+} from "@/types/location";
+import { getCachedOrFetch } from "@/lib/cache";
 
 export const locationService = {
-    getAllDistricts: async () => {
-        const response = await api.get<ApiResponse<DistrictResponse[]>>("/districts");
-        return response.data;
-    },
+  // ---- Districts ----
 
-    getDistrictById: async (id: number) => {
-        const response = await api.get<ApiResponse<DistrictResponse>>(`/districts/${id}`);
-        return response.data;
-    },
+  /** GET /districts */
+  getAllDistricts: async (): Promise<DistrictResponse[]> => {
+    return getCachedOrFetch("cache_districts", async () => {
+      const response = await api.get<ApiResponse<DistrictResponse[]>>("/districts");
+      return response.data.data;
+    });
+  },
 
-    createDistrict: async (data: DistrictRequest) => {
-        const response = await api.post<ApiResponse<DistrictResponse>>("/districts", data);
-        return response.data;
-    },
+  /** GET /districts/:id */
+  getDistrictById: async (id: number): Promise<DistrictResponse> => {
+    const response = await api.get<ApiResponse<DistrictResponse>>(`/districts/${id}`);
+    return response.data.data;
+  },
 
-    updateDistrict: async (id: number, data: DistrictRequest) => {
-        const response = await api.put<ApiResponse<DistrictResponse>>(`/districts/${id}`, data);
-        return response.data;
-    },
+  /** POST /districts */
+  createDistrict: async (data: DistrictRequest): Promise<DistrictResponse> => {
+    const response = await api.post<ApiResponse<DistrictResponse>>("/districts", data);
+    return response.data.data;
+  },
 
-    deleteDistrict: async (id: number) => {
-        const response = await api.delete<ApiResponse<void>>(`/districts/${id}`);
-        return response.data;
-    },
+  /** PUT /districts/:id */
+  updateDistrict: async (id: number, data: DistrictRequest): Promise<DistrictResponse> => {
+    const response = await api.put<ApiResponse<DistrictResponse>>(`/districts/${id}`, data);
+    return response.data.data;
+  },
 
-    getAllWards: async () => {
-        const response = await api.get<ApiResponse<WardResponse[]>>("/wards");
-        return response.data;
-    },
+  /** DELETE /districts/:id */
+  deleteDistrict: async (id: number): Promise<void> => {
+    await api.delete<ApiResponse<void>>(`/districts/${id}`);
+  },
 
-    getWardById: async (id: number) => {
-        const response = await api.get<ApiResponse<WardResponse>>(`/wards/${id}`);
-        return response.data;
-    },
+  // ---- Wards ----
 
-    getWardsByDistrict: async (districtId: number) => {
-        const response = await api.get<ApiResponse<WardResponse[]>>(`/wards/district/${districtId}`);
-        return response.data;
-    },
+  /** GET /wards */
+  getAllWards: async (): Promise<WardResponse[]> => {
+    const response = await api.get<ApiResponse<WardResponse[]>>("/wards");
+    return response.data.data;
+  },
 
-    createWard: async (data: WardRequest) => {
-        const response = await api.post<ApiResponse<WardResponse>>("/wards", data);
-        return response.data;
-    },
+  /** GET /wards/:id */
+  getWardById: async (id: number): Promise<WardResponse> => {
+    const response = await api.get<ApiResponse<WardResponse>>(`/wards/${id}`);
+    return response.data.data;
+  },
 
-    updateWard: async (id: number, data: WardRequest) => {
-        const response = await api.put<ApiResponse<WardResponse>>(`/wards/${id}`, data);
-        return response.data;
-    },
+  /** GET /wards/district/:districtId */
+  getWardsByDistrict: async (districtId: number): Promise<WardResponse[]> => {
+    const response = await api.get<ApiResponse<WardResponse[]>>(`/wards/district/${districtId}`);
+    return response.data.data;
+  },
 
-    deleteWard: async (id: number) => {
-        const response = await api.delete<ApiResponse<void>>(`/wards/${id}`);
-        return response.data;
-    },
+  /** POST /wards */
+  createWard: async (data: WardRequest): Promise<WardResponse> => {
+    const response = await api.post<ApiResponse<WardResponse>>("/wards", data);
+    return response.data.data;
+  },
+
+  /** PUT /wards/:id */
+  updateWard: async (id: number, data: WardRequest): Promise<WardResponse> => {
+    const response = await api.put<ApiResponse<WardResponse>>(`/wards/${id}`, data);
+    return response.data.data;
+  },
+
+  /** DELETE /wards/:id */
+  deleteWard: async (id: number): Promise<void> => {
+    await api.delete<ApiResponse<void>>(`/wards/${id}`);
+  },
 };
+
+export default locationService;

@@ -1,30 +1,39 @@
 import api from "./api";
-import { ExperienceLevelRequest, ExperienceLevelResponse } from "@/types/experienceLevel";
 import { ApiResponse } from "@/types/apiResponse";
+import { ExperienceLevelRequest, ExperienceLevelResponse } from "@/types/experienceLevel";
+import { getCachedOrFetch } from "@/lib/cache";
 
 export const experienceLevelService = {
-    getAllExperienceLevels: async () => {
-        const response = await api.get<ApiResponse<ExperienceLevelResponse[]>>("/experience-levels");
-        return response.data;
-    },
+  /** GET /experience-levels */
+  getAllExperienceLevels: async (): Promise<ExperienceLevelResponse[]> => {
+    return getCachedOrFetch("cache_experience_levels", async () => {
+      const response = await api.get<ApiResponse<ExperienceLevelResponse[]>>("/experience-levels");
+      return response.data.data;
+    });
+  },
 
-    getExperienceLevelById: async (id: number) => {
-        const response = await api.get<ApiResponse<ExperienceLevelResponse>>(`/experience-levels/${id}`);
-        return response.data;
-    },
+  /** GET /experience-levels/:id */
+  getExperienceLevelById: async (id: number): Promise<ExperienceLevelResponse> => {
+    const response = await api.get<ApiResponse<ExperienceLevelResponse>>(`/experience-levels/${id}`);
+    return response.data.data;
+  },
 
-    createExperienceLevel: async (data: ExperienceLevelRequest) => {
-        const response = await api.post<ApiResponse<ExperienceLevelResponse>>("/experience-levels", data);
-        return response.data;
-    },
+  /** POST /experience-levels */
+  createExperienceLevel: async (data: ExperienceLevelRequest): Promise<ExperienceLevelResponse> => {
+    const response = await api.post<ApiResponse<ExperienceLevelResponse>>("/experience-levels", data);
+    return response.data.data;
+  },
 
-    updateExperienceLevel: async (id: number, data: ExperienceLevelRequest) => {
-        const response = await api.put<ApiResponse<ExperienceLevelResponse>>(`/experience-levels/${id}`, data);
-        return response.data;
-    },
+  /** PUT /experience-levels/:id */
+  updateExperienceLevel: async (id: number, data: ExperienceLevelRequest): Promise<ExperienceLevelResponse> => {
+    const response = await api.put<ApiResponse<ExperienceLevelResponse>>(`/experience-levels/${id}`, data);
+    return response.data.data;
+  },
 
-    deleteExperienceLevel: async (id: number) => {
-        const response = await api.delete<ApiResponse<void>>(`/experience-levels/${id}`);
-        return response.data;
-    },
+  /** DELETE /experience-levels/:id */
+  deleteExperienceLevel: async (id: number): Promise<void> => {
+    await api.delete<ApiResponse<void>>(`/experience-levels/${id}`);
+  },
 };
+
+export default experienceLevelService;

@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
-import GoogleIcon from "@/components/icons/GoogleIcon";
 import LogoIcon from "@/components/icons/LogoIcon";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
@@ -20,6 +19,14 @@ type UserType = "candidate" | "employer";
 
 interface LoginFormProps {
     userType: UserType;
+}
+
+declare global {
+    interface Window {
+        google?: any;
+        google_callback_ref?: any;
+        google_initialized?: boolean;
+    }
 }
 
 const loginConfig = {
@@ -76,12 +83,82 @@ export default function LoginForm({ userType }: LoginFormProps) {
         password: "",
     });
 
-    const { login, logout, loading } = useAuth();
+    const rememberRef = useRef(remember);
+    const googleRenderedRef = useRef(false);
+    const roleRef = useRef(config.role);
+
+    const { login, googleLogin, logout, loading } = useAuth();
+
+    useEffect(() => {
+        rememberRef.current = remember;
+    }, [remember]);
+
+    useEffect(() => {
+        roleRef.current = config.role;
+    }, [config.role]);
+
+    useEffect(() => {
+        const handleGoogleCredentialResponse = async (response: any) => {
+            const credentialToken = response.credential;
+
+            const result = await googleLogin(
+                credentialToken,
+                rememberRef.current,
+                roleRef.current
+            );
+
+            if (result.success) {
+                toast.success("Đăng nhập bằng Google thành công");
+            } else {
+                toast.error(result.message || "Đăng nhập bằng Google thất bại");
+            }
+        };
+
+        window.google_callback_ref = handleGoogleCredentialResponse;
+
+        const checkGoogleScript = setInterval(() => {
+            if (!window.google?.accounts?.id) return;
+
+            clearInterval(checkGoogleScript);
+
+            if (!window.google_initialized) {
+                window.google.accounts.id.initialize({
+                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+                    callback: (response: any) => {
+                        window.google_callback_ref?.(response);
+                    },
+                    use_fedcm_for_prompt: false,
+                });
+
+                window.google_initialized = true;
+            }
+
+            const googleButton =
+                document.getElementById("google-login-button");
+
+            if (googleButton && !googleRenderedRef.current) {
+                googleButton.innerHTML = "";
+
+                window.google.accounts.id.renderButton(googleButton, {
+                    theme: "outline",
+                    size: "large",
+                    width: 400,
+                    text: "signin_with",
+                    shape: "rectangular",
+                });
+
+                googleRenderedRef.current = true;
+            }
+        }, 500);
+
+        return () => {
+            clearInterval(checkGoogleScript);
+        };
+    }, [googleLogin]);
 
     useEffect(() => {
         const userStr =
-            localStorage.getItem("user") ||
-            sessionStorage.getItem("user");
+            localStorage.getItem("user") || sessionStorage.getItem("user");
 
         if (!userStr) return;
 
@@ -100,36 +177,26 @@ export default function LoginForm({ userType }: LoginFormProps) {
                 }
 
                 logout("/candidate/login");
-
-                toast.info(
-                    "Vui lòng đăng nhập bằng tài khoản ứng viên"
-                );
-
+                toast.info("Vui lòng đăng nhập bằng tài khoản ứng viên");
                 return;
             }
 
             if (userType === "employer") {
                 if (user.roleName === "EMPLOYER") {
-                    router.push("/employer");
+                    router.push("/employer/dashboard");
                     return;
                 }
 
                 logout("/employer/login");
-
-                toast.info(
-                    "Vui lòng đăng nhập bằng tài khoản nhà tuyển dụng"
-                );
-
+                toast.info("Vui lòng đăng nhập bằng tài khoản nhà tuyển dụng");
                 return;
             }
         } catch (error) {
             console.error("Error parsing user data:", error);
         }
-    }, [userType, logout]);
+    }, [userType, logout, router]);
 
-    const handleSubmit = async (
-        e: React.FormEvent<HTMLFormElement>
-    ) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const newErrors = {
@@ -159,11 +226,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
             return;
         }
 
-        const result = await login(
-            { email, password },
-            remember,
-            config.role
-        );
+        const result = await login({ email, password }, remember, config.role);
 
         if (result.success) {
             toast.success(result.message || "Đăng nhập thành công");
@@ -177,7 +240,15 @@ export default function LoginForm({ userType }: LoginFormProps) {
             <div className="flex w-full flex-col justify-center sm:px-12 md:w-1/2 md:px-16 lg:px-24">
                 <div className="mx-auto w-full max-w-md">
                     <div className="mb-4">
-                        {userType === "candidate" ? <LogoIcon /> : <EmployerLogo />}
+                        {userType === "candidate" ? (
+                            <Link href="/candidate">
+                                <LogoIcon />
+                            </Link>
+                        ) : (
+                            <Link href="/employer">
+                                <EmployerLogo />
+                            </Link>
+                        )}
                     </div>
 
                     <div className="mb-8">
@@ -250,14 +321,10 @@ export default function LoginForm({ userType }: LoginFormProps) {
 
                     <Divider text="Hoặc đăng nhập bằng" />
 
-                    <Button
-                        type="button"
-                        variant="outline"
-                        className="flex items-center justify-center gap-3 py-2.5 text-sm cursor-pointer w-full"
-                    >
-                        <GoogleIcon />
-                        Google
-                    </Button>
+                    <div
+                        id="google-login-button"
+                        className="flex w-full justify-center"
+                    />
 
                     <div className="mt-10 text-center">
                         <p className="text-sm text-gray-500">

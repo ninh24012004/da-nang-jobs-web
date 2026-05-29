@@ -1,29 +1,24 @@
 export interface DistrictResponse {
-    id: number;
-    districtName: string;
+  id: number;
+  districtName: string;
 }
 
 export interface DistrictRequest {
-    districtName: string;
+  districtName: string;
 }
 
-export interface DistrictFormData {
-    districtName: string;
-}
+export type DistrictFormData = DistrictRequest;
 
 export interface WardResponse {
-    id: number;
-    wardName: string;
-    districtId: number;
-    districtName?: string;
+  id: number;
+  wardName: string;
+  districtId: number;
+  districtName?: string;
 }
 
 export interface WardRequest {
-    wardName: string;
-    districtId: number;
+  wardName: string;
+  districtId: number;
 }
 
-export interface WardFormData {
-    wardName: string;
-    districtId: number;
-}
+export type WardFormData = WardRequest;
