@@ -76,7 +76,7 @@ export default function EmployerServices() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header content */}
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#006b7a] uppercase tracking-widest bg-[#006b7a]/10 px-3 py-1.5 rounded-md">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00B14F] uppercase tracking-widest bg-[#00B14F]/10 px-3 py-1.5 rounded">
             <span>Dịch vụ cung cấp</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800">
@@ -99,12 +99,10 @@ export default function EmployerServices() {
               {/* Image side */}
               <div className="lg:w-1/2 w-full flex justify-center">
                 <div className="relative group max-w-md lg:max-w-none">
-                  {/* Outer circle glow decorative */}
-                  <div className="absolute inset-0 bg-[#006b7a]/5 rounded-full blur-3xl pointer-events-none group-hover:scale-105 transition-transform duration-500"></div>
                   <img
                     src={service.img}
                     alt={service.title}
-                    className="relative max-h-80 md:max-h-96 w-auto object-contain transform group-hover:-translate-y-1 transition-all duration-500"
+                    className="relative max-h-80 md:max-h-96 w-auto object-contain transition-all duration-150"
                   />
                 </div>
               </div>
@@ -112,7 +110,7 @@ export default function EmployerServices() {
               {/* Text side */}
               <div className="lg:w-1/2 space-y-6 text-left">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-[#006b7a] uppercase tracking-wider bg-[#006b7a]/10 px-2.5 py-1 rounded">
+                  <span className="text-xs font-bold text-[#00B14F] uppercase tracking-wider bg-[#00B14F]/10 px-2.5 py-1 rounded">
                     {service.badge}
                   </span>
                   <span className="text-xs font-medium text-gray-400">
@@ -128,7 +126,7 @@ export default function EmployerServices() {
                 <ul className="space-y-4">
                   {service.bullets.map((bullet, bulletIdx) => (
                     <li key={bulletIdx} className="flex items-start gap-3">
-                      <CheckCircle size={18} className="text-[#006b7a] mt-0.5 flex-shrink-0" />
+                      <CheckCircle size={18} className="text-[#00B14F] mt-0.5 flex-shrink-0" />
                       <span className="text-gray-600 text-sm md:text-base font-light leading-relaxed">
                         {bullet}
                       </span>
@@ -145,7 +143,7 @@ export default function EmployerServices() {
                       const element = document.querySelector("#banner-form");
                       if (element) element.scrollIntoView({ behavior: "smooth" });
                     }}
-                    className="flex items-center justify-center w-full sm:w-auto border border-[#006b7a] text-[#006b7a] hover:bg-[#006b7a]/5 px-6 py-3 rounded-lg text-sm font-bold shadow-sm transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center w-full sm:w-auto border border-[#00B14F] text-[#00B14F] hover:bg-[#00B14F]/5 px-6 py-3 rounded-md text-sm font-bold shadow-sm transition-colors duration-150"
                   >
                     Tư vấn dịch vụ
                   </a>
@@ -156,7 +154,7 @@ export default function EmployerServices() {
                       const element = document.querySelector("#banner-form");
                       if (element) element.scrollIntoView({ behavior: "smooth" });
                     }}
-                    className="flex items-center justify-center w-full sm:w-auto bg-[#006b7a] hover:bg-[#005a66] text-white px-6 py-3 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center w-full sm:w-auto bg-[#00B14F] hover:bg-[#00873D] text-white px-6 py-3 rounded-md text-sm font-bold shadow-sm transition-colors duration-150"
                   >
                     Đăng ký ngay
                   </a>

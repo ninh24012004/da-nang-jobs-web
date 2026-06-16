@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Chuyển ISO datetime string sang dạng "X phút trước", "X giờ trước"...
  */
-export function formatTime(isoDate: string): string {
+export function formatTime(isoDate: string | Date): string {
   const diff = Date.now() - new Date(isoDate).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "Vừa xong";

@@ -24,7 +24,7 @@ export default function EmployerPartners() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header content */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#006b7a] uppercase tracking-widest bg-[#006b7a]/10 px-3 py-1.5 rounded-md">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00B14F] uppercase tracking-widest bg-[#00B14F]/10 px-3 py-1.5 rounded-md">
             <span>Đối tác đồng hành</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800">
@@ -38,15 +38,15 @@ export default function EmployerPartners() {
         {/* Double-column grid for Clients vs Media */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Key Clients Grid */}
-          <div className="bg-white border border-gray-150 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col justify-between space-y-6 text-left">
-            <h3 className="text-lg font-bold text-gray-800 border-l-4 border-[#006b7a] pl-3">
+          <div className="bg-white border border-gray-150 rounded-lg p-6 sm:p-8 shadow-sm flex flex-col justify-between space-y-6 text-left">
+            <h3 className="text-lg font-bold text-gray-800 border-l-4 border-[#00B14F] pl-3">
               Doanh nghiệp tiêu biểu
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 items-center">
               {clients.map((client) => (
                 <div
                   key={client.name}
-                  className="h-20 flex items-center justify-center p-3 border border-gray-50 rounded-xl bg-gray-50/30 hover:bg-white hover:border-gray-200 hover:shadow-sm transition-all duration-300 group"
+                  className="h-20 flex items-center justify-center p-3 border border-gray-50 rounded-lg bg-gray-50/30 hover:bg-white hover:border-gray-200 hover:shadow-sm transition-all duration-300 group"
                 >
                   <img
                     src={client.logo}
@@ -59,15 +59,15 @@ export default function EmployerPartners() {
           </div>
 
           {/* Media Partners Grid */}
-          <div className="bg-white border border-gray-150 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col justify-between space-y-6 text-left">
-            <h3 className="text-lg font-bold text-gray-800 border-l-4 border-[#006b7a] pl-3">
+          <div className="bg-white border border-gray-150 rounded-lg p-6 sm:p-8 shadow-sm flex flex-col justify-between space-y-6 text-left">
+            <h3 className="text-lg font-bold text-gray-800 border-l-4 border-[#00B14F] pl-3">
               Đối tác truyền thông
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 items-center">
               {mediaPartners.map((media) => (
                 <div
                   key={media.name}
-                  className="h-20 flex items-center justify-center p-3 border border-gray-50 rounded-xl bg-gray-50/30 hover:bg-white hover:border-gray-200 hover:shadow-sm transition-all duration-300 group"
+                  className="h-20 flex items-center justify-center p-3 border border-gray-50 rounded-lg bg-gray-50/30 hover:bg-white hover:border-gray-200 hover:shadow-sm transition-all duration-300 group"
                 >
                   <img
                     src={media.logo}

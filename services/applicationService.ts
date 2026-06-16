@@ -73,12 +73,7 @@ export const applicationService = {
       const existing = localApps.find(a => a.jobId === request.jobId);
       if (existing) return existing;
 
-      let jobTitle = "Vị trí lập trình viên";
-      try {
-        const { MOCK_JOBS } = require("./jobService");
-        const matchingJob = MOCK_JOBS.find((j: any) => j.id === request.jobId);
-        if (matchingJob) jobTitle = matchingJob.jobTitle;
-      } catch (e) {}
+      const jobTitle = "Vị trí lập trình viên";
 
       const newApp: ApplicationResponse = {
         id: Date.now(),

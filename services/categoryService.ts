@@ -5,7 +5,7 @@ import {
   CategoryResponse,
   CategoryTreeResponse,
 } from "@/types/category";
-import { getCachedOrFetch } from "@/lib/cache";
+import { getCachedOrFetch, invalidateCache } from "@/lib/cache";
 
 export const categoryService = {
   /**
@@ -29,10 +29,12 @@ export const categoryService = {
       const flatList: CategoryResponse[] = [];
       const flatten = (nodes: CategoryTreeResponse[]) => {
         for (const node of nodes) {
+          const parentId = node.parentId ?? node.parentCategoryId ?? null;
           flatList.push({
             id: node.id,
             categoryName: node.categoryName,
-            parentId: node.parentId ?? null,
+            parentId: parentId,
+            parentCategoryId: node.parentCategoryId ?? parentId,
           });
           if (node.children && node.children.length > 0) {
             flatten(node.children);
@@ -70,6 +72,8 @@ export const categoryService = {
    */
   createCategory: async (data: CategoryRequest): Promise<CategoryResponse> => {
     const response = await api.post<ApiResponse<CategoryResponse>>("/categories", data);
+    invalidateCache("cache_categories_tree");
+    invalidateCache("cache_categories_flat");
     return response.data.data;
   },
 
@@ -79,6 +83,8 @@ export const categoryService = {
    */
   updateCategory: async (id: number, data: CategoryRequest): Promise<CategoryResponse> => {
     const response = await api.put<ApiResponse<CategoryResponse>>(`/categories/${id}`, data);
+    invalidateCache("cache_categories_tree");
+    invalidateCache("cache_categories_flat");
     return response.data.data;
   },
 
@@ -88,6 +94,8 @@ export const categoryService = {
    */
   deleteCategory: async (id: number): Promise<void> => {
     await api.delete<ApiResponse<void>>(`/categories/${id}`);
+    invalidateCache("cache_categories_tree");
+    invalidateCache("cache_categories_flat");
   },
 };
 

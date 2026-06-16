@@ -29,10 +29,10 @@ export default function NavigationItem({
         <div className="relative group">
             <Link
                 href={href}
-                className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-md text-xs font-extrabold transition-all cursor-pointer ${
                     isActive
-                        ? "text-[#006b7a] bg-[#006b7a]/5 font-black"
-                        : "text-gray-650 hover:text-[#006b7a] hover:bg-gray-50"
+                        ? "text-[#00B14F] bg-[#00B14F]/5 font-black"
+                        : "text-gray-650 hover:text-[#00B14F] hover:bg-gray-50"
                 }`}
             >
                 <span>{label}</span>
@@ -40,7 +40,7 @@ export default function NavigationItem({
                 {hasDropdown && (
                     <>
                         <ChevronDown className="w-3.5 h-3.5 text-gray-400 group-hover:hidden transition-transform" />
-                        <ChevronUp className="w-3.5 h-3.5 text-[#006b7a] hidden group-hover:block transition-transform" />
+                        <ChevronUp className="w-3.5 h-3.5 text-[#00B14F] hidden group-hover:block transition-transform" />
                     </>
                 )}
             </Link>

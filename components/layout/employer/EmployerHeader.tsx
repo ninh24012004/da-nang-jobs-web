@@ -40,7 +40,6 @@ export default function EmployerHeader() {
   } = useNotifications();
 
   useEffect(() => {
-    // 1. Scroll listener
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setIsScrolled(true);
@@ -87,7 +86,6 @@ export default function EmployerHeader() {
             companyName: compName,
           });
 
-          // Fetch active profile live from the backend to refresh cache
           employerService.getEmployerProfile()
             .then((data: any) => {
               if (data) {
@@ -97,7 +95,6 @@ export default function EmployerHeader() {
                   avatar: data.logoUrl || prev.avatar
                 } : null);
 
-                // Refresh storage cache
                 const storage = localToken ? localStorage : sessionStorage;
                 storage.setItem("employer", JSON.stringify(data));
               }
@@ -142,7 +139,6 @@ export default function EmployerHeader() {
     };
   }, []);
 
-  // Lazy fetch: chỉ gọi API khi panel mở lần đầu
   useEffect(() => {
     if (notiOpen && !notiFetched) {
       fetchNotifications();
@@ -206,9 +202,9 @@ export default function EmployerHeader() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-        ? "bg-white/95 backdrop-blur-md shadow-md py-2.5"
-        : "bg-white py-3.5 border-b border-gray-100"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-150 ${isScrolled
+        ? "bg-white/95 backdrop-blur-md shadow-sm py-2.5"
+        : "bg-white py-3.5 border-b border-slate-100"
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -219,11 +215,11 @@ export default function EmployerHeader() {
               <Link href="/employer">
                 <EmployerLogo />
               </Link>
-              <Link href="/employer" className="hidden lg:flex flex-col border-l border-gray-200 pl-3 group">
-                <span className="text-xs font-semibold tracking-wider text-[#006b7a] uppercase">
+              <Link href="/employer" className="hidden lg:flex flex-col border-l border-slate-200 pl-3">
+                <span className="text-xs font-bold tracking-wider text-[#00B14F] uppercase">
                   ĐÀ NẴNG JOB
                 </span>
-                <span className="text-[10px] text-gray-500 font-medium leading-none">
+                <span className="text-[10px] text-slate-500 font-semibold leading-none">
                   Nhà Tuyển Dụng
                 </span>
               </Link>
@@ -239,9 +235,9 @@ export default function EmployerHeader() {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className={`text-sm font-semibold transition-colors ${isActive
-                      ? "text-[#006b7a] border-b-2 border-[#006b7a] pb-1"
-                      : "text-gray-600 hover:text-[#006b7a]"
+                    className={`text-sm font-bold transition-colors ${isActive
+                      ? "text-[#00B14F] border-b-2 border-[#00B14F] pb-1"
+                      : "text-slate-650 hover:text-[#00B14F]"
                       }`}
                   >
                     {link.label}
@@ -254,7 +250,7 @@ export default function EmployerHeader() {
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleScrollTo(e, link.href)}
-                  className="text-sm font-semibold text-gray-600 hover:text-[#006b7a] transition-colors"
+                  className="text-sm font-bold text-slate-650 hover:text-[#00B14F] transition-colors"
                 >
                   {link.label}
                 </a>
@@ -264,22 +260,21 @@ export default function EmployerHeader() {
 
           {/* Right side actions */}
           <div className="hidden md:flex items-center gap-3">
-            {/* Authenticated / Guest Actions */}
             {isAuthenticated && user ? (
               <>
-                {/* 2. Notification Bell */}
+                {/* Notification Bell */}
                 <div className="relative" ref={notiRef}>
                   <button
                     onClick={() => {
                       setNotiOpen(!notiOpen);
                       setDropdownOpen(false);
                     }}
-                    className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-all relative border border-gray-100"
+                    className="p-2 rounded-full hover:bg-slate-50 text-slate-500 hover:text-slate-700 transition-colors relative border border-slate-100 cursor-pointer"
                     aria-label="Thông báo tuyển dụng"
                   >
                     <Bell size={18} />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 h-5 w-5 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-[9px] border-2 border-white animate-pulse">
+                      <span className="absolute -top-1.5 -right-1.5 h-4 w-4 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-[9px] border border-white">
                         {unreadCount}
                       </span>
                     )}
@@ -287,27 +282,27 @@ export default function EmployerHeader() {
 
                   {/* Notifications Dropdown Panel */}
                   {notiOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-80 rounded-xl bg-white border border-gray-150 shadow-2xl py-2 z-50 text-left animate-fadeIn">
-                      <div className="px-4 py-2 border-b border-gray-50 flex items-center justify-between">
-                        <span className="text-sm font-bold text-gray-800">Thông báo</span>
+                    <div className="absolute right-0 top-full mt-2 w-80 rounded-[8px] bg-white border border-slate-200 shadow-md py-2 z-50 text-left animate-in fade-in duration-150">
+                      <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-sm font-bold text-slate-800">Thông báo</span>
                         {unreadCount > 0 && (
                           <button
                             onClick={() => markAllAsRead(notifications)}
-                            className="text-[10px] text-[#006b7a] font-semibold hover:underline"
+                            className="text-[10px] text-[#00B14F] font-bold hover:underline cursor-pointer border-none bg-transparent"
                           >
                             Đọc tất cả
                           </button>
                         )}
                       </div>
 
-                      <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
+                      <div className="max-h-72 overflow-y-auto divide-y divide-slate-100">
                         {notiLoading ? (
-                          <div className="flex items-center justify-center py-8 gap-2 text-gray-400">
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                          <div className="flex items-center justify-center py-8 gap-2 text-slate-400">
+                            <Loader2 className="w-4 h-4 animate-spin text-[#00B14F]" />
                             <span className="text-xs">Đang tải thông báo...</span>
                           </div>
                         ) : notifications.length === 0 ? (
-                          <div className="py-8 text-center text-xs text-gray-400">
+                          <div className="py-8 text-center text-xs text-slate-400">
                             Chưa có thông báo nào
                           </div>
                         ) : (
@@ -315,23 +310,23 @@ export default function EmployerHeader() {
                             <div
                               key={noti.id}
                               onClick={() => !noti.isRead && markAsRead([noti.id])}
-                              className={`p-3 text-xs transition-colors hover:bg-gray-50 flex items-start gap-2.5 cursor-pointer ${
-                                !noti.isRead ? "bg-teal-50/20" : ""
+                              className={`p-3 text-xs transition-colors hover:bg-slate-55 flex items-start gap-2.5 cursor-pointer ${
+                                !noti.isRead ? "bg-[#00B14F]/5" : ""
                               }`}
                             >
-                              <span className={`h-2 w-2 rounded-full bg-[#006b7a] mt-1.5 flex-shrink-0 transition-opacity ${
+                              <span className={`h-1.5 w-1.5 rounded-full bg-[#00B14F] mt-1.5 flex-shrink-0 transition-opacity ${
                                 noti.isRead ? "opacity-0" : ""
                               }`} />
                               <div className="flex-grow min-w-0">
-                                <p className={`text-gray-700 leading-snug ${
-                                  !noti.isRead ? "font-semibold" : ""
+                                <p className={`text-slate-700 leading-snug ${
+                                  !noti.isRead ? "font-bold" : ""
                                 }`}>
                                   {noti.title}
                                 </p>
-                                <p className="text-gray-500 leading-normal mt-0.5 line-clamp-2">
+                                <p className="text-slate-500 leading-normal mt-0.5 line-clamp-2">
                                   {noti.content}
                                 </p>
-                                <span className="text-[10px] text-gray-400 mt-1 block">
+                                <span className="text-[10px] text-slate-400 mt-1 block">
                                   {formatTime(noti.createdAt)}
                                 </span>
                               </div>
@@ -340,11 +335,11 @@ export default function EmployerHeader() {
                         )}
                       </div>
 
-                      <div className="border-t border-gray-50 text-center pt-2 pb-1">
+                      <div className="border-t border-slate-100 text-center pt-2 pb-1">
                         <Link
                           href="/employer/dashboard"
                           onClick={() => setNotiOpen(false)}
-                          className="text-xs font-semibold text-[#006b7a] hover:underline"
+                          className="text-xs font-bold text-[#00B14F] hover:underline"
                         >
                           Xem tất cả thông báo
                         </Link>
@@ -353,56 +348,56 @@ export default function EmployerHeader() {
                   )}
                 </div>
 
-                {/* 3. Quick Recruitment action: + Đăng tin mới */}
+                {/* Quick Recruitment action: + Đăng tin mới */}
                 <Link
                   href="/employer/dashboard?tab=post-job"
-                  className="flex items-center gap-1 bg-[#006b7a] hover:bg-[#005a66] text-white px-3 py-2 rounded-lg text-xs font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+                  className="flex items-center gap-1.5 bg-[#00B14F] hover:bg-[#00873D] text-white px-3.5 py-2 rounded-[6px] text-xs font-bold transition-colors shadow-sm"
                 >
                   <PlusCircle size={14} />
                   <span>Đăng tin tuyển dụng</span>
                 </Link>
 
-                {/* 4. Logged In User Dropdown Menu */}
+                {/* Logged In User Dropdown Menu */}
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => {
                       setDropdownOpen(!dropdownOpen);
                       setNotiOpen(false);
                     }}
-                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white hover:border-[#006b7a]/50 hover:bg-gray-50 transition-all select-none"
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-[6px] border border-slate-200 bg-white hover:border-[#00B14F]/40 hover:bg-slate-50 transition-colors select-none cursor-pointer"
                   >
-                    <div className="h-8 w-8 rounded-full bg-[#006b7a] text-white flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden flex-shrink-0">
+                    <div className="h-8 w-8 rounded-full bg-[#00B14F]/10 text-[#00B14F] flex items-center justify-center font-bold text-xs overflow-hidden flex-shrink-0">
                       {user.avatar ? (
-                        <img src={user.avatar} alt={user.fullName} className="h-full w-full object-cover" />
+                        <img src={user.avatar} alt={user.fullName} className="h-full w-full object-cover rounded-full" />
                       ) : (
                         getInitials(user.fullName)
                       )}
                     </div>
                     <div className="text-left hidden lg:block max-w-[130px]">
-                      <p className="text-xs font-bold text-gray-800 truncate leading-none">{user.fullName}</p>
-                      <p className="text-[9px] text-[#006b7a] font-bold leading-none mt-1 truncate">
+                      <p className="text-xs font-bold text-slate-800 truncate leading-none">{user.fullName}</p>
+                      <p className="text-[9px] text-[#00B14F] font-bold leading-none mt-1 truncate">
                         {user.companyName || "DNJ Partner"}
                       </p>
                     </div>
-                    <ChevronDown size={14} className={`text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                    <ChevronDown size={14} className={`text-slate-400 transition-transform duration-150 ${dropdownOpen ? "rotate-180" : ""}`} />
                   </button>
 
                   {/* Dropdown Card */}
                   {dropdownOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-64 rounded-xl bg-white border border-gray-150 shadow-2xl py-2 z-50 text-left animate-fadeIn">
-                      <div className="px-4 py-3 border-b border-gray-50 bg-gray-50/50 rounded-t-xl">
+                    <div className="absolute right-0 top-full mt-2 w-64 rounded-[8px] bg-white border border-slate-200 shadow-md py-2 z-50 text-left animate-in fade-in duration-150">
+                      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50 rounded-t-[8px]">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] bg-teal-150 text-[#006b7a] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                          <span className="text-[10px] bg-[#00B14F]/10 text-[#00B14F] px-1.5 py-0.5 rounded-[4px] font-bold uppercase tracking-wider">
                             PRO Recruiter
                           </span>
-                          <span className="text-[10px] text-gray-400">ID: DNJ-9851</span>
+                          <span className="text-[10px] text-slate-400">ID: DNJ-9851</span>
                         </div>
-                        <p className="text-sm font-bold text-gray-800 truncate mt-1.5">{user.fullName}</p>
-                        <p className="text-xs text-gray-400 truncate mt-0.5 font-light">{user.email}</p>
+                        <p className="text-sm font-bold text-slate-800 truncate mt-1.5">{user.fullName}</p>
+                        <p className="text-xs text-slate-400 truncate mt-0.5 font-light">{user.email}</p>
                       </div>
 
                       <div className="p-1.5 space-y-0.5">
-                        <div className="px-3 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                        <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                           Điều khiển
                         </div>
 
@@ -411,9 +406,9 @@ export default function EmployerHeader() {
                             setDropdownOpen(false);
                             router.push("/employer/dashboard");
                           }}
-                          className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 hover:text-[#006b7a] hover:bg-[#006b7a]/5 rounded-lg transition-colors font-medium cursor-pointer"
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-700 hover:text-[#00B14F] hover:bg-[#00B14F]/5 rounded-[6px] transition-colors font-semibold cursor-pointer"
                         >
-                          <LayoutDashboard size={15} />
+                          <LayoutDashboard size={14} />
                           <span>Bảng điều khiển tuyển dụng</span>
                         </div>
 
@@ -422,9 +417,9 @@ export default function EmployerHeader() {
                             setDropdownOpen(false);
                             router.push("/employer/dashboard?tab=post-job");
                           }}
-                          className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 hover:text-[#006b7a] hover:bg-[#006b7a]/5 rounded-lg transition-colors font-medium cursor-pointer"
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-700 hover:text-[#00B14F] hover:bg-[#00B14F]/5 rounded-[6px] transition-colors font-semibold cursor-pointer"
                         >
-                          <FileText size={15} />
+                          <FileText size={14} />
                           <span>Đăng tin tuyển dụng mới</span>
                         </div>
 
@@ -433,14 +428,14 @@ export default function EmployerHeader() {
                             setDropdownOpen(false);
                             router.push("/employer/dashboard?tab=company");
                           }}
-                          className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 hover:text-[#006b7a] hover:bg-[#006b7a]/5 rounded-lg transition-colors font-medium cursor-pointer"
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-700 hover:text-[#00B14F] hover:bg-[#00B14F]/5 rounded-[6px] transition-colors font-semibold cursor-pointer"
                         >
-                          <Building size={15} />
+                          <Building size={14} />
                           <span>Hồ sơ doanh nghiệp</span>
                         </div>
 
-                        <div className="h-px bg-gray-50 my-1" />
-                        <div className="px-3 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                        <div className="h-px bg-slate-100 my-1" />
+                        <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                           Chuyển đổi
                         </div>
 
@@ -449,19 +444,19 @@ export default function EmployerHeader() {
                             setDropdownOpen(false);
                             router.push("/candidate");
                           }}
-                          className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 hover:text-[#006b7a] hover:bg-[#006b7a]/5 rounded-lg transition-colors font-medium cursor-pointer"
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-700 hover:text-[#00B14F] hover:bg-[#00B14F]/5 rounded-[6px] transition-colors font-semibold cursor-pointer"
                         >
-                          <ArrowLeftRight size={15} />
+                          <ArrowLeftRight size={14} />
                           <span>Chuyển sang trang Ứng viên</span>
                         </div>
                       </div>
 
-                      <div className="border-t border-gray-100 p-1.5 mt-1 bg-gray-50/20">
+                      <div className="border-t border-slate-100 p-1.5 mt-1 bg-slate-50">
                         <button
                           onClick={handleLogout}
-                          className="flex items-center gap-2.5 w-full text-left px-3 py-2 text-xs text-red-650 hover:bg-red-50 rounded-lg transition-colors font-bold cursor-pointer"
+                          className="flex items-center gap-2.5 w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded-[6px] transition-colors font-bold cursor-pointer border-none bg-transparent"
                         >
-                          <LogOut size={15} />
+                          <LogOut size={14} />
                           <span>Đăng xuất tài khoản</span>
                         </button>
                       </div>
@@ -470,11 +465,11 @@ export default function EmployerHeader() {
                 </div>
               </>
             ) : (
-              /* Guest Options: Login & Job Posting */
+              /* Guest Options */
               <>
                 <Link
                   href="/employer/login"
-                  className="text-sm font-semibold text-gray-700 hover:text-[#006b7a] transition-colors px-3 py-2 rounded-md hover:bg-gray-50"
+                  className="text-sm font-bold text-slate-700 hover:text-[#00B14F] transition-colors px-3 py-2 rounded-[6px] hover:bg-slate-50"
                 >
                   Đăng nhập
                 </Link>
@@ -482,9 +477,9 @@ export default function EmployerHeader() {
                 <a
                   href="#banner-form"
                   onClick={(e) => handleScrollTo(e, "#banner-form")}
-                  className="flex items-center gap-1.5 bg-[#006b7a] hover:bg-[#005a66] text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+                  className="flex items-center gap-1.5 bg-[#00B14F] hover:bg-[#00873D] text-white px-4 py-2 rounded-[6px] text-xs font-bold transition-colors shadow-sm"
                 >
-                  <PlusCircle size={16} />
+                  <PlusCircle size={14} />
                   <span>Đăng tuyển ngay</span>
                 </a>
               </>
@@ -496,18 +491,18 @@ export default function EmployerHeader() {
             <a
               href="#banner-form"
               onClick={(e) => handleScrollTo(e, "#banner-form")}
-              className="p-2 rounded-full bg-[#006b7a]/10 text-[#006b7a] hover:bg-[#006b7a]/20 transition-colors"
+              className="p-2 rounded-full bg-[#00B14F]/10 text-[#00B14F] hover:bg-[#00B14F]/20 transition-colors"
               aria-label="Tư vấn tuyển dụng"
             >
-              <PhoneCall size={18} />
+              <PhoneCall size={16} />
             </a>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg text-gray-600 hover:text-[#006b7a] hover:bg-gray-50 focus:outline-none transition-colors"
+              className="p-2 rounded-[6px] text-slate-600 hover:text-[#00B14F] hover:bg-slate-50 focus:outline-none transition-colors cursor-pointer"
               aria-expanded={isOpen}
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
@@ -515,53 +510,47 @@ export default function EmployerHeader() {
 
       {/* Mobile Drawer */}
       <div
-        className={`fixed inset-0 top-[69px] z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        className={`fixed inset-0 top-[69px] z-40 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-150 md:hidden ${isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
           }`}
         onClick={() => setIsOpen(false)}
       >
         <div
-          className={`absolute right-0 top-0 bottom-0 w-4/5 max-w-sm bg-white shadow-xl p-6 transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
+          className={`absolute right-0 top-0 bottom-0 w-4/5 max-w-sm bg-white shadow-md p-6 transition-transform duration-150 ${isOpen ? "translate-x-0" : "translate-x-full"
             }`}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex flex-col h-full justify-between">
             <div className="space-y-6">
-              {/* User block in mobile view */}
               {isAuthenticated && user ? (
-                <div className="flex flex-col gap-2 p-3 rounded-xl bg-gray-50 border border-gray-100 text-left">
+                <div className="flex flex-col gap-2 p-3.5 rounded-[8px] bg-slate-50 border border-slate-200 text-left">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-[#006b7a] text-white flex items-center justify-center font-bold text-sm shadow-sm overflow-hidden flex-shrink-0">
+                    <div className="h-10 w-10 rounded-full bg-[#00B14F]/10 text-[#00B14F] flex items-center justify-center font-bold text-sm overflow-hidden flex-shrink-0">
                       {user.avatar ? (
-                        <img src={user.avatar} alt={user.fullName} className="h-full w-full object-cover" />
+                        <img src={user.avatar} alt={user.fullName} className="h-full w-full object-cover rounded-full" />
                       ) : (
                         getInitials(user.fullName)
                       )}
                     </div>
                     <div className="max-w-[160px]">
-                      <p className="text-sm font-bold text-gray-800 truncate leading-tight">{user.fullName}</p>
-                      <p className="text-[10px] text-[#006b7a] font-bold mt-1 truncate">{user.companyName}</p>
+                      <p className="text-sm font-bold text-slate-800 truncate leading-tight">{user.fullName}</p>
+                      <p className="text-[10px] text-[#00B14F] font-bold mt-1 truncate">{user.companyName}</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100 text-[10px] text-gray-500 font-medium">
-                    <span>Số dư: <strong className="text-[#006b7a]">1,500,000đ</strong></span>
-                    <span>•</span>
-                    <span>VIP: <strong className="text-amber-600">3 tin</strong></span>
                   </div>
                 </div>
               ) : (
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                   Menu tuyển dụng
                 </span>
               )}
 
-              <nav className="flex flex-col space-y-4">
+              <nav className="flex flex-col space-y-3">
                 {isAuthenticated ? (
                   employerLinks.map((link) => (
                     <Link
                       key={link.label}
                       href={link.href}
                       onClick={() => setIsOpen(false)}
-                      className="text-base font-semibold text-gray-800 hover:text-[#006b7a] transition-colors py-2 border-b border-gray-50"
+                      className="text-sm font-bold text-slate-800 hover:text-[#00B14F] transition-colors py-2 border-b border-slate-100"
                     >
                       {link.label}
                     </Link>
@@ -572,7 +561,7 @@ export default function EmployerHeader() {
                       key={link.label}
                       href={link.href}
                       onClick={(e) => handleScrollTo(e, link.href)}
-                      className="text-base font-semibold text-gray-800 hover:text-[#006b7a] transition-colors py-2 border-b border-gray-50"
+                      className="text-sm font-bold text-slate-800 hover:text-[#00B14F] transition-colors py-2 border-b border-slate-100"
                     >
                       {link.label}
                     </a>
@@ -582,33 +571,33 @@ export default function EmployerHeader() {
             </div>
 
             {/* Mobile CTAs */}
-            <div className="space-y-4 pt-6 border-t border-gray-100">
+            <div className="space-y-3 pt-6 border-t border-slate-100">
               {isAuthenticated ? (
                 <>
                   <Link
                     href="/employer/dashboard"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full border border-gray-200 py-3 rounded-lg text-gray-700 font-bold hover:bg-gray-50 transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 w-full border border-slate-200 py-2.5 rounded-[6px] text-slate-700 font-bold hover:bg-slate-50 transition-colors"
                   >
-                    <LayoutDashboard size={18} />
+                    <LayoutDashboard size={16} />
                     <span>Quản lý tuyển dụng</span>
                   </Link>
 
                   <Link
                     href="/candidate"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full border border-gray-200 py-3 rounded-lg text-gray-700 font-bold hover:bg-gray-50 transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 w-full border border-slate-200 py-2.5 rounded-[6px] text-slate-700 font-bold hover:bg-slate-50 transition-colors"
                   >
-                    <ArrowLeftRight size={18} />
-                    <span>Chuyển sang trang ứng viên</span>
+                    <ArrowLeftRight size={16} />
+                    <span>Trang ứng viên</span>
                   </Link>
 
                   <button
                     onClick={handleLogout}
-                    className="flex items-center justify-center gap-2 w-full bg-red-50 text-red-650 py-3 rounded-lg font-bold hover:bg-red-100 transition-all active:scale-[0.98] cursor-pointer"
+                    className="flex items-center justify-center gap-2 w-full bg-red-50 hover:bg-red-100 text-red-600 py-2.5 rounded-[6px] font-bold transition-colors cursor-pointer border-none"
                   >
-                    <LogOut size={18} />
-                    <span>Đăng xuất tài khoản</span>
+                    <LogOut size={16} />
+                    <span>Đăng xuất</span>
                   </button>
                 </>
               ) : (
@@ -616,19 +605,19 @@ export default function EmployerHeader() {
                   <Link
                     href="/employer/dashboard"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full border border-gray-200 py-3 rounded-lg text-gray-700 font-bold hover:bg-gray-50 transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 w-full border border-slate-200 py-2.5 rounded-[6px] text-slate-700 font-bold hover:bg-slate-50 transition-colors"
                   >
-                    <User size={18} />
-                    <span>Đăng nhập hệ thống</span>
+                    <User size={16} />
+                    <span>Đăng nhập</span>
                   </Link>
 
                   <a
                     href="#banner-form"
                     onClick={(e) => handleScrollTo(e, "#banner-form")}
-                    className="flex items-center justify-center gap-2 w-full bg-[#006b7a] hover:bg-[#005a66] text-white py-3 rounded-lg font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 w-full bg-[#00B14F] hover:bg-[#00873D] text-white py-2.5 rounded-[6px] font-bold transition-colors shadow-sm"
                   >
-                    <PlusCircle size={18} />
-                    <span>Đăng tin miễn phí ngay</span>
+                    <PlusCircle size={16} />
+                    <span>Đăng tuyển miễn phí</span>
                   </a>
                 </>
               )}
@@ -636,6 +625,6 @@ export default function EmployerHeader() {
           </div>
         </div>
       </div>
-    </header >
+    </header>
   );
 }

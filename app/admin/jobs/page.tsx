@@ -181,27 +181,24 @@ export default function AdminJobsPage() {
     switch (status) {
       case "APPROVED":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-bold border border-emerald-100 shadow-xs">
-            <span className="h-1 w-1 rounded-full bg-emerald-500" />
+          <span className="inline-flex items-center bg-green-50 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold border border-green-200">
             Đã Duyệt
           </span>
         );
       case "REJECTED":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 px-2.5 py-1 rounded-full text-[10px] font-bold border border-rose-100 shadow-xs">
-            <span className="h-1 w-1 rounded-full bg-rose-500" />
+          <span className="inline-flex items-center bg-red-50 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">
             Từ Chối
           </span>
         );
       case "PENDING":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full text-[10px] font-bold border border-amber-100 animate-pulse shadow-xs">
-            <span className="h-1 w-1 rounded-full bg-amber-500" />
+          <span className="inline-flex items-center bg-amber-50 text-amber-700 px-2 py-0.5 rounded text-[10px] font-bold border border-amber-200">
             Chờ Duyệt
           </span>
         );
       default:
-        return <span className="text-gray-400">—</span>;
+        return <span className="text-slate-400">—</span>;
     }
   };
 
@@ -209,18 +206,18 @@ export default function AdminJobsPage() {
     switch (status) {
       case "ACTIVE":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-teal-50 text-[#006B7A] px-2.5 py-1 rounded-full text-[10px] font-bold border border-teal-100">
+          <span className="inline-flex items-center bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200">
             Hiển thị (ACTIVE)
           </span>
         );
       case "HIDDEN":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-gray-50 text-gray-500 px-2.5 py-1 rounded-full text-[10px] font-bold border border-gray-150">
+          <span className="inline-flex items-center bg-red-50 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">
             Đã ẩn (HIDDEN)
           </span>
         );
       default:
-        return <span className="text-gray-400">—</span>;
+        return <span className="text-slate-400">—</span>;
     }
   };
 
@@ -231,75 +228,75 @@ export default function AdminJobsPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-800 tracking-tight">Quản lý tin tuyển dụng</h1>
-          <p className="text-gray-400 mt-1 text-xs font-medium">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Quản lý tin tuyển dụng</h1>
+          <p className="text-slate-500 mt-1 text-xs font-medium">
             Duyệt, từ chối và kiểm soát hiển thị tất cả tin tuyển dụng trên hệ thống.
           </p>
         </div>
       </div>
 
       {/* 1. Quick Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         {/* Card 1: ALL */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tổng tin tuyển dụng</p>
-            <h3 className="text-3xl font-extrabold text-gray-800 tracking-tight">{counts.ALL}</h3>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Tổng tin tuyển dụng</p>
+            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{counts.ALL}</h3>
           </div>
-          <div className="p-3 bg-gray-50 text-gray-500 rounded-2xl shadow-inner">
-            <Briefcase size={22} className="stroke-[1.75]" />
+          <div className="p-2.5 bg-slate-100 text-slate-600 rounded-md">
+            <Briefcase size={20} className="stroke-[1.75]" />
           </div>
         </div>
 
         {/* Card 2: PENDING */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Chờ duyệt mới</p>
-            <h3 className="text-3xl font-extrabold text-amber-600 tracking-tight animate-pulse">{counts.PENDING}</h3>
+            <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Chờ duyệt mới</p>
+            <h3 className="text-2xl font-bold text-amber-600 tracking-tight">{counts.PENDING}</h3>
           </div>
-          <div className="p-3 bg-amber-50 text-amber-500 rounded-2xl shadow-inner animate-pulse">
-            <Clock size={22} className="stroke-[1.75]" />
+          <div className="p-2.5 bg-amber-50 text-amber-650 rounded-md">
+            <Clock size={20} className="stroke-[1.75]" />
           </div>
         </div>
 
         {/* Card 3: REAPPROVAL */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-sky-500 uppercase tracking-widest">Cần duyệt lại</p>
-            <h3 className="text-3xl font-extrabold text-sky-600 tracking-tight">{counts.REAPPROVAL_NEEDED}</h3>
+            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Cần duyệt lại</p>
+            <h3 className="text-2xl font-bold text-blue-600 tracking-tight">{counts.REAPPROVAL_NEEDED}</h3>
           </div>
-          <div className="p-3 bg-sky-50 text-sky-600 rounded-2xl shadow-inner">
-            <TrendingUp size={22} className="stroke-[1.75]" />
+          <div className="p-2.5 bg-blue-50 text-blue-600 rounded-md">
+            <TrendingUp size={20} className="stroke-[1.75]" />
           </div>
         </div>
 
         {/* Card 4: APPROVED */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Tin đã duyệt</p>
-            <h3 className="text-3xl font-extrabold text-emerald-600 tracking-tight">{counts.APPROVED}</h3>
+            <p className="text-[10px] font-bold text-green-600 uppercase tracking-wider">Tin đã duyệt</p>
+            <h3 className="text-2xl font-bold text-green-600 tracking-tight">{counts.APPROVED}</h3>
           </div>
-          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl shadow-inner">
-            <ShieldCheck size={22} className="stroke-[1.75]" />
+          <div className="p-2.5 bg-green-50 text-green-600 rounded-md">
+            <ShieldCheck size={20} className="stroke-[1.75]" />
           </div>
         </div>
 
         {/* Card 5: HIDDEN */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Tin đang bị ẩn</p>
-            <h3 className="text-3xl font-extrabold text-red-650 tracking-tight">{counts.HIDDEN}</h3>
+            <p className="text-[10px] font-bold text-red-650 uppercase tracking-wider">Tin đang bị ẩn</p>
+            <h3 className="text-2xl font-bold text-red-650 tracking-tight">{counts.HIDDEN}</h3>
           </div>
-          <div className="p-3 bg-red-50 text-red-750 rounded-2xl shadow-inner">
-            <ShieldAlert size={22} className="stroke-[1.75]" />
+          <div className="p-2.5 bg-red-50 text-red-600 rounded-md">
+            <ShieldAlert size={20} className="stroke-[1.75]" />
           </div>
         </div>
       </div>
 
       {/* 2. Tabs and Search controls */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs flex flex-col lg:flex-row gap-4 items-center justify-between">
+      <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center justify-between">
         {/* Navigation Tabs with Count Badges */}
-        <div className="flex bg-gray-50/80 p-1.5 rounded-2xl border border-gray-200/50 w-full lg:w-auto overflow-x-auto custom-scrollbar gap-1">
+        <div className="flex bg-slate-50 p-1 rounded-md border border-slate-200 w-full lg:w-auto overflow-x-auto custom-scrollbar gap-1">
           {([
             { id: "ALL", label: "Tất cả", count: counts.ALL },
             { id: "PENDING", label: "Chờ duyệt", count: counts.PENDING },
@@ -314,18 +311,18 @@ export default function AdminJobsPage() {
                 setStatusFilter(tab.id);
                 setPage(0);
               }}
-              className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold rounded-xl transition-all duration-300 flex-shrink-0 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md transition-colors duration-150 flex-shrink-0 cursor-pointer ${
                 statusFilter === tab.id
-                  ? "bg-white text-[#006B7A] shadow-md scale-[1.02]"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100/50"
+                  ? "bg-white text-slate-900 shadow-xs border border-slate-250 font-bold"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
               }`}
             >
               <span>{tab.label}</span>
               <span
-                className={`px-1.5 py-0.5 rounded-md text-[9px] font-extrabold ${
+                className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
                   statusFilter === tab.id
-                    ? "bg-[#006B7A]/10 text-[#006B7A]"
-                    : "bg-gray-200/60 text-gray-500"
+                    ? "bg-slate-100 text-slate-800"
+                    : "bg-slate-200/60 text-slate-650"
                 }`}
               >
                 {tab.count}
@@ -335,30 +332,30 @@ export default function AdminJobsPage() {
         </div>
 
         {/* Search Bar */}
-        <div className="relative w-full lg:w-80 shadow-inner">
+        <div className="relative w-full lg:w-80">
           <input
             type="text"
             placeholder="Tìm theo chức danh, nhà tuyển dụng..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-gray-50/50 border border-gray-200 focus:border-[#006B7A] focus:ring-1 focus:ring-[#006B7A] rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-700 outline-none transition-all font-medium"
+            className="w-full bg-slate-50 border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-400 rounded-md pl-10 pr-4 py-2 text-xs text-slate-750 outline-none transition-colors font-medium"
           />
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
         </div>
       </div>
 
       {/* 3. Main Data Table */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs font-semibold text-gray-700">
-            <thead className="bg-gray-50 border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-widest">
+          <table className="w-full text-left border-collapse text-xs font-medium text-slate-700">
+            <thead className="bg-slate-50 border-b border-slate-200 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
               <tr>
                 <th className="p-4 w-12 text-center">
                   <input
                     type="checkbox"
                     checked={jobs.length > 0 && selectedIds.length === jobs.length}
                     onChange={handleSelectAll}
-                    className="rounded text-[#006B7A] focus:ring-[#006B7A] h-3.5 w-3.5 border-gray-300"
+                    className="rounded text-slate-900 focus:ring-slate-900 h-3.5 w-3.5 border-slate-350"
                   />
                 </th>
                 <th className="p-4">Vị trí tuyển dụng</th>
@@ -371,43 +368,43 @@ export default function AdminJobsPage() {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-200">
               {jobsLoading ? (
                 <tr>
-                  <td colSpan={8} className="p-16 text-center text-gray-400">
+                  <td colSpan={8} className="p-16 text-center text-slate-400">
                     <div className="flex flex-col items-center gap-3">
-                      <Loader2 className="h-8 w-8 animate-spin text-[#006B7A]" />
-                      <span className="text-[11px] font-bold text-gray-400">Đang tải danh sách tin tuyển dụng...</span>
+                      <Loader2 className="h-8 w-8 animate-spin text-slate-600" />
+                      <span className="text-[11px] font-bold text-slate-500">Đang tải danh sách tin tuyển dụng...</span>
                     </div>
                   </td>
                 </tr>
               ) : jobs.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-16 text-center text-gray-400 font-medium">
+                  <td colSpan={8} className="p-16 text-center text-slate-400 font-medium">
                     Không tìm thấy tin tuyển dụng nào phù hợp!
                   </td>
                 </tr>
               ) : (
                 jobs.map((j) => (
-                  <tr key={j.id} className="hover:bg-[#F8FAFC]/80 transition-all duration-200 group border-b border-gray-100">
+                  <tr key={j.id} className="hover:bg-slate-50 transition-colors duration-150 border-b border-slate-200">
                     <td className="p-4 text-center">
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(j.id)}
                         onChange={(e) => handleSelectOne(j.id, e.target.checked)}
-                        className="rounded text-[#006B7A] focus:ring-[#006B7A] h-3.5 w-3.5 border-gray-300 cursor-pointer"
+                        className="rounded text-slate-900 focus:ring-slate-900 h-3.5 w-3.5 border-slate-350 cursor-pointer"
                       />
                     </td>
 
                     <td className="p-4">
                       <div>
-                        <p className="font-extrabold text-gray-800 text-sm leading-snug group-hover:text-[#006B7A] transition-colors">{j.jobTitle}</p>
-                        <p className="text-[9px] text-gray-400 font-bold uppercase mt-1 inline-flex items-center gap-1.5">
-                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md text-[8px] font-extrabold">
+                        <p className="font-bold text-slate-900 text-sm leading-snug">{j.jobTitle}</p>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase mt-1 inline-flex items-center gap-1.5">
+                          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[8px] font-bold">
                             {j.positionName || "—"}
                           </span>
                           {j.needsReapproval && (
-                            <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md text-[8px] font-extrabold animate-pulse">
+                            <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[8px] font-bold">
                               Cần duyệt lại
                             </span>
                           )}
@@ -415,18 +412,18 @@ export default function AdminJobsPage() {
                       </div>
                     </td>
 
-                    <td className="p-4 font-extrabold text-gray-700 text-xs">
+                    <td className="p-4 font-bold text-slate-700 text-xs">
                       {j.employerName || "—"}
                     </td>
 
                     <td className="p-4">
-                      <span className="inline-flex items-center gap-1 text-gray-500 font-bold text-xs">
-                        <MapPin size={12} className="text-gray-400" />
+                      <span className="inline-flex items-center gap-1 text-slate-500 font-medium text-xs">
+                        <MapPin size={12} className="text-slate-400" />
                         {j.wardName ? `${j.wardName}, Đà Nẵng` : "Đà Nẵng"}
                       </span>
                     </td>
 
-                    <td className="p-4 font-mono font-bold text-[#006B7A] text-xs">
+                    <td className="p-4 font-mono font-bold text-slate-750 text-xs">
                       {j.salaryType === "Lương thỏa thuận" || j.salaryType === "NEGOTIABLE" ? (
                         "Thỏa thuận"
                       ) : (
@@ -442,13 +439,13 @@ export default function AdminJobsPage() {
                       {getVisibilityBadge(j.visibilityStatus)}
                     </td>
 
-                    <td className="p-4 text-right space-x-1">
+                    <td className="p-4 text-right space-x-1 whitespace-nowrap">
                       <button
                         onClick={() => {
                           setSelectedJob(j);
                           setIsDetailsOpen(true);
                         }}
-                        className="bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-600 px-2.5 py-1.5 rounded-xl shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer font-bold"
+                        className="bg-white hover:bg-slate-55 border border-slate-200 text-slate-750 px-2.5 py-1.5 rounded-md transition-colors duration-150 inline-flex items-center gap-1 cursor-pointer font-semibold text-xs animate-none"
                       >
                         <Eye size={13} />
                         <span>Xem chi tiết</span>
@@ -459,7 +456,7 @@ export default function AdminJobsPage() {
                           <button
                             onClick={() => handleApproveAction([j.id])}
                             disabled={actionLoading}
-                            className="bg-[#006B7A] hover:bg-[#005a66] text-white px-2.5 py-1.5 rounded-xl shadow-xs transition-all active:scale-[0.98] cursor-pointer font-extrabold inline-flex items-center gap-1"
+                            className="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1.5 rounded-md transition-colors duration-150 cursor-pointer font-bold inline-flex items-center gap-1 text-xs"
                           >
                             <Check size={12} />
                             Duyệt
@@ -470,7 +467,7 @@ export default function AdminJobsPage() {
                               openRejectionModal(false);
                             }}
                             disabled={actionLoading}
-                            className="bg-rose-50 hover:bg-rose-100 text-rose-650 px-2.5 py-1.5 rounded-xl border border-rose-100 transition-all active:scale-[0.98] cursor-pointer font-extrabold"
+                            className="bg-white hover:bg-red-50 border border-slate-200 text-red-600 px-2.5 py-1.5 rounded-md transition-colors duration-150 cursor-pointer font-bold text-xs"
                           >
                             Từ chối
                           </button>
@@ -482,7 +479,7 @@ export default function AdminJobsPage() {
                           <button
                             onClick={() => handleVisibilityAction([j.id], "HIDDEN")}
                             disabled={actionLoading}
-                            className="bg-red-50 hover:bg-red-100 text-red-650 border border-red-200 px-2.5 py-1.5 rounded-xl transition-all active:scale-[0.98] cursor-pointer font-bold inline-flex items-center gap-1"
+                            className="bg-white hover:bg-red-50 text-red-650 border border-slate-200 px-2.5 py-1.5 rounded-md transition-colors duration-150 cursor-pointer font-bold inline-flex items-center gap-1 text-xs"
                           >
                             <Lock size={12} />
                             Ẩn tin
@@ -491,7 +488,7 @@ export default function AdminJobsPage() {
                           <button
                             onClick={() => handleVisibilityAction([j.id], "ACTIVE")}
                             disabled={actionLoading}
-                            className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-xl transition-all active:scale-[0.98] cursor-pointer font-bold inline-flex items-center gap-1"
+                            className="bg-white hover:bg-green-50 text-green-700 border border-slate-200 px-2.5 py-1.5 rounded-md transition-colors duration-150 cursor-pointer font-bold inline-flex items-center gap-1 text-xs"
                           >
                             <Unlock size={12} />
                             Hiển thị lại
@@ -509,7 +506,7 @@ export default function AdminJobsPage() {
 
       {/* 4. Pagination */}
       <div className="flex items-center justify-between px-2 text-xs font-semibold">
-        <div className="text-gray-500">
+        <div className="text-slate-500">
           Hiển thị trang {page + 1} / {totalPages} (Tổng cộng: {totalElements} tin tuyển dụng)
         </div>
 
@@ -517,7 +514,7 @@ export default function AdminJobsPage() {
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0 || jobsLoading}
-            className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-600 rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+            className="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-md transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
           >
             Trang trước
           </button>
@@ -525,7 +522,7 @@ export default function AdminJobsPage() {
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1 || jobsLoading}
-            className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-600 rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+            className="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-md transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
           >
             Trang sau
           </button>
@@ -534,9 +531,8 @@ export default function AdminJobsPage() {
 
       {/* 5. FLOATING BATCH ACTIONS BAR */}
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#006B7A] text-white px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-5 animate-slideUp border border-teal-500/20 backdrop-blur-md">
-          <div className="flex items-center gap-2 text-xs font-extrabold pr-2 border-r border-teal-600">
-            <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3 rounded-lg shadow-lg flex items-center gap-5 border border-slate-800">
+          <div className="flex items-center gap-2 text-xs font-bold pr-2 border-r border-slate-700">
             <span>Đã chọn {selectedIds.length} tin tuyển dụng</span>
           </div>
 
@@ -546,7 +542,7 @@ export default function AdminJobsPage() {
                 <button
                   onClick={() => handleApproveAction(selectedIds)}
                   disabled={actionLoading}
-                  className="bg-white hover:bg-teal-50 text-[#006B7A] px-4 py-2 rounded-xl text-xs font-extrabold transition-all active:scale-95 shadow-md flex items-center gap-1 cursor-pointer"
+                  className="bg-white hover:bg-slate-100 text-slate-900 px-4 py-2 rounded-md text-xs font-bold transition-colors duration-150 flex items-center gap-1 cursor-pointer"
                 >
                   <Check size={13} className="stroke-[2.5]" />
                   <span>Duyệt hàng loạt</span>
@@ -554,7 +550,7 @@ export default function AdminJobsPage() {
                 <button
                   onClick={() => openRejectionModal(true)}
                   disabled={actionLoading}
-                  className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-extrabold transition-all active:scale-95 shadow-md flex items-center gap-1 cursor-pointer border border-rose-500/30"
+                  className="bg-red-700 hover:bg-red-850 text-white px-4 py-2 rounded-md text-xs font-bold transition-colors duration-150 flex items-center gap-1 cursor-pointer"
                 >
                   <span>Từ chối hàng loạt</span>
                 </button>
@@ -564,7 +560,7 @@ export default function AdminJobsPage() {
                 <button
                   onClick={() => handleVisibilityAction(selectedIds, "HIDDEN")}
                   disabled={actionLoading}
-                  className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-extrabold transition-all active:scale-95 shadow-md flex items-center gap-1 cursor-pointer border border-rose-500/30"
+                  className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-md text-xs font-bold transition-colors duration-150 flex items-center gap-1 cursor-pointer"
                 >
                   <Lock size={13} />
                   <span>Ẩn hiển thị hàng loạt</span>
@@ -572,7 +568,7 @@ export default function AdminJobsPage() {
                 <button
                   onClick={() => handleVisibilityAction(selectedIds, "ACTIVE")}
                   disabled={actionLoading}
-                  className="bg-white hover:bg-teal-50 text-[#006B7A] px-4 py-2 rounded-xl text-xs font-extrabold transition-all active:scale-95 shadow-md flex items-center gap-1 cursor-pointer"
+                  className="bg-white hover:bg-slate-100 text-slate-900 px-4 py-2 rounded-md text-xs font-bold transition-colors duration-150 flex items-center gap-1 cursor-pointer"
                 >
                   <Unlock size={13} />
                   <span>Hiển thị hàng loạt</span>
@@ -582,7 +578,7 @@ export default function AdminJobsPage() {
             
             <button
               onClick={() => setSelectedIds([])}
-              className="text-teal-200 hover:text-white p-1 rounded-lg ml-1"
+              className="text-slate-400 hover:text-white p-1 rounded ml-1"
               title="Bỏ chọn tất cả"
             >
               <X size={16} />
@@ -593,17 +589,17 @@ export default function AdminJobsPage() {
 
       {/* 6. PREMIUM DETAILS DRAWER (CENTER DIALOG OR DRAWER) */}
       {isDetailsOpen && selectedJob && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
-          <div className="bg-white w-full max-w-3xl rounded-3xl border border-gray-100 shadow-2xl flex flex-col max-h-[92vh] overflow-hidden transform scale-100 transition-all duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white w-full max-w-3xl rounded-lg border border-slate-200 shadow-lg flex flex-col max-h-[92vh] overflow-hidden">
             {/* Modal Header */}
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#006B7A]/5 to-cyan-50/20">
+            <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-2xl bg-white border border-gray-100 flex items-center justify-center shadow-xs text-xl text-[#006B7A] font-extrabold flex-shrink-0">
+                <div className="h-10 w-10 rounded bg-white border border-slate-200 flex items-center justify-center shadow-xs text-sm text-slate-800 font-bold flex-shrink-0">
                   {selectedJob.employerName ? selectedJob.employerName.slice(0, 2).toUpperCase() : "DN"}
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-base text-gray-800 leading-tight">{selectedJob.jobTitle}</h3>
-                  <p className="text-[9px] text-[#006B7A] font-extrabold uppercase mt-1 tracking-wider leading-none">
+                  <h3 className="font-bold text-base text-slate-900 leading-tight">{selectedJob.jobTitle}</h3>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-wider leading-none">
                     Doanh nghiệp: {selectedJob.employerName || "—"}
                   </p>
                 </div>
@@ -613,22 +609,22 @@ export default function AdminJobsPage() {
                   setIsDetailsOpen(false);
                   setSelectedJob(null);
                 }}
-                className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all duration-200 cursor-pointer border border-transparent hover:border-gray-200"
+                className="p-1.5 rounded hover:bg-slate-200 text-slate-400 hover:text-slate-650 transition-colors cursor-pointer border border-slate-200"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-6 text-xs text-gray-600 font-semibold custom-scrollbar">
+            <div className="p-6 overflow-y-auto space-y-6 text-xs text-slate-600 font-medium custom-scrollbar">
               {/* Quick Status pills banner */}
-              <div className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 flex flex-wrap items-center justify-between gap-3 shadow-inner">
+              <div className="p-3.5 rounded border border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-400 font-bold">Duyệt hồ sơ:</span>
+                  <span className="text-slate-500 font-semibold">Duyệt hồ sơ:</span>
                   {getApproveStatusBadge(selectedJob.approveStatus)}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-400 font-bold">Hiển thị website:</span>
+                  <span className="text-slate-500 font-semibold">Hiển thị website:</span>
                   {getVisibilityBadge(selectedJob.visibilityStatus)}
                 </div>
               </div>
@@ -636,9 +632,9 @@ export default function AdminJobsPage() {
               {/* Basic Fields grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mức lương tuyển dụng</p>
-                  <p className="font-bold text-gray-800 text-sm bg-gray-50 px-3.5 py-2.5 rounded-xl border border-gray-100 inline-flex items-center gap-1.5">
-                    <DollarSign size={14} className="text-[#006B7A]" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mức lương tuyển dụng</p>
+                  <p className="font-bold text-slate-800 text-sm bg-slate-50 px-3 py-2 rounded border border-slate-200 inline-flex items-center gap-1.5">
+                    <DollarSign size={14} className="text-slate-500" />
                     <span>
                       {selectedJob.salaryType === "Lương thỏa thuận" || selectedJob.salaryType === "NEGOTIABLE" ? (
                         "Lương thỏa thuận"
@@ -650,28 +646,28 @@ export default function AdminJobsPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cấp bậc tuyển dụng</p>
-                  <p className="font-bold text-gray-800 text-sm bg-gray-50 px-3.5 py-2.5 rounded-xl border border-gray-100 inline-flex items-center gap-1.5">
-                    <Award size={14} className="text-[#006B7A]" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cấp bậc tuyển dụng</p>
+                  <p className="font-bold text-slate-800 text-sm bg-slate-50 px-3 py-2 rounded border border-slate-200 inline-flex items-center gap-1.5">
+                    <Award size={14} className="text-slate-500" />
                     <span>{selectedJob.positionName || "Chưa cập nhật"}</span>
                   </p>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kinh nghiệm yêu cầu</p>
-                  <p className="font-bold text-gray-800 text-sm bg-gray-50 px-3.5 py-2.5 rounded-xl border border-gray-100 inline-flex items-center gap-1.5">
-                    <TrendingUp size={14} className="text-[#006B7A]" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kinh nghiệm yêu cầu</p>
+                  <p className="font-bold text-slate-800 text-sm bg-slate-50 px-3 py-2 rounded border border-slate-200 inline-flex items-center gap-1.5">
+                    <TrendingUp size={14} className="text-slate-550" />
                     <span>{selectedJob.experienceLevelName || "Không yêu cầu"}</span>
                   </p>
                 </div>
               </div>
 
               {/* Deadline & Location */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2 border-t border-gray-100">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-slate-200">
                 <div className="space-y-1.5">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hạn nộp hồ sơ</p>
-                  <p className="font-bold text-gray-700 flex items-center gap-2 text-xs bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                    <Calendar size={14} className="text-[#006B7A]" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hạn nộp hồ sơ</p>
+                  <p className="font-semibold text-slate-700 flex items-center gap-2 text-xs bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <Calendar size={14} className="text-slate-500" />
                     <span>
                       {selectedJob.deadline 
                         ? new Date(selectedJob.deadline).toLocaleDateString("vi-VN", {
@@ -686,22 +682,22 @@ export default function AdminJobsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Địa điểm làm việc</p>
-                  <p className="font-bold text-gray-700 flex items-center gap-2 text-xs bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                    <MapPin size={14} className="text-red-500" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Địa điểm làm việc</p>
+                  <p className="font-semibold text-slate-700 flex items-center gap-2 text-xs bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <MapPin size={14} className="text-slate-500" />
                     <span>{selectedJob.address ? `${selectedJob.address}, ${selectedJob.wardName || ""}, Đà Nẵng` : "Đà Nẵng"}</span>
                   </p>
                 </div>
               </div>
 
               {/* Categories, Skills, Tags section */}
-              <div className="space-y-4 pt-2 border-t border-gray-100">
+              <div className="space-y-4 pt-4 border-t border-slate-200">
                 {selectedJob.categoryNames && selectedJob.categoryNames.length > 0 && (
                   <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ngành nghề (Categories)</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ngành nghề (Categories)</p>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedJob.categoryNames.map((cat, idx) => (
-                        <span key={idx} className="bg-teal-50 text-[#006B7A] px-2.5 py-1 rounded-lg border border-teal-100 text-[10px] font-extrabold">
+                        <span key={idx} className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200 text-[10px] font-semibold">
                           {cat}
                         </span>
                       ))}
@@ -711,10 +707,10 @@ export default function AdminJobsPage() {
 
                 {selectedJob.skillNames && selectedJob.skillNames.length > 0 && (
                   <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Yêu cầu kỹ năng (Skills)</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Yêu cầu kỹ năng (Skills)</p>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedJob.skillNames.map((s, idx) => (
-                        <span key={idx} className="bg-sky-50 text-sky-700 px-2.5 py-1 rounded-lg border border-sky-100 text-[10px] font-extrabold">
+                        <span key={idx} className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200 text-[10px] font-semibold">
                           {s}
                         </span>
                       ))}
@@ -724,10 +720,10 @@ export default function AdminJobsPage() {
 
                 {selectedJob.tagNames && selectedJob.tagNames.length > 0 && (
                   <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nhãn liên quan (Tags)</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nhãn liên quan (Tags)</p>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedJob.tagNames.map((t, idx) => (
-                        <span key={idx} className="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-lg border border-gray-200 text-[10px] font-extrabold">
+                        <span key={idx} className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200 text-[10px] font-semibold">
                           #{t}
                         </span>
                       ))}
@@ -737,35 +733,35 @@ export default function AdminJobsPage() {
               </div>
 
               {/* Mô tả công việc */}
-              <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mô tả công việc</p>
-                <div className="font-medium text-gray-600 leading-relaxed bg-[#F8FAFC] p-4.5 rounded-2xl border border-gray-200/50 text-xs whitespace-pre-wrap">
+              <div className="space-y-1.5 pt-4 border-t border-slate-200">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mô tả công việc</p>
+                <div className="font-normal text-slate-700 leading-relaxed bg-slate-50 p-4 rounded border border-slate-200 text-xs whitespace-pre-wrap">
                   {selectedJob.jobDescription || "Chưa cập nhật nội dung mô tả công việc."}
                 </div>
               </div>
 
               {/* Yêu cầu công việc */}
-              <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Yêu cầu ứng viên</p>
-                <div className="font-medium text-gray-600 leading-relaxed bg-[#F8FAFC] p-4.5 rounded-2xl border border-gray-200/50 text-xs whitespace-pre-wrap">
+              <div className="space-y-1.5 pt-4 border-t border-slate-200">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Yêu cầu ứng viên</p>
+                <div className="font-normal text-slate-700 leading-relaxed bg-slate-50 p-4 rounded border border-slate-200 text-xs whitespace-pre-wrap">
                   {selectedJob.jobRequirements || "Chưa cập nhật nội dung yêu cầu ứng viên."}
                 </div>
               </div>
 
               {/* Quyền lợi */}
-              <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Quyền lợi được hưởng</p>
-                <div className="font-medium text-gray-600 leading-relaxed bg-[#F8FAFC] p-4.5 rounded-2xl border border-gray-200/50 text-xs whitespace-pre-wrap">
+              <div className="space-y-1.5 pt-4 border-t border-slate-200">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Quyền lợi được hưởng</p>
+                <div className="font-normal text-slate-700 leading-relaxed bg-slate-50 p-4 rounded border border-slate-200 text-xs whitespace-pre-wrap">
                   {selectedJob.jobBenefits || "Chưa cập nhật nội dung quyền lợi được hưởng."}
                 </div>
               </div>
 
               {/* Lý do từ chối trước đó (nếu có) */}
               {selectedJob.rejectionReason && selectedJob.approveStatus === "REJECTED" && (
-                <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                  <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Lý do từ chối phê duyệt trước đó</p>
-                  <div className="font-bold text-rose-700 leading-relaxed bg-rose-50 p-4 rounded-2xl border border-rose-100 text-xs flex items-start gap-2">
-                    <AlertTriangle size={15} className="mt-0.5 flex-shrink-0 text-rose-650" />
+                <div className="space-y-1.5 pt-4 border-t border-slate-200">
+                  <p className="text-[10px] font-bold text-red-600 uppercase tracking-wider">Lý do từ chối phê duyệt trước đó</p>
+                  <div className="font-semibold text-red-850 leading-relaxed bg-red-50 p-3 rounded border border-red-200 text-xs flex items-start gap-2">
+                    <AlertTriangle size={15} className="mt-0.5 flex-shrink-0 text-red-650" />
                     <span>{selectedJob.rejectionReason}</span>
                   </div>
                 </div>
@@ -773,13 +769,13 @@ export default function AdminJobsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-gray-100 flex justify-end gap-2 bg-gray-50 rounded-b-3xl">
+            <div className="p-4 border-t border-slate-200 flex justify-end gap-2 bg-slate-50">
               <button
                 onClick={() => {
                   setIsDetailsOpen(false);
                   setSelectedJob(null);
                 }}
-                className="px-5 py-2.5 border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-xl font-bold transition-all active:scale-[0.98] cursor-pointer animate-fadeIn"
+                className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-750 rounded-md font-bold transition-colors duration-150 cursor-pointer text-xs"
               >
                 Đóng
               </button>
@@ -789,7 +785,7 @@ export default function AdminJobsPage() {
                   <button
                     onClick={() => openRejectionModal(false)}
                     disabled={actionLoading}
-                    className="bg-rose-50 hover:bg-rose-100 text-rose-650 px-5 py-2.5 rounded-xl font-bold border border-rose-100 transition-all active:scale-[0.98] cursor-pointer"
+                    className="bg-white hover:bg-red-50 text-red-650 px-4 py-2 rounded-md font-bold border border-slate-200 hover:border-red-200 transition-colors duration-150 cursor-pointer text-xs"
                   >
                     Từ chối phê duyệt
                   </button>
@@ -797,9 +793,9 @@ export default function AdminJobsPage() {
                   <button
                     onClick={() => handleApproveAction([selectedJob.id])}
                     disabled={actionLoading}
-                    className="bg-[#006B7A] hover:bg-[#005a66] text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                    className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-md font-bold transition-colors duration-150 flex items-center gap-1.5 cursor-pointer text-xs"
                   >
-                    <Check size={15} />
+                    <Check size={14} />
                     <span>Phê duyệt tin đăng</span>
                   </button>
                 </>
@@ -810,7 +806,7 @@ export default function AdminJobsPage() {
                   <button
                     onClick={() => handleVisibilityAction([selectedJob.id], "HIDDEN")}
                     disabled={actionLoading}
-                    className="bg-red-50 hover:bg-red-100 text-red-650 border border-red-200 px-5 py-2.5 rounded-xl font-bold transition-all active:scale-[0.98] cursor-pointer flex items-center gap-1.5 shadow-xs"
+                    className="bg-white hover:bg-red-50 text-red-650 border border-slate-200 px-4 py-2 rounded-md font-bold transition-colors duration-150 cursor-pointer flex items-center gap-1.5 text-xs"
                   >
                     <Lock size={14} />
                     <span>Ẩn hiển thị tin đăng</span>
@@ -819,7 +815,7 @@ export default function AdminJobsPage() {
                   <button
                     onClick={() => handleVisibilityAction([selectedJob.id], "ACTIVE")}
                     disabled={actionLoading}
-                    className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-5 py-2.5 rounded-xl font-bold transition-all active:scale-[0.98] cursor-pointer flex items-center gap-1.5 shadow-xs"
+                    className="bg-white hover:bg-green-50 text-green-700 border border-slate-200 px-4 py-2 rounded-md font-bold transition-colors duration-150 cursor-pointer flex items-center gap-1.5 text-xs"
                   >
                     <Unlock size={14} />
                     <span>Hiển thị lại tin đăng</span>
@@ -833,41 +829,41 @@ export default function AdminJobsPage() {
 
       {/* 7. REJECTION REASON MODAL (WITH QUICK OPTIONS) */}
       {isRejectOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn">
-          <div className="bg-white w-full max-w-lg rounded-3xl border border-gray-100 shadow-2xl overflow-hidden animate-scaleIn">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white w-full max-w-lg rounded-lg border border-slate-200 shadow-lg overflow-hidden">
             {/* Header */}
-            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-rose-50/50">
-              <div className="flex items-center gap-2 text-rose-800">
-                <AlertTriangle size={18} />
-                <h4 className="font-extrabold text-sm uppercase tracking-widest">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2 text-slate-800">
+                <AlertTriangle size={18} className="text-red-650" />
+                <h4 className="font-bold text-xs uppercase tracking-wider">
                   {isBatchRejection ? `Từ chối duyệt ${selectedIds.length} tin tuyển dụng` : "Từ chối duyệt tin tuyển dụng"}
                 </h4>
               </div>
               <button
                 onClick={() => setIsRejectOpen(false)}
-                className="p-1.5 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all cursor-pointer"
+                className="p-1 rounded hover:bg-slate-200 text-slate-450 hover:text-slate-650 transition-colors cursor-pointer border border-slate-200"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
             {/* Form body */}
             <form onSubmit={handleRejectSubmit}>
               <div className="p-5 space-y-4 text-xs font-semibold">
-                <p className="text-gray-500 leading-relaxed font-light text-[11px]">
+                <p className="text-slate-500 leading-relaxed font-normal text-[11px]">
                   Vui lòng nhập lý do từ chối cụ thể. Lý do từ chối này sẽ hiển thị trực tiếp cho nhà tuyển dụng để họ điều chỉnh và gửi duyệt lại.
                 </p>
 
                 {/* Quick Rejection templates */}
                 <div className="space-y-2">
-                  <label className="text-gray-400 uppercase tracking-widest block text-[10px] font-bold">Gợi ý nhanh lý do từ chối</label>
-                  <div className="flex flex-col gap-1.5 max-h-36 overflow-y-auto p-1.5 rounded-2xl bg-gray-50 border border-gray-150 custom-scrollbar">
+                  <label className="text-slate-400 uppercase tracking-wider block text-[10px] font-bold">Gợi ý nhanh lý do từ chối</label>
+                  <div className="flex flex-col gap-1.5 max-h-36 overflow-y-auto p-2 rounded bg-slate-50 border border-slate-200 custom-scrollbar">
                     {QUICK_REJECTION_JOB_TEMPLATES.map((tmpl, idx) => (
                       <button
                         key={idx}
                         type="button"
                         onClick={() => setRejectionReason(tmpl)}
-                        className="bg-white hover:bg-rose-50 hover:text-rose-700 text-gray-600 px-3 py-2 rounded-xl border border-gray-200 hover:border-rose-200 transition-all text-left text-[11px] font-medium leading-relaxed block w-full cursor-pointer shadow-xs"
+                        className="bg-white hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded border border-slate-200 transition-colors text-left text-[11px] font-medium leading-relaxed block w-full cursor-pointer"
                       >
                         {tmpl}
                       </button>
@@ -876,24 +872,24 @@ export default function AdminJobsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-widest block text-[10px] font-bold">Chi tiết lý do từ chối <span className="text-red-500">*</span></label>
+                  <label className="text-slate-400 uppercase tracking-wider block text-[10px] font-bold">Chi tiết lý do từ chối <span className="text-red-500">*</span></label>
                   <textarea
                     rows={4}
                     required
                     placeholder="Ví dụ: Mô tả công việc thiếu thông tin nhiệm vụ chi tiết, vui lòng bổ sung đầy đủ hơn..."
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
-                    className="w-full bg-white border border-gray-250 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded-2xl px-4 py-3 text-gray-700 outline-none transition-all font-medium leading-relaxed"
+                    className="w-full bg-white border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-400 rounded-md px-3 py-2 text-slate-750 outline-none transition-colors font-medium leading-relaxed"
                   />
                 </div>
               </div>
 
               {/* Action buttons */}
-              <div className="p-4 border-t border-gray-100 flex justify-end gap-2 bg-gray-50 rounded-b-3xl">
+              <div className="p-4 border-t border-slate-200 flex justify-end gap-2 bg-slate-50">
                 <button
                   type="button"
                   onClick={() => setIsRejectOpen(false)}
-                  className="px-4 py-2 border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-xl font-bold transition-all active:scale-[0.98] cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-750 rounded-md font-bold transition-colors duration-150 cursor-pointer text-xs"
                 >
                   Quay lại
                 </button>
@@ -901,7 +897,7 @@ export default function AdminJobsPage() {
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  className="bg-red-650 hover:bg-red-700 disabled:bg-gray-300 text-white px-5 py-2 rounded-xl font-bold shadow-md transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-slate-350 text-white px-4 py-2 rounded-md font-bold transition-colors duration-150 flex items-center gap-1.5 cursor-pointer text-xs"
                 >
                   {actionLoading ? (
                     <>

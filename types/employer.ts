@@ -1,6 +1,6 @@
 // ---- Enums / Union types ----
 export type EmployerStatus = "PENDING" | "APPROVED" | "REJECTED" | "INCOMPLETE" | "BLOCKED";
-export type EmployerUpdateStatus = "PENDING" | "APPROVED" | "REJECTED";
+
 
 // ---- Response types ----
 export interface EmployerResponse {
@@ -34,23 +34,6 @@ export interface EmployerPublicResponse {
   logoUrl?: string;
 }
 
-export interface EmployerUpdateResponse {
-  id: number;
-  employerId: number;
-  companyName: string;
-  taxCode: string;
-  businessLicense: string;
-  wardId?: number | string;
-  address?: string;
-  website?: string;
-  companySize?: string;
-  description?: string;
-  logoUrl?: string;
-  reason?: string;
-  status: EmployerUpdateStatus;
-  createdAt: string;
-  approvedAt?: string;
-}
 
 // ---- Request types ----
 export interface UpdateEmployerRequest {

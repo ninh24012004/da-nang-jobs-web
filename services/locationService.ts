@@ -6,7 +6,7 @@ import {
   WardRequest,
   WardResponse,
 } from "@/types/location";
-import { getCachedOrFetch } from "@/lib/cache";
+import { getCachedOrFetch, invalidateCache } from "@/lib/cache";
 
 export const locationService = {
   // ---- Districts ----
@@ -28,18 +28,21 @@ export const locationService = {
   /** POST /districts */
   createDistrict: async (data: DistrictRequest): Promise<DistrictResponse> => {
     const response = await api.post<ApiResponse<DistrictResponse>>("/districts", data);
+    invalidateCache("cache_districts");
     return response.data.data;
   },
 
   /** PUT /districts/:id */
   updateDistrict: async (id: number, data: DistrictRequest): Promise<DistrictResponse> => {
     const response = await api.put<ApiResponse<DistrictResponse>>(`/districts/${id}`, data);
+    invalidateCache("cache_districts");
     return response.data.data;
   },
 
   /** DELETE /districts/:id */
   deleteDistrict: async (id: number): Promise<void> => {
     await api.delete<ApiResponse<void>>(`/districts/${id}`);
+    invalidateCache("cache_districts");
   },
 
   // ---- Wards ----

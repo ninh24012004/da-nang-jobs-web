@@ -19,29 +19,27 @@ export default function EmployerHero() {
         backgroundImage: 'url("https://tuyendung.topcv.vn/images/introduction/landing-page-hero.png")',
       }}
     >
-      {/* Dark overlay with brand teal glow accents */}
+      {/* Dark overlay */}
       <div className="absolute inset-0 bg-[#070b12]/80 z-0"></div>
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#006b7a]/15 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#006b7a]/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div className="relative max-w-5xl mx-auto text-center z-10 space-y-6 md:space-y-8">
         {/* Danang Job Scoring pill */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#006b7a]/20 border border-[#006b7a]/40 text-[#006b7a] text-xs md:text-sm font-semibold tracking-wider uppercase animate-bounce">
-          <Sparkles size={14} className="text-[#006b7a]" />
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#00B14F]/20 border border-[#00B14F]/40 text-[#00B14F] text-xs md:text-sm font-semibold tracking-wider uppercase">
+          <Sparkles size={14} className="text-[#00B14F]" />
           <span>Hỗ Trợ Tuyển Dụng Đà Nẵng Cực Nhanh</span>
         </div>
 
-        {/* Headlines with sleek gradient text */}
+        {/* Headlines with sleek text */}
         <div className="space-y-4">
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight">
             <span className="bg-gradient-to-b from-gray-300 to-white bg-clip-text text-transparent">
               ĐÀ NẴNG
             </span>
-            <span className="mx-2 md:mx-4 bg-gradient-to-r from-[#006b7a] to-teal-400 bg-clip-text text-transparent">
+            <span className="mx-2 md:mx-4 text-[#00B14F]">
               JOBS
             </span>
           </h1>
-          <h2 className="text-lg sm:text-2xl md:text-3xl text-gray-350 font-medium max-w-3xl mx-auto leading-relaxed">
+          <h2 className="text-lg sm:text-2xl md:text-3xl text-gray-300 font-medium max-w-3xl mx-auto leading-relaxed">
             Nền tảng đăng tin tuyển dụng và tìm kiếm hồ sơ ứng viên hàng đầu tại Đà Nẵng, kết nối nhanh chóng, hiệu quả cao
           </h2>
         </div>
@@ -51,16 +49,16 @@ export default function EmployerHero() {
           <a
             href="#banner-form"
             onClick={(e) => handleScrollTo(e, "#banner-form")}
-            className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-xl border border-[#006b7a]/40 bg-[#006b7a]/15 hover:bg-[#006b7a]/25 text-white font-bold text-lg backdrop-blur-md shadow-lg shadow-teal-950/20 hover:shadow-[#006b7a]/10 transition-all active:scale-[0.98] group"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-md border border-[#00B14F]/40 bg-[#00B14F]/15 hover:bg-[#00B14F]/25 text-white font-bold text-lg backdrop-blur-md shadow-sm transition-colors duration-150 group"
           >
-            <PhoneCall size={18} className="text-[#006b7a] group-hover:scale-110 transition-transform" />
+            <PhoneCall size={18} className="text-[#00B14F] transition-transform" />
             <span>Liên hệ tư vấn</span>
           </a>
 
           <a
             href="#banner-form"
             onClick={(e) => handleScrollTo(e, "#banner-form")}
-            className="flex items-center justify-center gap-1.5 w-full sm:w-auto px-8 py-4 rounded-xl bg-[#006b7a] hover:bg-[#005a66] text-white font-bold text-lg shadow-lg shadow-[#006b7a]/30 hover:shadow-[#006b7a]/40 hover:-translate-y-0.5 transition-all active:scale-[0.98] active:translate-y-0"
+            className="flex items-center justify-center gap-1.5 w-full sm:w-auto px-8 py-4 rounded-md bg-[#00B14F] hover:bg-[#00873D] text-white font-bold text-lg shadow-sm transition-colors duration-150"
           >
             <span>Trải nghiệm ngay</span>
             <ChevronRight size={20} />
@@ -70,15 +68,15 @@ export default function EmployerHero() {
         {/* Small tags list */}
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 pt-8 text-xs md:text-sm text-gray-400 font-medium">
           <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#006b7a]"></span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#00B14F]"></span>
             Không giới hạn số lượng đăng tuyển
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#006b7a]"></span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#00B14F]"></span>
             Hơn 150.000+ hồ sơ ứng viên Đà Nẵng
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#006b7a]"></span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#00B14F]"></span>
             Hỗ trợ kết nối AI thông minh
           </span>
         </div>

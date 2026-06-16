@@ -17,10 +17,10 @@ export default function EmployerBigUpdate() {
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* Text content column */}
           <div className="lg:w-1/2 space-y-6 text-left">
-            <div className="inline-flex items-center gap-1 text-xs font-bold text-[#006b7a] uppercase tracking-widest bg-[#006b7a]/10 px-3 py-1.5 rounded-md">
+            <div className="inline-flex items-center gap-1 text-xs font-bold text-[#00B14F] uppercase tracking-widest bg-[#00B14F]/10 px-3 py-1.5 rounded">
               <span>Tính năng mới</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 border-l-4 border-[#006b7a] pl-4 leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 border-l-4 border-[#00B14F] pl-4 leading-tight">
               Đà Nẵng Job Smart Platform
             </h2>
             <p className="text-gray-600 text-base md:text-lg font-light leading-relaxed">
@@ -33,19 +33,19 @@ export default function EmployerBigUpdate() {
             {/* Bullets list */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-sm text-gray-700 font-medium">
               <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-[#006b7a] flex-shrink-0" />
+                <CheckCircle2 size={16} className="text-[#00B14F] flex-shrink-0" />
                 <span>Đăng tin tuyển dụng nhanh</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-[#006b7a] flex-shrink-0" />
+                <CheckCircle2 size={16} className="text-[#00B14F] flex-shrink-0" />
                 <span>Quản lý chiến dịch thông minh</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-[#006b7a] flex-shrink-0" />
+                <CheckCircle2 size={16} className="text-[#00B14F] flex-shrink-0" />
                 <span>Báo cáo hiệu suất thực tế</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-[#006b7a] flex-shrink-0" />
+                <CheckCircle2 size={16} className="text-[#00B14F] flex-shrink-0" />
                 <span>Đánh giá năng lực tích hợp</span>
               </div>
             </div>
@@ -54,7 +54,7 @@ export default function EmployerBigUpdate() {
             <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
               <div
                 onClick={(e) => handleScrollTo(e as any, "#banner-form")}
-                className="flex items-center justify-center w-full sm:w-auto border border-[#006b7a] text-[#006b7a] hover:bg-[#006b7a]/5 px-6 py-3 rounded-lg text-sm font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                className="flex items-center justify-center w-full sm:w-auto border border-[#00B14F] text-[#00B14F] hover:bg-[#00B14F]/5 px-6 py-3 rounded-md text-sm font-bold shadow-sm transition-colors duration-150 cursor-pointer"
               >
                 Nhận tư vấn ngay
               </div>
@@ -65,7 +65,7 @@ export default function EmployerBigUpdate() {
                   const element = document.querySelector("#banner-form");
                   if (element) element.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="flex items-center justify-center w-full sm:w-auto bg-[#006b7a] hover:bg-[#005a66] text-white px-6 py-3 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="flex items-center justify-center w-full sm:w-auto bg-[#00B14F] hover:bg-[#00873D] text-white px-6 py-3 rounded-md text-sm font-bold shadow-sm transition-colors duration-150"
               >
                 Đăng tin ngay
               </a>
@@ -75,12 +75,10 @@ export default function EmployerBigUpdate() {
           {/* Image content column */}
           <div className="lg:w-1/2 w-full">
             <div className="relative group">
-              {/* Background gradient blur */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#006b7a]/10 to-teal-500/10 rounded-2xl blur-2xl group-hover:scale-105 transition-transform duration-500 pointer-events-none"></div>
               <img
                 src="https://tuyendung.topcv.vn/images/introduction/bg-big-update.png"
                 alt="Cập nhật mới của trang đăng tin tuyển dụng miễn phí"
-                className="relative w-full max-w-lg lg:max-w-none mx-auto rounded-2xl shadow-xl border border-gray-100/50 object-cover transform group-hover:-translate-y-1 transition-all duration-500"
+                className="relative w-full max-w-lg lg:max-w-none mx-auto rounded-lg shadow-sm border border-gray-100/50 object-cover transition-shadow duration-150"
               />
             </div>
           </div>
