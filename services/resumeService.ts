@@ -5,38 +5,18 @@ import { ResumeRequest, ResumeResponse } from "@/types/resume";
 // Local storage key for fallback persistence
 const LOCAL_RESUME_KEY = "danang_job_web_local_resumes";
 
-// High-fidelity default mock resumes
-const INITIAL_MOCK_RESUMES: ResumeResponse[] = [
-  {
-    id: 1,
-    title: "CV Trực Tuyến - Kỹ Sư Phần Mềm (Mặc định)",
-    description: "CV chi tiết kinh nghiệm lập trình ReactJS, NodeJS và các dự án thực tế tại Đà Nẵng",
-    fileUrl: "https://res.cloudinary.com/demo/image/upload/v123456/sample_cv.pdf",
-    isDefault: true,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 2,
-    title: "CV Thiết Kế Web - UI/UX Designer",
-    description: "Hồ sơ các dự án thiết kế giao diện Mobile & Web App, Figma portfolio cá nhân",
-    fileUrl: "https://res.cloudinary.com/demo/image/upload/v123456/sample_cv.pdf",
-    isDefault: false,
-    createdAt: new Date().toISOString()
-  }
-];
-
 // Helper to get local resumes list from localStorage
 const getLocalResumes = (): ResumeResponse[] => {
-  if (typeof window === "undefined") return INITIAL_MOCK_RESUMES;
+  if (typeof window === "undefined") return [];
   const stored = localStorage.getItem(LOCAL_RESUME_KEY);
   if (!stored) {
-    localStorage.setItem(LOCAL_RESUME_KEY, JSON.stringify(INITIAL_MOCK_RESUMES));
-    return INITIAL_MOCK_RESUMES;
+    localStorage.setItem(LOCAL_RESUME_KEY, JSON.stringify([]));
+    return [];
   }
   try {
     return JSON.parse(stored);
   } catch (e) {
-    return INITIAL_MOCK_RESUMES;
+    return [];
   }
 };
 

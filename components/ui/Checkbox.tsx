@@ -17,7 +17,7 @@ export default function Checkbox({
                 id={id}
                 type="checkbox"
                 className={cn(
-                    "h-4 w-4 cursor-pointer rounded border-gray-300 text-[#006b7a] focus:ring-[#006b7a]",
+                    "h-4 w-4 cursor-pointer rounded border-gray-300 text-[#00B14F] focus:ring-[#00B14F]",
                     className
                 )}
                 {...props}

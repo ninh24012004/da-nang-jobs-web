@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
     Search,
-    Bookmark,
     FileCheck,
     ThumbsUp,
-    Building2,
-    Sparkles,
 } from "lucide-react";
 
 import { categoryService } from "@/services/categoryService";
@@ -18,6 +16,7 @@ import MegaMenuSectionTitle from "./MegaMenuSectionTitle";
 import MegaMenuTextLink from "./MegaMenuTextLink";
 
 export default function JobsMegaMenu() {
+    const pathname = usePathname();
     const [parentCategories, setParentCategories] = useState<CategoryTreeResponse[]>([]);
 
     useEffect(() => {
@@ -38,50 +37,33 @@ export default function JobsMegaMenu() {
 
     return (
         <div className="absolute left-0 top-full pt-5 hidden group-hover:block select-none animate-fadeIn">
-            <div className="w-[680px] bg-white rounded-2xl border border-gray-200 shadow-2xl overflow-hidden">
+            <div className="w-[680px] bg-white rounded-[8px] border border-slate-200 shadow-2xl overflow-hidden">
                 <div className="grid grid-cols-[240px_1fr]">
 
                     {/* LEFT COLUMN: Actions & Links */}
                     <MegaMenuColumn bordered>
-                        <MegaMenuSectionTitle title="VIỆC LÀM" />
+                        <MegaMenuSectionTitle title="QUẢN LÝ VIỆC LÀM" />
 
                         <div className="space-y-0.5 mt-3">
                             <MegaMenuItem
-                                href="/candidate"
+                                href="/jobs"
                                 label="Tìm việc làm"
                                 icon={<Search />}
-                                active
+                                active={pathname === "/jobs"}
                             />
 
                             <MegaMenuItem
-                                href="/candidate/profile?tab=recommendations"
-                                label="Việc làm đã lưu"
-                                icon={<Bookmark />}
-                            />
-
-                            <MegaMenuItem
-                                href="/candidate/profile?tab=recommendations"
+                                href="/candidate/applications"
                                 label="Việc làm đã ứng tuyển"
                                 icon={<FileCheck />}
+                                active={pathname === "/candidate/applications"}
                             />
 
                             <MegaMenuItem
                                 href="/candidate/profile?tab=recommendations"
                                 label="Việc làm phù hợp"
                                 icon={<ThumbsUp />}
-                            />
-                        </div>
-
-                        <MegaMenuSectionTitle
-                            title="CÔNG TY"
-                            className="mt-8"
-                        />
-
-                        <div className="space-y-0.5 mt-3">
-                            <MegaMenuItem
-                                href="/candidate/companies"
-                                label="Danh sách công ty"
-                                icon={<Building2 />}
+                                active={pathname === "/candidate/profile"}
                             />
                         </div>
                     </MegaMenuColumn>
@@ -92,7 +74,7 @@ export default function JobsMegaMenu() {
 
                         {parentCategories.length === 0 ? (
                           <div className="flex items-center gap-2 mt-6 text-gray-400 text-xs font-medium">
-                            <Loader2 className="w-4 h-4 animate-spin text-[#006B7A]" />
+                            <Loader2 className="w-4 h-4 animate-spin text-[#00B14F]" />
                             <span>Đang tải danh mục...</span>
                           </div>
                         ) : (

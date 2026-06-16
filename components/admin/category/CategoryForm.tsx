@@ -93,13 +93,13 @@ export default function CategoryForm({
                         Danh mục cha
                     </label>
                     <select
-                        value={formData.parentId || ""}
+                        value={formData.parentId !== null && formData.parentId !== undefined ? String(formData.parentId) : ""}
                         onChange={(e) => setFormData({ ...formData, parentId: e.target.value ? Number(e.target.value) : null })}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#006B7A] focus:ring-4 focus:ring-[#006B7A]/5 outline-none transition-all appearance-none bg-white cursor-pointer"
                     >
                         <option value="">-- Danh mục gốc --</option>
                         {flatCategoriesList.map((cat) => (
-                            <option key={cat.id} value={cat.id}>
+                            <option key={cat.id} value={String(cat.id)}>
                                 {"\u00A0".repeat(cat.level * 4)} {cat.name}
                             </option>
                         ))}

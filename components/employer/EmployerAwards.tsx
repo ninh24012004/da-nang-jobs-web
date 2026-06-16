@@ -39,7 +39,7 @@ export default function EmployerAwards() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header content */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#006b7a] uppercase tracking-widest bg-[#006b7a]/10 px-3 py-1.5 rounded-md">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00B14F] uppercase tracking-widest bg-[#00B14F]/10 px-3 py-1.5 rounded">
             <span>Giải thưởng tiêu biểu</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800">
@@ -55,16 +55,16 @@ export default function EmployerAwards() {
           {awards.map((award, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+              className="bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-150 flex flex-col justify-between overflow-hidden group"
             >
               {/* Image element */}
               <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
                 <img
                   src={award.img}
                   alt={award.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transition-transform duration-150"
                 />
-                <span className="absolute top-3 left-3 bg-[#006b7a] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
+                <span className="absolute top-3 left-3 bg-[#00B14F] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
                   {award.tag}
                 </span>
               </div>
@@ -72,7 +72,7 @@ export default function EmployerAwards() {
               {/* Text descriptions */}
               <div className="p-5 flex-1 flex flex-col justify-between space-y-4 text-left">
                 <div className="space-y-2">
-                  <h3 className="text-base font-bold text-gray-800 tracking-tight line-clamp-2 group-hover:text-[#006b7a] transition-colors">
+                  <h3 className="text-base font-bold text-gray-800 tracking-tight line-clamp-2 group-hover:text-[#00B14F] transition-colors duration-150">
                     {award.title}
                   </h3>
                   <p className="text-gray-500 text-xs font-light leading-relaxed line-clamp-3">
@@ -86,7 +86,7 @@ export default function EmployerAwards() {
                     href={award.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs font-bold text-[#006b7a] hover:text-[#005a66] transition-all uppercase tracking-wider"
+                    className="flex items-center gap-1.5 text-xs font-bold text-[#00B14F] hover:text-[#00873D] transition-colors duration-150 uppercase tracking-wider"
                   >
                     <span>Chi tiết</span>
                     <ExternalLink size={12} />

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
@@ -179,7 +180,6 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
         try {
             await changePasswordApi(resetToken, password);
             toast.success("Đổi mật khẩu thành công");
-            // Redirect to login after successful password change
             setTimeout(() => {
                 router.push(`/${userType}/login`);
             }, 1500);
@@ -211,7 +211,7 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
         userType === "candidate" ? "/candidate/login" : "/employer/login";
 
     return (
-        <div className="flex h-screen w-full bg-white font-sans text-[#1a1a1a]">
+        <div className="flex h-screen w-full bg-white font-sans text-slate-800">
             <div className="flex w-full flex-col justify-center sm:px-12 md:w-1/2 md:px-16 lg:px-24">
                 <div className="mx-auto w-full max-w-md">
                     <div className="mb-4">
@@ -229,30 +229,30 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                     <div className="mb-8">
                         {step === "email" && (
                             <>
-                                <h2 className="text-2xl font-bold text-[#0d1b2a] md:text-3xl">
+                                <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">
                                     Quên mật khẩu?
                                 </h2>
-                                <p className="mt-2 text-lg text-gray-500">
+                                <p className="mt-2 text-lg text-slate-500 font-light">
                                     Nhập email của bạn để nhận mã xác thực
                                 </p>
                             </>
                         )}
                         {step === "verification" && (
                             <>
-                                <h2 className="text-2xl font-bold text-[#0d1b2a] md:text-3xl">
+                                <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">
                                     Xác thực email
                                 </h2>
-                                <p className="mt-2 text-lg text-gray-500">
+                                <p className="mt-2 text-lg text-slate-500 font-light">
                                     Nhập mã xác thực được gửi đến {email}
                                 </p>
                             </>
                         )}
                         {step === "password" && (
                             <>
-                                <h2 className="text-2xl font-bold text-[#0d1b2a] md:text-3xl">
+                                <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">
                                     Đặt mật khẩu mới
                                 </h2>
-                                <p className="mt-2 text-lg text-gray-500">
+                                <p className="mt-2 text-lg text-slate-500 font-light">
                                     Nhập mật khẩu mới của bạn
                                 </p>
                             </>
@@ -269,6 +269,7 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                                 type="email"
                                 value={email}
                                 error={errors.email}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     setEmail(e.target.value);
                                     setErrors((prev) => ({
@@ -278,7 +279,11 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                                 }}
                             />
 
-                            <Button type="submit" isLoading={loading}>
+                            <Button 
+                                type="submit" 
+                                isLoading={loading}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
+                            >
                                 Gửi mã xác thực
                             </Button>
                         </form>
@@ -294,6 +299,7 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                                 maxLength={6}
                                 value={code}
                                 error={errors.code}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     const value = e.target.value.replace(/\D/g, "");
                                     setCode(value);
@@ -304,13 +310,17 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                                 }}
                             />
 
-                            <Button type="submit" isLoading={loading}>
+                            <Button 
+                                type="submit" 
+                                isLoading={loading}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
+                            >
                                 Xác thực mã
                             </Button>
 
                             <div className="text-center">
                                 {countdown > 0 ? (
-                                    <p className="text-sm text-gray-500">
+                                    <p className="text-sm text-slate-500 font-medium">
                                         Gửi lại mã sau {countdown}s
                                     </p>
                                 ) : (
@@ -318,7 +328,10 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                                         type="button"
                                         onClick={handleResendCode}
                                         disabled={resendLoading}
-                                        className="text-sm font-medium text-[#006b7a] hover:underline disabled:opacity-50"
+                                        className={cn(
+                                            "text-sm font-medium hover:underline disabled:opacity-50 border-none bg-transparent cursor-pointer",
+                                            userType === "candidate" ? "text-[#00B14F]" : "text-[#0F172A]"
+                                        )}
                                     >
                                         Gửi lại mã
                                     </button>
@@ -337,6 +350,7 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                                 type="password"
                                 value={password}
                                 error={errors.password}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     setPassword(e.target.value);
                                     setErrors((prev) => ({
@@ -353,6 +367,7 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                                 type="password"
                                 value={confirmPassword}
                                 error={errors.confirmPassword}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     setConfirmPassword(e.target.value);
                                     setErrors((prev) => ({
@@ -362,7 +377,11 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                                 }}
                             />
 
-                            <Button type="submit" isLoading={loading}>
+                            <Button 
+                                type="submit" 
+                                isLoading={loading}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
+                            >
                                 Đặt mật khẩu mới
                             </Button>
                         </form>
@@ -373,7 +392,10 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                         {step !== "email" && (
                             <button
                                 onClick={handleBack}
-                                className="mb-4 flex items-center gap-2 text-sm font-medium text-[#006b7a] hover:underline"
+                                className={cn(
+                                    "mb-4 flex items-center gap-2 text-sm font-medium hover:underline border-none bg-transparent cursor-pointer",
+                                    userType === "candidate" ? "text-[#00B14F]" : "text-[#0F172A]"
+                                )}
                             >
                                 <ChevronLeft size={16} />
                                 Quay lại
@@ -381,9 +403,15 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                         )}
 
                         <div className="text-center">
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-slate-550 font-medium">
                                 Nhớ mật khẩu?{" "}
-                                <Link href={loginPath} className="font-medium text-[#006b7a] hover:underline">
+                                <Link 
+                                    href={loginPath} 
+                                    className={cn(
+                                        "font-bold hover:underline",
+                                        userType === "candidate" ? "text-[#00B14F]" : "text-[#0F172A]"
+                                    )}
+                                >
                                     Đăng nhập
                                 </Link>
                             </p>
@@ -392,11 +420,17 @@ export default function ForgotPasswordForm({ userType }: ForgotPasswordFormProps
                 </div>
             </div>
 
-            {/* Right side image (optional) */}
-            <div className="hidden bg-gradient-to-br from-[#006b7a] to-[#004d5a] md:flex md:w-1/2 md:items-center md:justify-center">
-                <div className="text-center text-white">
-                    <h3 className="mb-4 text-3xl font-bold">Đà Nẵng Jobs</h3>
-                    <p className="text-lg opacity-80">Cơ hội việc làm tại Đà Nẵng</p>
+            <div
+                className={cn(
+                    "hidden md:flex md:w-1/2 md:items-center md:justify-center",
+                    userType === "candidate"
+                        ? "bg-gradient-to-br from-[#00B14F] to-[#00873D]"
+                        : "bg-gradient-to-br from-[#0F172A] to-[#1E293B]"
+                )}
+            >
+                <div className="text-center text-white p-8">
+                    <h3 className="mb-4 text-3xl font-extrabold tracking-tight">Đà Nẵng Jobs</h3>
+                    <p className="text-lg opacity-90 font-light">Cơ hội việc làm tại thành phố Đà Nẵng đáng sống</p>
                 </div>
             </div>
         </div>

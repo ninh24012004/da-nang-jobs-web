@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import employerService from "@/services/employerService";
-import { EmployerResponse, EmployerStatus, EmployerUpdateResponse } from "@/types/employer";
+import { EmployerResponse, EmployerStatus } from "@/types/employer";
 import { locationService } from "@/services/locationService";
 import { DistrictResponse, WardResponse } from "@/types/location";
 import {
@@ -31,7 +31,7 @@ const REJECTION_TEMPLATES = [
 ];
 
 export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "PENDING" }) {
-  const [companies, setCompanies] = useState<(EmployerResponse | EmployerUpdateResponse)[]>([]);
+  const [companies, setCompanies] = useState<EmployerResponse[]>([]);
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [districts, setDistricts] = useState<DistrictResponse[]>([]);
@@ -44,7 +44,7 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
   const [error, setError] = useState("");
 
   // Modals state
-  const [selectedCompany, setSelectedCompany] = useState<EmployerResponse | EmployerUpdateResponse | null>(null);
+  const [selectedCompany, setSelectedCompany] = useState<EmployerResponse | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
@@ -70,14 +70,14 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
     try {
       let res;
       if (statusFilter === "PENDING") {
-        res = await employerService.getPendingCompanies(page, size);
+        res = await employerService.getCompaniesByStatus("PENDING", page, size);
       } else if (statusFilter === "ALL") {
         res = await employerService.getAllCompanies(page, size);
       } else {
         res = await employerService.getCompaniesByStatus(statusFilter as EmployerStatus, page, size);
       }
 
-      const content: (EmployerResponse | EmployerUpdateResponse)[] = res.content || [];
+      const content: EmployerResponse[] = res.content || [];
 
       setCompanies(content);
       setTotalPages(res.totalPages || 1);
@@ -100,19 +100,19 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
     return (
       company.companyName?.toLowerCase().includes(query) ||
       company.taxCode?.toLowerCase().includes(query) ||
-      (company as any).phoneNumber?.toLowerCase().includes(query) ||
-      (company as any).emailCompany?.toLowerCase().includes(query)
+      company.phoneNumber?.toLowerCase().includes(query) ||
+      company.emailCompany?.toLowerCase().includes(query)
     );
   });
 
-  const handleApprove = async (company: EmployerUpdateResponse) => {
+  const handleApprove = async (company: EmployerResponse) => {
     if (!window.confirm(`Bạn có chắc chắn muốn phê duyệt doanh nghiệp "${company.companyName}"?`)) {
       return;
     }
 
     setActionLoading(true);
     try {
-      await employerService.approveEmployer(company.employerId);
+      await employerService.approveEmployer(company.id);
       toast.success(`Đã phê duyệt nhà tuyển dụng "${company.companyName}" thành công!`);
 
       await Promise.all([fetchCompanies()]);
@@ -126,7 +126,7 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
     }
   };
 
-  const handleToggleBlock = async (company: EmployerResponse | EmployerUpdateResponse, block: boolean) => {
+  const handleToggleBlock = async (company: EmployerResponse, block: boolean) => {
     const actionText = block ? "khóa tài khoản" : "mở khóa tài khoản";
     if (!window.confirm(`Bạn có chắc chắn muốn ${actionText} doanh nghiệp "${company.companyName}"?`)) {
       return;
@@ -134,7 +134,7 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
 
     setActionLoading(true);
     try {
-      const employerId = (company as any).employerId || company.id;
+      const employerId = company.id;
       const targetStatus: EmployerStatus = block ? "BLOCKED" : "APPROVED";
       await employerService.changeEmployerStatus(employerId, targetStatus);
       toast.success(`Đã ${actionText} nhà tuyển dụng "${company.companyName}" thành công!`);
@@ -178,7 +178,7 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
     }
   };
 
-  const getFullAddress = (company: EmployerResponse | EmployerUpdateResponse) => {
+  const getFullAddress = (company: EmployerResponse) => {
     if (!company.wardId) return company.address || "Chưa cập nhật";
     const ward = wards.find(w => w.id === Number(company.wardId));
     if (!ward) return company.address || "Chưa cập nhật";
@@ -200,36 +200,31 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
     switch (status) {
       case "APPROVED":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-bold border border-emerald-100 shadow-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <span className="inline-flex items-center bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-xs font-semibold border border-emerald-100">
             Đã Duyệt
           </span>
         );
       case "REJECTED":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 px-3 py-1.5 rounded-full text-xs font-bold border border-rose-100 shadow-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+          <span className="inline-flex items-center bg-rose-50 text-rose-700 px-2 py-0.5 rounded text-xs font-semibold border border-rose-100">
             Bị Từ Chối
           </span>
         );
       case "PENDING":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold border border-amber-100 animate-pulse shadow-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+          <span className="inline-flex items-center bg-amber-50 text-amber-700 px-2 py-0.5 rounded text-xs font-semibold border border-amber-100">
             Chờ Phê Duyệt
           </span>
         );
       case "BLOCKED":
         return (
-          <span className="inline-flex items-center gap-1.5 bg-red-50 text-red-650 px-3 py-1.5 rounded-full text-xs font-bold border border-red-100 shadow-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-red-650" />
+          <span className="inline-flex items-center bg-red-50 text-red-700 px-2 py-0.5 rounded text-xs font-semibold border border-red-100">
             Đã Bị Khóa
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 bg-gray-50 text-gray-500 px-3 py-1.5 rounded-full text-xs font-bold border border-gray-150 shadow-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
+          <span className="inline-flex items-center bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs font-semibold border border-slate-250">
             Chưa Hoàn Tất
           </span>
         );
@@ -239,9 +234,9 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
   return (
     <div className="space-y-6">
       {/* 2. Tabs and Search controls */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs flex flex-col lg:flex-row gap-4 items-center justify-between">
+      <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center justify-between">
         {/* Navigation Tabs */}
-        <div className="flex bg-gray-50/80 p-1.5 rounded-2xl border border-gray-200/50 w-full lg:w-auto overflow-x-auto custom-scrollbar gap-1">
+        <div className="flex bg-slate-100 p-1 rounded-md border border-slate-200/80 w-full lg:w-auto overflow-x-auto custom-scrollbar gap-0.5">
           {([
             { id: "ALL", label: "Tất cả" },
             { id: "PENDING", label: "Chờ duyệt" },
@@ -255,11 +250,10 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                 setStatusFilter(tab.id);
                 setPage(0);
               }}
-              className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold rounded-xl transition-all duration-300 flex-shrink-0 cursor-pointer ${
-                statusFilter === tab.id
-                  ? "bg-white text-[#006B7A] shadow-md scale-[1.02]"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100/50"
-              }`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded transition-colors duration-150 flex-shrink-0 cursor-pointer ${statusFilter === tab.id
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/40"
+                }`}
             >
               <span>{tab.label}</span>
             </button>
@@ -267,82 +261,82 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
         </div>
 
         {/* Search Bar */}
-        <div className="relative w-full lg:w-80 shadow-inner">
+        <div className="relative w-full lg:w-80">
           <input
             type="text"
             placeholder="Tìm theo tên công ty, MST, Hotline..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-gray-50/50 border border-gray-200 focus:border-[#006B7A] focus:ring-1 focus:ring-[#006B7A] rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-700 outline-none transition-all font-medium"
+            className="w-full bg-slate-50 border border-slate-200 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 rounded-md pl-10 pr-4 py-2 text-xs text-slate-700 outline-none transition-colors font-medium"
           />
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
         </div>
       </div>
 
 
       {/* 3. Main Data Table */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl text-xs font-semibold flex items-center gap-2">
-          <AlertTriangle size={16} />
+        <div className="bg-red-50 border border-red-200 text-red-800 p-3 rounded-md text-xs font-semibold flex items-center gap-2">
+          <AlertTriangle size={14} />
           <span>{error}</span>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs font-semibold text-gray-700">
-            <thead className="bg-gray-50 border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-widest">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead className="bg-slate-50 border-b border-slate-200 text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
               <tr>
-                <th className="p-4 w-16 text-center">Logo</th>
-                <th className="p-4">Doanh nghiệp</th>
-                <th className="p-4">Mã số thuế</th>
-                <th className="p-4">Hotline</th>
-                <th className="p-4">Tài liệu pháp lý (PDF)</th>
-                <th className="p-4">Trạng thái</th>
-                <th className="p-4 text-right">Thao tác</th>
+                <th className="p-3 w-16 text-center">Logo</th>
+                <th className="p-3">Doanh nghiệp</th>
+                <th className="p-3">Mã số thuế</th>
+                <th className="p-3">Hotline</th>
+                <th className="p-3">Tài liệu pháp lý (PDF)</th>
+                <th className="p-3">Trạng thái</th>
+                <th className="p-3 text-right">Thao tác</th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100 font-medium text-slate-750">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="p-16 text-center text-gray-400">
-                    <div className="flex flex-col items-center gap-3">
-                      <Loader2 className="h-8 w-8 animate-spin text-[#006B7A]" />
-                      <span className="text-[11px] font-bold text-gray-400">Đang tải dữ liệu nhà tuyển dụng...</span>
+                  <td colSpan={7} className="p-10 text-center text-slate-400">
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="h-6 w-6 animate-spin text-slate-900" />
+                      <span className="text-[11px] font-semibold text-slate-400">Đang tải dữ liệu nhà tuyển dụng...</span>
                     </div>
                   </td>
                 </tr>
               ) : filteredCompanies.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-16 text-center text-gray-400 font-medium">
+                  <td colSpan={7} className="p-10 text-center text-slate-400 font-medium">
                     Không tìm thấy nhà tuyển dụng nào phù hợp!
                   </td>
                 </tr>
               ) : (
                 filteredCompanies.map((c) => (
-                  <tr key={c.id} className="hover:bg-[#F8FAFC]/80 transition-all duration-200 group border-b border-gray-100">
-                    <td className="p-4 text-center">
-                      <div className="h-12 w-12 mx-auto rounded-xl border border-gray-100 overflow-hidden flex items-center justify-center font-bold text-xs shadow-inner relative transition-transform group-hover:scale-105">
+                  <tr key={c.id} className="hover:bg-slate-50/70 transition-colors duration-150 border-b border-slate-100">
+                    <td className="p-3 text-center">
+                      <div className="h-9 w-9 mx-auto rounded-md border border-slate-200 overflow-hidden flex items-center justify-center font-semibold text-xs relative bg-white">
                         {c.logoUrl && c.logoUrl.trim() !== "" ? (
                           <img src={c.logoUrl} alt="Logo" className="h-full w-full object-cover" />
                         ) : (
-                          <div className="absolute inset-0 bg-gradient-to-br from-[#006B7A] to-[#009fb2] text-white flex items-center justify-center font-bold tracking-wider uppercase font-mono shadow-inner text-sm">
+                          <div className="absolute inset-0 bg-slate-900 text-white flex items-center justify-center font-semibold uppercase font-mono text-xs">
                             {c.companyName ? c.companyName.slice(0, 2).toUpperCase() : "DN"}
                           </div>
                         )}
                       </div>
                     </td>
 
-                    <td className="p-4">
+                    <td className="p-3">
                       <div>
-                        <p className="font-extrabold text-gray-800 text-sm leading-snug group-hover:text-[#006B7A] transition-colors">{c.companyName}</p>
+                        <p className="font-semibold text-slate-900 text-xs leading-snug">{c.companyName}</p>
                         {c.website && (
                           <a
                             href={c.website.startsWith('http') ? c.website : `https://${c.website}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[10px] text-[#006B7A] hover:underline inline-flex items-center gap-1 mt-1 font-bold max-w-full"
+                            className="text-[10px] text-slate-600 hover:text-slate-900 hover:underline inline-flex items-center gap-1 mt-1 font-semibold max-w-full"
                           >
                             <Globe size={11} className="flex-shrink-0" />
                             <span className="truncate max-w-[140px] inline-block">
@@ -353,49 +347,49 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                       </div>
                     </td>
 
-                    <td className="p-4 font-mono font-bold text-gray-600">{c.taxCode}</td>
+                    <td className="p-3 font-mono font-semibold text-slate-650">{c.taxCode}</td>
 
-                    <td className="p-4 font-bold text-gray-600">{(c as any).phoneNumber || "—"}</td>
+                    <td className="p-3 font-semibold text-slate-650">{c.phoneNumber || "—"}</td>
 
-                    <td className="p-4">
+                    <td className="p-3">
                       {c.businessLicense && c.businessLicense.startsWith("http") ? (
                         <a
                           href={c.businessLicense}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-[#006B7A] hover:text-[#005a66] hover:bg-[#006B7A]/10 font-bold bg-[#006B7A]/5 px-3 py-1.5 rounded-lg transition-all"
+                          className="inline-flex items-center gap-1.5 text-slate-700 hover:text-slate-900 hover:bg-slate-100 font-semibold bg-slate-50 border border-slate-200 px-2.5 py-1 rounded transition-colors"
                         >
-                          <FileText size={13} className="text-red-500" />
+                          <FileText size={12} className="text-red-650" />
                           <span>Mở PDF</span>
                         </a>
                       ) : (
-                        <span className="text-gray-400 italic font-medium">Chưa có tài liệu</span>
+                        <span className="text-slate-400 italic font-medium">Chưa có tài liệu</span>
                       )}
                     </td>
 
-                    <td className="p-4">{getStatusBadge(c.status)}</td>
+                    <td className="p-3">{getStatusBadge(c.status)}</td>
 
-                    <td className="p-4 text-right space-x-1.5">
+                    <td className="p-3 text-right space-x-1">
                       <button
                         onClick={() => {
                           setSelectedCompany(c);
                           setIsDetailsModalOpen(true);
                         }}
-                        className="bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-600 px-3 py-1.5 rounded-xl shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer font-bold"
+                        className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-650 px-2.5 py-1.5 rounded-md transition-colors inline-flex items-center gap-1 cursor-pointer font-semibold"
                         title="Xem chi tiết hồ sơ"
                       >
-                        <Eye size={13} />
-                        <span>Xem chi tiết</span>
+                        <Eye size={12} />
+                        <span>Chi tiết</span>
                       </button>
 
                       {c.status === "PENDING" ? (
                         <>
                           <button
-                            onClick={() => handleApprove(c as EmployerUpdateResponse)}
+                            onClick={() => handleApprove(c)}
                             disabled={actionLoading}
-                            className="bg-[#006B7A] hover:bg-[#005a66] text-white px-3 py-1.5 rounded-xl shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer font-extrabold"
+                            className="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1.5 rounded-md transition-colors inline-flex items-center gap-1 cursor-pointer font-semibold border border-transparent"
                           >
-                            <Check size={13} />
+                            <Check size={12} />
                             Duyệt
                           </button>
                           <button
@@ -404,7 +398,7 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                               setIsRejectModalOpen(true);
                             }}
                             disabled={actionLoading}
-                            className="bg-rose-50 hover:bg-rose-100 text-rose-650 px-3 py-1.5 rounded-xl border border-rose-100 transition-all active:scale-[0.98] cursor-pointer font-extrabold"
+                            className="bg-rose-50 hover:bg-rose-100 text-rose-700 px-2.5 py-1.5 rounded-md border border-rose-250 transition-colors cursor-pointer font-semibold"
                           >
                             Từ chối
                           </button>
@@ -413,9 +407,9 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                         <button
                           onClick={() => handleToggleBlock(c, false)}
                           disabled={actionLoading}
-                          className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl transition-all active:scale-[0.98] cursor-pointer font-extrabold shadow-xs inline-flex items-center gap-1"
+                          className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-250 px-2.5 py-1.5 rounded-md transition-colors cursor-pointer font-semibold inline-flex items-center gap-1"
                         >
-                          <Unlock size={12} />
+                          <Unlock size={11} />
                           Mở khóa
                         </button>
                       ) : (
@@ -423,9 +417,9 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                           <button
                             onClick={() => handleToggleBlock(c, true)}
                             disabled={actionLoading}
-                            className="bg-red-50 hover:bg-red-100 text-red-650 border border-red-200 px-3 py-1.5 rounded-xl transition-all active:scale-[0.98] cursor-pointer font-extrabold shadow-xs inline-flex items-center gap-1"
+                            className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-2.5 py-1.5 rounded-md transition-colors cursor-pointer font-semibold inline-flex items-center gap-1"
                           >
-                            <Lock size={12} />
+                            <Lock size={11} />
                             Khóa tài khoản
                           </button>
                         )
@@ -440,8 +434,8 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
       </div>
 
       {/* 4. Pagination control */}
-      <div className="flex items-center justify-between px-2 text-xs font-semibold">
-        <div className="text-gray-500">
+      <div className="flex items-center justify-between px-1 text-xs">
+        <div className="text-slate-500">
           Hiển thị trang {page + 1} / {totalPages} (Tổng cộng: {totalElements} doanh nghiệp)
         </div>
 
@@ -449,7 +443,7 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0 || loading}
-            className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-600 rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+            className="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-650 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold cursor-pointer"
           >
             Trang trước
           </button>
@@ -457,7 +451,7 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1 || loading}
-            className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-600 rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+            className="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-650 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold cursor-pointer"
           >
             Trang sau
           </button>
@@ -467,22 +461,22 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
       {/* 5. PREMIUM DETAILS MODAL (GLASSMORPHISM POPUP) */}
       {isDetailsModalOpen && selectedCompany && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
-          <div className="bg-white w-full max-w-2xl rounded-3xl border border-gray-100 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden transform scale-100 transition-all duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-lg border border-slate-200 shadow-xl flex flex-col max-h-[90vh] overflow-hidden transform scale-100 transition-all duration-300">
             {/* Modal Header */}
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#006B7A]/5 to-cyan-50/20">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-2xl border border-gray-200 overflow-hidden flex items-center justify-center font-extrabold text-[#006B7A] text-lg bg-white shadow-sm relative">
+            <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-3.5">
+                <div className="h-12 w-12 rounded-md border border-slate-200 overflow-hidden flex items-center justify-center font-bold text-slate-800 text-sm bg-white relative">
                   {selectedCompany.logoUrl && selectedCompany.logoUrl.trim() !== "" ? (
                     <img src={selectedCompany.logoUrl} alt="Logo" className="h-full w-full object-cover" />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#006B7A] to-[#009fb2] text-white flex items-center justify-center font-bold tracking-wider uppercase font-mono shadow-inner text-sm">
+                    <div className="absolute inset-0 bg-slate-900 text-white flex items-center justify-center font-bold font-mono text-xs">
                       {selectedCompany.companyName ? selectedCompany.companyName.slice(0, 2).toUpperCase() : "DN"}
                     </div>
                   )}
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-lg text-gray-800 leading-tight">{selectedCompany.companyName}</h3>
-                  <p className="text-[10px] text-gray-400 font-extrabold uppercase mt-1 tracking-wider">Hồ sơ pháp lý nhà tuyển dụng</p>
+                  <h3 className="font-semibold text-base text-slate-800 leading-tight">{selectedCompany.companyName}</h3>
+                  <p className="text-[10px] text-slate-500 font-medium uppercase mt-0.5 tracking-wider">Hồ sơ pháp lý nhà tuyển dụng</p>
                 </div>
               </div>
               <button
@@ -490,41 +484,41 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                   setIsDetailsModalOpen(false);
                   setSelectedCompany(null);
                 }}
-                className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all duration-200 cursor-pointer border border-transparent hover:border-gray-200"
+                className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer border border-transparent"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-6 text-xs text-gray-600 font-semibold custom-scrollbar">
+            <div className="p-5 overflow-y-auto space-y-5 text-xs text-slate-600 font-semibold custom-scrollbar">
               {/* Top Banner Status */}
-              <div className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 flex items-center justify-between shadow-inner">
-                <span className="text-gray-500 font-bold">Trạng thái tài khoản:</span>
+              <div className="p-3 rounded-md border border-slate-200 bg-slate-50 flex items-center justify-between">
+                <span className="text-slate-500 font-medium">Trạng thái tài khoản:</span>
                 <span>{getStatusBadge(selectedCompany.status)}</span>
               </div>
 
               {/* Basic Fields grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mã số thuế</p>
-                  <p className="font-mono font-bold text-gray-800 text-sm bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 inline-block">{selectedCompany.taxCode}</p>
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Mã số thuế</p>
+                  <p className="font-mono font-bold text-slate-800 text-xs bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 inline-block">{selectedCompany.taxCode}</p>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Số điện thoại liên hệ</p>
-                  <p className="font-bold text-gray-800 text-sm bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 inline-block">{(selectedCompany as any).phoneNumber || "—"}</p>
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Số điện thoại liên hệ</p>
+                  <p className="font-bold text-slate-800 text-xs bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 inline-block">{selectedCompany.phoneNumber || "—"}</p>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Website doanh nghiệp</p>
-                  <div className="font-bold text-[#006B7A] text-sm">
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Website doanh nghiệp</p>
+                  <div className="font-bold text-slate-800 text-xs">
                     {selectedCompany.website ? (
-                      <a 
-                        href={selectedCompany.website.startsWith('http') ? selectedCompany.website : `https://${selectedCompany.website}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="hover:underline inline-flex items-center gap-1 bg-teal-50 px-3 py-2 rounded-xl border border-teal-100 max-w-full"
+                      <a
+                        href={selectedCompany.website.startsWith('http') ? selectedCompany.website : `https://${selectedCompany.website}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline inline-flex items-center gap-1 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 max-w-full"
                       >
                         <Globe size={13} className="flex-shrink-0" />
                         <span className="truncate max-w-[200px] sm:max-w-[260px] inline-block">
@@ -533,49 +527,49 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                         <ExternalLink size={11} className="ml-0.5 flex-shrink-0" />
                       </a>
                     ) : (
-                      <span className="text-gray-400 italic bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 inline-block">Chưa có website</span>
+                      <span className="text-slate-400 italic bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 inline-block">Chưa có website</span>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Quy mô nhân sự</p>
-                  <p className="font-bold text-gray-800 text-sm bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 inline-flex items-center gap-1.5">
-                    <Users size={14} className="text-gray-400" />
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Quy mô nhân sự</p>
+                  <p className="font-bold text-slate-800 text-xs bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 inline-flex items-center gap-1.5">
+                    <Users size={13} className="text-slate-400" />
                     <span>{selectedCompany.companySize || "Chưa cập nhật"}</span>
                   </p>
                 </div>
               </div>
 
               {/* Head office Address */}
-              <div className="space-y-1 pt-2 border-t border-gray-100">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Địa chỉ trụ sở chính</p>
-                <div className="font-bold text-gray-700 flex items-start gap-2 text-sm bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                  <MapPin size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
+              <div className="space-y-1 pt-1.5 border-t border-slate-100">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Địa chỉ trụ sở chính</p>
+                <div className="font-semibold text-slate-700 flex items-start gap-2 text-xs bg-slate-50 p-2.5 rounded-md border border-slate-200">
+                  <MapPin size={14} className="text-red-650 mt-0.5 flex-shrink-0" />
                   <span>{getFullAddress(selectedCompany)}</span>
                 </div>
               </div>
 
               {/* Description / Introduction */}
-              <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Giới thiệu hoạt động</p>
-                <div className="font-medium text-gray-600 leading-relaxed bg-[#F8FAFC] p-4.5 rounded-2xl border border-gray-200/50 text-xs">
+              <div className="space-y-1 pt-1.5 border-t border-slate-100">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Giới thiệu hoạt động</p>
+                <div className="font-medium text-slate-650 leading-relaxed bg-slate-50 p-3.5 rounded-md border border-slate-200/80 text-xs whitespace-pre-wrap">
                   {selectedCompany.description || "Chưa có thông tin giới thiệu hoạt động."}
                 </div>
               </div>
 
               {/* Business License PDF Viewer Option */}
-              <div className="space-y-2 pt-2 border-t border-gray-100">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tài liệu pháp lý (Giấy phép kinh doanh)</p>
+              <div className="space-y-2 pt-1.5 border-t border-slate-100">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Tài liệu pháp lý (Giấy phép kinh doanh)</p>
                 {selectedCompany.businessLicense && selectedCompany.businessLicense.startsWith("http") ? (
-                  <div className="flex items-center justify-between p-4 rounded-2xl border border-teal-100 bg-[#006B7A]/5 text-teal-900 shadow-sm transition-all hover:bg-[#006B7A]/10 duration-200">
+                  <div className="flex items-center justify-between p-3.5 rounded-md border border-slate-200 bg-slate-50 transition-colors">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-2.5 bg-red-50 text-red-500 rounded-xl flex-shrink-0 shadow-xs">
-                        <FileText size={20} />
+                      <div className="p-2 bg-red-50 text-red-600 rounded border border-red-100 flex-shrink-0">
+                        <FileText size={18} />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-extrabold text-[12px] text-gray-700 truncate leading-tight">Giấy đăng ký kinh doanh.pdf</p>
-                        <p className="text-[10px] text-gray-400 mt-0.5 font-light">Tài liệu đã được xác thực pháp lý</p>
+                        <p className="font-semibold text-xs text-slate-700 truncate leading-tight">Giấy đăng ký kinh doanh.pdf</p>
+                        <p className="text-[9px] text-slate-400 mt-0.5">Tài liệu đã được xác thực pháp lý</p>
                       </div>
                     </div>
 
@@ -583,14 +577,14 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                       href={selectedCompany.businessLicense}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-white hover:bg-gray-50 border border-gray-200 text-[#006B7A] px-4 py-2 rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all active:scale-[0.98] inline-flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
+                      className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors inline-flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
                     >
-                      <ExternalLink size={13} />
+                      <ExternalLink size={12} />
                       <span>Xem file PDF</span>
                     </a>
                   </div>
                 ) : (
-                  <div className="p-5 rounded-2xl border border-gray-150 bg-gray-50/50 text-center font-medium text-gray-400 italic">
+                  <div className="p-4 rounded-md border border-slate-200 bg-slate-50 text-center font-medium text-slate-400 italic">
                     Doanh nghiệp chưa tải lên tệp tài liệu PDF giấy phép kinh doanh.
                   </div>
                 )}
@@ -598,13 +592,13 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-gray-100 flex justify-end gap-2 bg-gray-50 rounded-b-3xl">
+            <div className="p-3 border-t border-slate-200 flex justify-end gap-2 bg-slate-50 rounded-b-lg">
               <button
                 onClick={() => {
                   setIsDetailsModalOpen(false);
                   setSelectedCompany(null);
                 }}
-                className="px-5 py-2.5 border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-xl font-bold transition-all active:scale-[0.98] cursor-pointer"
+                className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-md font-semibold text-xs transition-colors cursor-pointer"
               >
                 Đóng
               </button>
@@ -613,16 +607,16 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                   <button
                     onClick={() => setIsRejectModalOpen(true)}
                     disabled={actionLoading}
-                    className="bg-rose-50 hover:bg-rose-100 text-rose-650 px-5 py-2.5 rounded-xl font-bold border border-rose-100 transition-all active:scale-[0.98] cursor-pointer"
+                    className="bg-rose-55 hover:bg-rose-100 text-rose-700 px-4 py-2 rounded-md font-semibold border border-rose-200 transition-colors cursor-pointer text-xs"
                   >
                     Từ chối phê duyệt
                   </button>
                   <button
-                    onClick={() => handleApprove(selectedCompany as EmployerUpdateResponse)}
+                    onClick={() => handleApprove(selectedCompany)}
                     disabled={actionLoading}
-                    className="bg-[#006B7A] hover:bg-[#005a66] text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                    className="bg-slate-900 hover:bg-slate-800 text-white px-4.5 py-2 rounded-md font-semibold transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
                   >
-                    <Check size={15} />
+                    <Check size={14} />
                     <span>Phê duyệt hồ sơ</span>
                   </button>
                 </>
@@ -630,18 +624,18 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                 <button
                   onClick={() => handleToggleBlock(selectedCompany, false)}
                   disabled={actionLoading}
-                  className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-5 py-2.5 rounded-xl font-extrabold transition-all active:scale-[0.98] cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                  className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-250 px-4.5 py-2 rounded-md font-semibold transition-colors cursor-pointer inline-flex items-center gap-1.5 text-xs"
                 >
-                  <Unlock size={14} />
+                  <Unlock size={13} />
                   <span>Mở khóa tài khoản</span>
                 </button>
               ) : (
                 <button
                   onClick={() => handleToggleBlock(selectedCompany, true)}
                   disabled={actionLoading}
-                  className="bg-red-50 hover:bg-red-100 text-red-650 border border-red-200 px-5 py-2.5 rounded-xl font-extrabold transition-all active:scale-[0.98] cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                  className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-4.5 py-2 rounded-md font-semibold transition-colors cursor-pointer inline-flex items-center gap-1.5 text-xs"
                 >
-                  <Lock size={14} />
+                  <Lock size={13} />
                   <span>Khóa tài khoản</span>
                 </button>
               )}
@@ -653,38 +647,38 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
       {/* 6. REJECTION REASON DIALOG MODAL (WITH QUICK OPTIONS) */}
       {isRejectModalOpen && selectedCompany && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn">
-          <div className="bg-white w-full max-w-lg rounded-3xl border border-gray-100 shadow-2xl overflow-hidden animate-scaleIn">
+          <div className="bg-white w-full max-w-lg rounded-lg border border-slate-200 shadow-xl overflow-hidden transform transition-all duration-300">
             {/* Header */}
-            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-rose-50/50">
-              <div className="flex items-center gap-2 text-rose-800">
-                <AlertTriangle size={18} />
-                <h4 className="font-extrabold text-sm uppercase tracking-widest">Từ chối phê duyệt doanh nghiệp</h4>
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2 text-slate-800">
+                <AlertTriangle size={16} className="text-red-600" />
+                <h4 className="font-semibold text-sm uppercase tracking-wider">Từ chối phê duyệt doanh nghiệp</h4>
               </div>
               <button
                 onClick={() => setIsRejectModalOpen(false)}
-                className="p-1.5 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all cursor-pointer"
+                className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
             {/* Form body */}
             <form onSubmit={handleRejectSubmit}>
               <div className="p-5 space-y-4 text-xs font-semibold">
-                <p className="text-gray-500 leading-relaxed font-light text-[11px]">
+                <p className="text-slate-500 leading-relaxed font-normal text-[11px]">
                   Vui lòng cung cấp lý do từ chối cụ thể cho <strong>{selectedCompany.companyName}</strong>. Lý do này sẽ hiển thị trực tiếp trong bảng quản trị của nhà tuyển dụng để họ khắc phục/gửi lại.
                 </p>
 
                 {/* Quick Templates option */}
-                <div className="space-y-2">
-                  <label className="text-gray-400 uppercase tracking-widest block text-[10px] font-bold">Gợi ý nhanh lý do từ chối</label>
-                  <div className="flex flex-col gap-1.5 max-h-36 overflow-y-auto p-1.5 rounded-2xl bg-gray-50 border border-gray-150 custom-scrollbar">
+                <div className="space-y-1.5">
+                  <label className="text-slate-500 uppercase tracking-wider block text-[10px] font-bold">Gợi ý nhanh lý do từ chối</label>
+                  <div className="flex flex-col gap-1 max-h-32 overflow-y-auto p-1.5 rounded-md bg-slate-50 border border-slate-200 custom-scrollbar">
                     {REJECTION_TEMPLATES.map((tmpl, idx) => (
                       <button
                         key={idx}
                         type="button"
                         onClick={() => setRejectionReason(tmpl)}
-                        className="bg-white hover:bg-rose-50 hover:text-rose-700 text-gray-600 px-3 py-2 rounded-xl border border-gray-200 hover:border-rose-200 transition-all text-left text-[11px] font-medium leading-relaxed block w-full cursor-pointer shadow-xs"
+                        className="bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded border border-slate-200 transition-colors text-left text-[11px] font-medium leading-normal block w-full cursor-pointer"
                       >
                         {tmpl}
                       </button>
@@ -693,24 +687,24 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-widest block text-[10px] font-bold">Chi tiết lý do từ chối <span className="text-red-500">*</span></label>
+                  <label className="text-slate-500 uppercase tracking-wider block text-[10px] font-bold">Chi tiết lý do từ chối <span className="text-red-500">*</span></label>
                   <textarea
                     rows={4}
                     required
                     placeholder="Ví dụ: Giấy đăng ký kinh doanh không rõ mã số thuế, vui lòng quét/chụp bản rõ hơn và gửi duyệt lại..."
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
-                    className="w-full bg-white border border-gray-250 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded-2xl px-4 py-3 text-gray-700 outline-none transition-all font-medium leading-relaxed"
+                    className="w-full bg-white border border-slate-250 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 rounded-md px-3.5 py-2.5 text-xs text-slate-700 outline-none transition-colors font-medium leading-relaxed"
                   />
                 </div>
               </div>
 
               {/* Action buttons footer */}
-              <div className="p-4 border-t border-gray-100 flex justify-end gap-2 bg-gray-50 rounded-b-3xl">
+              <div className="p-3 border-t border-slate-200 flex justify-end gap-2 bg-slate-50 rounded-b-lg">
                 <button
                   type="button"
                   onClick={() => setIsRejectModalOpen(false)}
-                  className="px-4 py-2 border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-xl font-bold transition-all active:scale-[0.98] cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-650 rounded-md font-semibold text-xs transition-colors cursor-pointer"
                 >
                   Quay lại
                 </button>
@@ -718,11 +712,11 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  className="bg-red-650 hover:bg-red-700 disabled:bg-gray-300 text-white px-5 py-2 rounded-xl font-bold shadow-md transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white px-4 py-2 rounded-md font-semibold transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
                 >
                   {actionLoading ? (
                     <>
-                      <Loader2 size={13} className="animate-spin" />
+                      <Loader2 size={12} className="animate-spin" />
                       <span>Đang xử lý...</span>
                     </>
                   ) : (

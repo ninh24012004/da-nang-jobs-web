@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useUsers } from "@/hooks/useUsers";
 import { useEmployers } from "@/hooks/useEmployers";
 import { useDashboard } from "@/hooks/useDashboard";
-import { EmployerUpdateResponse } from "@/types/employer";
+import { EmployerResponse } from "@/types/employer";
 import {
   Users,
   Building,
@@ -56,10 +56,10 @@ export default function AdminDashboard() {
     fetchTrends
   } = useDashboard();
 
-  const { fetchPendingCompanies, approveEmployer, rejectEmployer } = useEmployers();
+  const { fetchCompaniesByStatus, approveEmployer, rejectEmployer } = useEmployers();
 
   // Recent pending companies
-  const [pendingCompanies, setPendingCompanies] = useState<EmployerUpdateResponse[]>([]);
+  const [pendingCompanies, setPendingCompanies] = useState<EmployerResponse[]>([]);
 
   // Function to load all dashboard data from backend
   const loadDashboardData = useCallback(async (days = selectedDays) => {
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
       const [_, __, pendingRes] = await Promise.all([
         fetchSummary(),
         fetchTrends(days),
-        fetchPendingCompanies(0, 3).catch(() => null)
+        fetchCompaniesByStatus("PENDING", 0, 3).catch(() => null)
       ]);
       if (pendingRes) {
         setPendingCompanies(pendingRes.content || []);
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
     } finally {
       setStatsLoading(false);
     }
-  }, [fetchSummary, fetchTrends, fetchPendingCompanies, selectedDays]);
+  }, [fetchSummary, fetchTrends, fetchCompaniesByStatus, selectedDays]);
 
   // Initial load
   useEffect(() => {
@@ -96,11 +96,11 @@ export default function AdminDashboard() {
   }, [selectedDays, fetchTrends]);
 
   // Quick Action Handlers
-  const handleApproveQuick = async (company: EmployerUpdateResponse) => {
+  const handleApproveQuick = async (company: EmployerResponse) => {
     if (!window.confirm(`Phê duyệt hồ sơ pháp lý doanh nghiệp "${company.companyName}"?`)) return;
     setActionLoading(true);
     try {
-      await approveEmployer(company.employerId);
+      await approveEmployer(company.id);
       toast.success(`Đã duyệt doanh nghiệp "${company.companyName}" thành công!`);
       await loadDashboardData();
     } catch (err: any) {
@@ -110,7 +110,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleRejectQuick = async (company: EmployerUpdateResponse) => {
+  const handleRejectQuick = async (company: EmployerResponse) => {
     const reason = window.prompt(`Nhập lý do từ chối cho "${company.companyName}":`);
     if (reason === null) return;
     if (!reason.trim()) {
@@ -354,49 +354,49 @@ export default function AdminDashboard() {
     const { paths, maxVal, graphWidth, graphHeight, paddingX, paddingY, width, height, paddingXRight } = getGraphData();
 
     return (
-      <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs flex flex-col h-96 relative select-none">
+      <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col h-96 relative select-none">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
           <div>
-            <h4 className="font-extrabold text-sm text-gray-800">Biểu đồ xu hướng hoạt động</h4>
-            <p className="text-[10px] text-gray-400 font-semibold mt-0.5">
+            <h4 className="font-semibold text-sm text-slate-800">Biểu đồ xu hướng hoạt động</h4>
+            <p className="text-[10px] text-slate-400 mt-0.5">
               Thống kê lượng đăng ký & tương tác hệ thống theo thời gian
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Chart Type Selector */}
-            <div className="flex items-center gap-1 bg-gray-50 border border-gray-100 rounded-xl p-1">
+            <div className="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-md p-0.5">
               <button
                 onClick={() => setChartType("line")}
-                className={`px-3 py-1 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${chartType === "line" ? "bg-[#006B7A] text-white shadow-xs" : "text-gray-500 hover:bg-gray-100"}`}
+                className={`px-2.5 py-1 rounded text-[10px] font-medium transition-colors cursor-pointer ${chartType === "line" ? "bg-slate-900 text-white shadow-xs" : "text-slate-650 hover:bg-slate-200/50"}`}
               >
                 Đường cong
               </button>
               <button
                 onClick={() => setChartType("bar")}
-                className={`px-3 py-1 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${chartType === "bar" ? "bg-[#006B7A] text-white shadow-xs" : "text-gray-500 hover:bg-gray-100"}`}
+                className={`px-2.5 py-1 rounded text-[10px] font-medium transition-colors cursor-pointer ${chartType === "bar" ? "bg-slate-900 text-white shadow-xs" : "text-slate-650 hover:bg-slate-200/50"}`}
               >
                 Cột nhóm
               </button>
             </div>
 
             {/* Timeframe Selector */}
-            <div className="flex items-center gap-1 bg-gray-50 border border-gray-100 rounded-xl p-1">
+            <div className="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-md p-0.5">
               <button
                 onClick={() => setSelectedDays(7)}
-                className={`px-3 py-1 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${selectedDays === 7 ? "bg-[#006B7A] text-white shadow-xs" : "text-gray-500 hover:bg-gray-100"}`}
+                className={`px-2.5 py-1 rounded text-[10px] font-medium transition-colors cursor-pointer ${selectedDays === 7 ? "bg-slate-900 text-white shadow-xs" : "text-slate-650 hover:bg-slate-200/50"}`}
               >
                 7 Ngày
               </button>
               <button
                 onClick={() => setSelectedDays(15)}
-                className={`px-3 py-1 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${selectedDays === 15 ? "bg-[#006B7A] text-white shadow-xs" : "text-gray-500 hover:bg-gray-100"}`}
+                className={`px-2.5 py-1 rounded text-[10px] font-medium transition-colors cursor-pointer ${selectedDays === 15 ? "bg-slate-900 text-white shadow-xs" : "text-slate-650 hover:bg-slate-200/50"}`}
               >
                 15 Ngày
               </button>
               <button
                 onClick={() => setSelectedDays(30)}
-                className={`px-3 py-1 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${selectedDays === 30 ? "bg-[#006B7A] text-white shadow-xs" : "text-gray-500 hover:bg-gray-100"}`}
+                className={`px-2.5 py-1 rounded text-[10px] font-medium transition-colors cursor-pointer ${selectedDays === 30 ? "bg-slate-900 text-white shadow-xs" : "text-slate-650 hover:bg-slate-200/50"}`}
               >
                 30 Ngày
               </button>
@@ -405,31 +405,31 @@ export default function AdminDashboard() {
         </div>
 
         {/* Legend / Metrics Toggles */}
-        <div className="flex flex-wrap items-center gap-3.5 text-[9px] font-bold mb-4 bg-gray-50/50 p-2.5 rounded-2xl border border-gray-100/50">
+        <div className="flex flex-wrap items-center gap-2 text-[10px] font-medium mb-3 bg-slate-50 p-2 rounded-md border border-slate-200/60">
           <button
             onClick={() => setActiveMetrics(p => ({ ...p, candidates: !p.candidates }))}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${activeMetrics.candidates ? "bg-teal-50 border-teal-200 text-teal-700 shadow-xs" : "bg-white border-gray-200 text-gray-400"}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${activeMetrics.candidates ? "bg-teal-50 border-teal-200 text-teal-800 shadow-xs" : "bg-white border-slate-200 text-slate-400"}`}
           >
             <span className="h-2 w-2 rounded-full bg-[#0D9488]" />
             Ứng viên
           </button>
           <button
             onClick={() => setActiveMetrics(p => ({ ...p, employers: !p.employers }))}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${activeMetrics.employers ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-xs" : "bg-white border-gray-200 text-gray-400"}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${activeMetrics.employers ? "bg-indigo-50 border-indigo-200 text-indigo-850 shadow-xs" : "bg-white border-slate-200 text-slate-400"}`}
           >
             <span className="h-2 w-2 rounded-full bg-[#4F46E5]" />
             Doanh nghiệp
           </button>
           <button
             onClick={() => setActiveMetrics(p => ({ ...p, jobs: !p.jobs }))}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${activeMetrics.jobs ? "bg-violet-50 border-violet-200 text-violet-700 shadow-xs" : "bg-white border-gray-200 text-gray-400"}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${activeMetrics.jobs ? "bg-violet-50 border-violet-200 text-violet-850 shadow-xs" : "bg-white border-slate-200 text-slate-400"}`}
           >
             <span className="h-2 w-2 rounded-full bg-[#8B5CF6]" />
             Việc làm
           </button>
           <button
             onClick={() => setActiveMetrics(p => ({ ...p, applications: !p.applications }))}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${activeMetrics.applications ? "bg-amber-50 border-amber-200 text-amber-700 shadow-xs" : "bg-white border-gray-200 text-gray-400"}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${activeMetrics.applications ? "bg-amber-50 border-amber-200 text-amber-850 shadow-xs" : "bg-white border-slate-200 text-slate-400"}`}
           >
             <span className="h-2 w-2 rounded-full bg-[#F59E0B]" />
             Ứng tuyển
@@ -630,15 +630,15 @@ export default function AdminDashboard() {
       {/* 1. Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-800 tracking-tight">Bảng điều khiển</h1>
-          <p className="text-gray-400 mt-1 text-xs font-medium">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bảng điều khiển</h1>
+          <p className="text-slate-550 mt-1 text-xs font-medium">
             Tổng quan hoạt động nền tảng DaNangJobs · Cập nhật thời gian thực
           </p>
         </div>
         <button
           onClick={() => loadDashboardData()}
           disabled={statsLoading}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#006B7A] hover:bg-[#005a66] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 disabled:opacity-60 cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-md border border-transparent transition-colors duration-150 disabled:opacity-60 cursor-pointer"
         >
           {statsLoading ? (
             <Loader2 size={13} className="animate-spin" />
@@ -652,96 +652,96 @@ export default function AdminDashboard() {
       {/* 2. Stats Grid Row - Dynamic 6 Cards Layout */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {/* Card 1: Candidates */}
-        <div className="bg-white p-4.5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1 min-w-0">
-            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider truncate">Ứng viên</p>
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider truncate">Ứng viên</p>
             {statsLoading ? (
-              <div className="h-6 w-12 bg-gray-150 rounded animate-pulse mt-1" />
+              <div className="h-5 w-12 bg-slate-100 rounded animate-pulse mt-1" />
             ) : (
-              <h3 className="text-xl font-extrabold text-teal-600 tracking-tight">{metrics?.totalCandidates || 0}</h3>
+              <h3 className="text-lg font-bold text-slate-900 tracking-tight">{metrics?.totalCandidates || 0}</h3>
             )}
           </div>
-          <div className="p-2.5 bg-teal-50 text-teal-600 rounded-xl flex-shrink-0">
-            <UserCheck size={18} />
+          <div className="p-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md flex-shrink-0">
+            <UserCheck size={16} />
           </div>
         </div>
 
         {/* Card 2: Employers */}
-        <div className="bg-white p-4.5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1 min-w-0">
-            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider truncate">Doanh nghiệp</p>
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider truncate">Doanh nghiệp</p>
             {statsLoading ? (
-              <div className="h-6 w-12 bg-gray-150 rounded animate-pulse mt-1" />
+              <div className="h-5 w-12 bg-slate-100 rounded animate-pulse mt-1" />
             ) : (
-              <h3 className="text-xl font-extrabold text-indigo-600 tracking-tight">{metrics?.totalEmployers || 0}</h3>
+              <h3 className="text-lg font-bold text-slate-900 tracking-tight">{metrics?.totalEmployers || 0}</h3>
             )}
           </div>
-          <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl flex-shrink-0">
-            <Building size={18} />
+          <div className="p-2 bg-blue-50 text-blue-700 border border-blue-100 rounded-md flex-shrink-0">
+            <Building size={16} />
           </div>
         </div>
 
         {/* Card 3: Jobs */}
-        <div className="bg-white p-4.5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1 min-w-0">
-            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider truncate">Tin tuyển dụng</p>
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider truncate">Tin tuyển dụng</p>
             {statsLoading ? (
-              <div className="h-6 w-12 bg-gray-150 rounded animate-pulse mt-1" />
+              <div className="h-5 w-12 bg-slate-100 rounded animate-pulse mt-1" />
             ) : (
-              <h3 className="text-xl font-extrabold text-violet-600 tracking-tight">{metrics?.totalJobs || 0}</h3>
+              <h3 className="text-lg font-bold text-slate-900 tracking-tight">{metrics?.totalJobs || 0}</h3>
             )}
           </div>
-          <div className="p-2.5 bg-violet-50 text-violet-600 rounded-xl flex-shrink-0">
-            <Briefcase size={18} />
+          <div className="p-2 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-md flex-shrink-0">
+            <Briefcase size={16} />
           </div>
         </div>
 
         {/* Card 4: Applications */}
-        <div className="bg-white p-4.5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1 min-w-0">
-            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider truncate">Đơn ứng tuyển</p>
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider truncate">Đơn ứng tuyển</p>
             {statsLoading ? (
-              <div className="h-6 w-12 bg-gray-150 rounded animate-pulse mt-1" />
+              <div className="h-5 w-12 bg-slate-100 rounded animate-pulse mt-1" />
             ) : (
-              <h3 className="text-xl font-extrabold text-sky-600 tracking-tight">{metrics?.totalApplications || 0}</h3>
+              <h3 className="text-lg font-bold text-slate-900 tracking-tight">{metrics?.totalApplications || 0}</h3>
             )}
           </div>
-          <div className="p-2.5 bg-sky-50 text-sky-600 rounded-xl flex-shrink-0">
-            <FileText size={18} />
+          <div className="p-2 bg-slate-550/10 text-slate-700 border border-slate-200 rounded-md flex-shrink-0">
+            <FileText size={16} />
           </div>
         </div>
 
         {/* Card 5: Pending Employers */}
-        <div className="bg-white p-4.5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1 min-w-0">
-            <p className="text-[9px] font-bold text-amber-500 uppercase tracking-wider truncate">DN Chờ Duyệt</p>
+            <p className="text-[10px] font-medium text-amber-600 uppercase tracking-wider truncate">DN Chờ Duyệt</p>
             {statsLoading ? (
-              <div className="h-6 w-12 bg-gray-150 rounded animate-pulse mt-1" />
+              <div className="h-5 w-12 bg-slate-100 rounded animate-pulse mt-1" />
             ) : (
-              <h3 className={`text-xl font-extrabold text-amber-600 tracking-tight ${metrics?.pendingEmployers && metrics.pendingEmployers > 0 ? "animate-pulse" : ""}`}>
+              <h3 className="text-lg font-bold text-amber-700 tracking-tight">
                 {metrics?.pendingEmployers || 0}
               </h3>
             )}
           </div>
-          <div className={`p-2.5 bg-amber-50 text-amber-500 rounded-xl flex-shrink-0 ${metrics?.pendingEmployers && metrics.pendingEmployers > 0 ? "animate-bounce" : ""}`}>
-            <ShieldAlert size={18} />
+          <div className="p-2 bg-amber-50 text-amber-700 border border-amber-155 rounded-md flex-shrink-0">
+            <ShieldAlert size={16} />
           </div>
         </div>
 
         {/* Card 6: Pending Jobs */}
-        <div className="bg-white p-4.5 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between transition-colors duration-150">
           <div className="space-y-1 min-w-0">
-            <p className="text-[9px] font-bold text-rose-500 uppercase tracking-wider truncate">Tin Chờ Duyệt</p>
+            <p className="text-[10px] font-medium text-red-600 uppercase tracking-wider truncate">Tin Chờ Duyệt</p>
             {statsLoading ? (
-              <div className="h-6 w-12 bg-gray-150 rounded animate-pulse mt-1" />
+              <div className="h-5 w-12 bg-slate-100 rounded animate-pulse mt-1" />
             ) : (
-              <h3 className={`text-xl font-extrabold text-rose-600 tracking-tight ${metrics?.pendingJobs && metrics.pendingJobs > 0 ? "animate-pulse" : ""}`}>
+              <h3 className="text-lg font-bold text-red-650 tracking-tight">
                 {metrics?.pendingJobs || 0}
               </h3>
             )}
           </div>
-          <div className={`p-2.5 bg-rose-50 text-rose-500 rounded-xl flex-shrink-0 ${metrics?.pendingJobs && metrics.pendingJobs > 0 ? "animate-bounce animate-duration-1000" : ""}`}>
-            <Clock size={18} />
+          <div className="p-2 bg-red-50 text-red-700 border border-red-155 rounded-md flex-shrink-0">
+            <Clock size={16} />
           </div>
         </div>
       </div>
@@ -752,36 +752,36 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2">{renderTrendChart()}</div>
 
         {/* Categories Progress Bar Chart panel - Span 1 */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs flex flex-col h-96 overflow-hidden">
+        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col h-96 overflow-hidden">
           <div>
-            <h4 className="font-extrabold text-sm text-gray-800">Cơ cấu ngành nghề nổi bật</h4>
-            <p className="text-[10px] text-gray-400 font-semibold mt-0.5">Số lượng tin tuyển dụng phân theo lĩnh vực</p>
+            <h4 className="font-semibold text-sm text-slate-800">Cơ cấu ngành nghề nổi bật</h4>
+            <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Số lượng tin tuyển dụng phân theo lĩnh vực</p>
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar mt-4 space-y-4 pr-1">
             {statsLoading ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
-                <Loader2 size={24} className="animate-spin text-[#006B7A]" />
-                <span className="text-[10px] font-bold">Đang phân tích cơ cấu...</span>
+              <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2">
+                <Loader2 size={24} className="animate-spin text-slate-900" />
+                <span className="text-[10px] font-semibold">Đang phân tích cơ cấu...</span>
               </div>
             ) : !summary?.jobsByCategory || summary.jobsByCategory.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-400 text-center font-medium">
-                <Briefcase size={28} className="text-gray-300 mb-2" />
-                <span className="text-[11px] font-bold text-gray-700">Chưa có cơ cấu việc làm</span>
-                <span className="text-[9px] text-gray-400 mt-1">Đăng thêm việc làm để hiển thị phân tích.</span>
+              <div className="flex flex-col items-center justify-center h-full text-slate-400 text-center font-medium">
+                <Briefcase size={28} className="text-slate-350 mb-2" />
+                <span className="text-xs font-semibold text-slate-700">Chưa có cơ cấu việc làm</span>
+                <span className="text-[9px] text-slate-400 mt-1">Đăng thêm việc làm để hiển thị phân tích.</span>
               </div>
             ) : (
               (() => {
                 const maxJobCount = Math.max(...summary.jobsByCategory.map(c => c.jobCount), 1);
                 return summary.jobsByCategory.slice(0, 6).map((cat, idx) => (
                   <div key={idx} className="space-y-1.5">
-                    <div className="flex justify-between text-[10px] font-extrabold text-gray-700">
+                    <div className="flex justify-between text-[11px] font-medium text-slate-750">
                       <span className="truncate max-w-[70%]">{cat.categoryName}</span>
-                      <span className="text-[#006B7A] font-mono">{cat.jobCount} tin</span>
+                      <span className="text-slate-900 font-mono font-bold">{cat.jobCount} tin</span>
                     </div>
-                    <div className="h-2 w-full bg-gray-50 rounded-full overflow-hidden border border-gray-100/50">
+                    <div className="h-1.5 w-full bg-slate-100 rounded-sm overflow-hidden border border-slate-200/40">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#006B7A] to-[#009fb2] transition-all duration-500"
+                        className="h-full rounded-sm bg-slate-900 transition-all duration-500"
                         style={{ width: `${(cat.jobCount / maxJobCount) * 100}%` }}
                       />
                     </div>
@@ -796,24 +796,24 @@ export default function AdminDashboard() {
       {/* 4. Bottom Section: Tabs Container Table & Quick pending list */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Applications by Status Statistics - Span 2 */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-gray-100 shadow-xs flex flex-col min-h-[380px] overflow-hidden">
+        <div className="lg:col-span-2 bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col min-h-[380px] overflow-hidden">
           <div>
-            <h4 className="font-extrabold text-sm text-gray-800">Thống kê trạng thái ứng tuyển</h4>
-            <p className="text-[10px] text-gray-400 font-semibold mt-0.5">Tỷ lệ và số lượng đơn nộp phân bổ theo trạng thái hồ sơ</p>
+            <h4 className="font-semibold text-sm text-slate-800">Thống kê trạng thái ứng tuyển</h4>
+            <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Tỷ lệ và số lượng đơn nộp phân bổ theo trạng thái hồ sơ</p>
           </div>
 
-          <div className="flex-1 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex-1 mt-5 grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Left Column: Visual summary list */}
-            <div className="space-y-3.5 flex flex-col justify-center">
+            <div className="space-y-2.5 flex flex-col justify-center">
               {statsLoading ? (
-                <div className="flex flex-col items-center justify-center py-10 text-gray-400 gap-2">
-                  <Loader2 size={24} className="animate-spin text-[#006B7A]" />
-                  <span className="text-[10px] font-bold">Đang phân tích trạng thái...</span>
+                <div className="flex flex-col items-center justify-center py-10 text-slate-400 gap-2">
+                  <Loader2 size={24} className="animate-spin text-slate-900" />
+                  <span className="text-[10px] font-semibold">Đang phân tích trạng thái...</span>
                 </div>
               ) : !summary?.applicationsByStatus || summary.applicationsByStatus.length === 0 ? (
-                <div className="flex flex-col items-center justify-center text-gray-400 text-center font-medium py-10">
-                  <FileText size={28} className="text-gray-300 mb-2" />
-                  <span className="text-[11px] font-bold text-gray-700">Chưa có thống kê đơn nộp</span>
+                <div className="flex flex-col items-center justify-center text-slate-400 text-center font-medium py-10">
+                  <FileText size={28} className="text-slate-350 mb-2" />
+                  <span className="text-xs font-semibold text-slate-700">Chưa có thống kê đơn nộp</span>
                 </div>
               ) : (
                 (() => {
@@ -822,49 +822,49 @@ export default function AdminDashboard() {
                     const percentage = ((status.count / totalApps) * 100).toFixed(1);
 
                     let label = status.statusName;
-                    let bgColor = "bg-gray-50 border-gray-150 text-gray-500";
-                    let progressColor = "bg-gray-400";
-                    let icon = <AlertCircle size={14} />;
+                    let bgColor = "bg-slate-100 border-slate-200 text-slate-650";
+                    let progressColor = "bg-slate-400";
+                    let icon = <AlertCircle size={13} />;
 
                     if (status.statusName === "PENDING") {
                       label = "Hồ sơ chờ phản hồi";
                       bgColor = "bg-amber-50 border-amber-100 text-amber-700";
-                      progressColor = "bg-amber-500";
-                      icon = <Clock size={14} className="stroke-[2.5]" />;
+                      progressColor = "bg-amber-600";
+                      icon = <Clock size={13} />;
                     } else if (status.statusName === "ACCEPTED") {
                       label = "Hồ sơ được chấp nhận";
                       bgColor = "bg-emerald-50 border-emerald-100 text-emerald-700";
-                      progressColor = "bg-emerald-500";
-                      icon = <CheckCircle2 size={14} className="stroke-[2.5]" />;
+                      progressColor = "bg-emerald-600";
+                      icon = <CheckCircle2 size={13} />;
                     } else if (status.statusName === "REJECTED") {
                       label = "Hồ sơ bị từ chối";
-                      bgColor = "bg-rose-50 border-rose-100 text-rose-700";
-                      progressColor = "bg-rose-500";
-                      icon = <XCircle size={14} className="stroke-[2.5]" />;
+                      bgColor = "bg-red-50 border-red-100 text-red-700";
+                      progressColor = "bg-red-600";
+                      icon = <XCircle size={13} />;
                     } else if (status.statusName === "CANCELLED") {
                       label = "Hồ sơ đã hủy";
-                      bgColor = "bg-gray-50 border-gray-150 text-gray-500";
-                      progressColor = "bg-gray-400";
-                      icon = <AlertCircle size={14} className="stroke-[2.5]" />;
+                      bgColor = "bg-slate-100 border-slate-200 text-slate-500";
+                      progressColor = "bg-slate-400";
+                      icon = <AlertCircle size={13} />;
                     }
 
                     return (
-                      <div key={idx} className="p-3 bg-gray-50/50 border border-gray-100/50 rounded-2xl space-y-2">
+                      <div key={idx} className="p-2.5 bg-slate-50 border border-slate-200/60 rounded-md space-y-1.5">
                         <div className="flex items-center justify-between text-[11px]">
                           <div className="flex items-center gap-2">
-                            <span className={`p-1 rounded-lg ${bgColor} flex-shrink-0`}>
+                            <span className={`p-1 rounded ${bgColor} flex-shrink-0`}>
                               {icon}
                             </span>
-                            <span className="font-extrabold text-gray-700">{label}</span>
+                            <span className="font-semibold text-slate-700">{label}</span>
                           </div>
                           <div className="text-right">
-                            <span className="font-extrabold text-gray-800 font-mono">{status.count} đơn </span>
-                            <span className="text-gray-400 text-[10px] font-bold">({percentage}%)</span>
+                            <span className="font-semibold text-slate-900 font-mono">{status.count} đơn </span>
+                            <span className="text-slate-400 text-[10px]">({percentage}%)</span>
                           </div>
                         </div>
-                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-1.5 w-full bg-slate-100 rounded-sm overflow-hidden">
                           <div
-                            className={`h-full rounded-full ${progressColor} transition-all duration-500`}
+                            className={`h-full rounded-sm ${progressColor} transition-all duration-500`}
                             style={{ width: `${percentage}%` }}
                           />
                         </div>
@@ -876,20 +876,20 @@ export default function AdminDashboard() {
             </div>
 
             {/* Right Column: Visual comparisons / charts explanation / callout */}
-            <div className="flex flex-col justify-between p-4.5 bg-gradient-to-br from-gray-50 to-gray-50/30 border border-gray-100 rounded-3xl">
-              <div className="space-y-3">
-                <div className="p-2.5 bg-[#006B7A]/5 text-[#006B7A] rounded-2xl w-fit">
-                  <TrendingUp size={20} className="stroke-[2.5]" />
+            <div className="flex flex-col justify-between p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <div className="space-y-2">
+                <div className="p-1.5 bg-slate-200/80 text-slate-700 rounded-md w-fit border border-slate-300/40">
+                  <TrendingUp size={16} />
                 </div>
-                <h5 className="font-extrabold text-[12px] text-gray-800 leading-snug">Góc nhìn xu hướng tuyển dụng</h5>
-                <p className="text-[10px] text-gray-500 leading-relaxed font-medium">
+                <h5 className="font-semibold text-xs text-slate-800 leading-snug">Góc nhìn xu hướng tuyển dụng</h5>
+                <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
                   Tỷ lệ hồ sơ được chấp nhận phản ánh hiệu quả kết nối của hệ thống. Tỷ lệ chờ duyệt cao cho thấy ứng viên đang tích cực nộp đơn và doanh nghiệp cần đẩy nhanh tiến độ phê duyệt.
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-gray-100/80 mt-4 flex items-center justify-between text-[9px] font-bold text-gray-400 uppercase tracking-wider">
+              <div className="pt-3 border-t border-slate-200/80 mt-4 flex items-center justify-between text-[9px] font-semibold text-slate-450 uppercase tracking-wider">
                 <span>Cập nhật mới nhất</span>
-                <span className="font-mono text-[#006B7A] font-bold bg-[#006B7A]/5 px-2 py-0.5 rounded-lg">
+                <span className="font-mono text-slate-900 font-semibold bg-slate-200 px-2 py-0.5 rounded">
                   Thời gian thực
                 </span>
               </div>
@@ -898,54 +898,54 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Pending Approvals panel - Span 1 */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs flex flex-col h-[380px] overflow-hidden">
+        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col h-[380px] overflow-hidden">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h4 className="font-extrabold text-sm text-gray-800">Duyệt hồ sơ nhanh</h4>
-              <p className="text-[10px] text-gray-400 font-semibold mt-0.5">Yêu cầu đăng ký doanh nghiệp mới cần phê duyệt</p>
+              <h4 className="font-semibold text-sm text-slate-800">Duyệt hồ sơ nhanh</h4>
+              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Yêu cầu đăng ký doanh nghiệp mới cần phê duyệt</p>
             </div>
             <Link
               href="/admin/employer"
-              className="text-[#006B7A] hover:underline text-[9px] font-extrabold flex items-center gap-0.5"
+              className="text-slate-900 hover:text-slate-750 text-[10px] font-semibold flex items-center gap-0.5"
             >
               <span>Xem hết</span>
               <ChevronRight size={12} />
             </Link>
           </div>
 
-          <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-1">
+          <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-1">
             {statsLoading ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
-                <Loader2 size={24} className="animate-spin text-[#006B7A]" />
-                <span className="text-[10px] font-bold">Đang tải danh sách chờ duyệt...</span>
+              <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2">
+                <Loader2 size={24} className="animate-spin text-slate-900" />
+                <span className="text-[10px] font-semibold">Đang tải danh sách chờ duyệt...</span>
               </div>
             ) : pendingCompanies.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-400 text-center font-medium py-8 border-2 border-dashed border-gray-100 rounded-2xl">
-                <ShieldCheck size={28} className="text-emerald-500 mb-2" />
-                <span className="text-[11px] font-bold text-gray-700">Đã giải quyết toàn bộ!</span>
-                <span className="text-[9px] text-gray-400 mt-1">Không có hồ sơ doanh nghiệp nào chờ phê duyệt.</span>
+              <div className="flex flex-col items-center justify-center h-full text-slate-400 text-center font-medium py-8 border border-dashed border-slate-200 rounded-md bg-slate-50">
+                <ShieldCheck size={28} className="text-emerald-600 mb-2" />
+                <span className="text-xs font-semibold text-slate-700">Đã giải quyết toàn bộ!</span>
+                <span className="text-[9px] text-slate-400 mt-1">Không có hồ sơ doanh nghiệp nào chờ phê duyệt.</span>
               </div>
             ) : (
               pendingCompanies.map(c => (
                 <div
                   key={c.id}
-                  className="p-3 bg-gray-50/70 border border-gray-100/50 rounded-2xl flex items-center justify-between gap-3 hover:bg-gray-50 hover:shadow-xs transition-all duration-200 group"
+                  className="p-2.5 bg-white border border-slate-200 rounded-md flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors duration-150 group"
                 >
                   <div className="min-w-0 flex items-center gap-2.5">
-                    <div className="h-10 w-10 rounded-xl border border-gray-100 overflow-hidden flex items-center justify-center font-bold text-xs shadow-inner bg-white flex-shrink-0 relative">
+                    <div className="h-9 w-9 rounded-md border border-slate-200 overflow-hidden flex items-center justify-center font-semibold text-xs shadow-inner bg-white flex-shrink-0 relative">
                       {c.logoUrl && c.logoUrl.trim() !== "" ? (
                         <img src={c.logoUrl} alt="Logo" className="h-full w-full object-cover" />
                       ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#006B7A] to-[#009fb2] text-white flex items-center justify-center font-bold font-mono text-xs">
+                        <div className="absolute inset-0 bg-slate-900 text-white flex items-center justify-center font-semibold font-mono text-xs">
                           {c.companyName ? c.companyName.slice(0, 2).toUpperCase() : "DN"}
                         </div>
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-extrabold text-[11px] text-gray-800 leading-snug truncate group-hover:text-[#006B7A] transition-colors">
+                      <p className="font-semibold text-[11px] text-slate-800 leading-snug truncate group-hover:text-slate-950 transition-colors">
                         {c.companyName}
                       </p>
-                      <p className="text-[9px] text-gray-400 font-mono font-bold mt-1">MST: {c.taxCode}</p>
+                      <p className="text-[9px] text-slate-450 font-mono font-medium mt-0.5">MST: {c.taxCode}</p>
                     </div>
                   </div>
 
@@ -953,18 +953,18 @@ export default function AdminDashboard() {
                     <button
                       onClick={() => handleRejectQuick(c)}
                       disabled={actionLoading}
-                      className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition-all cursor-pointer border border-rose-100/50 active:scale-95 disabled:opacity-50"
+                      className="p-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-md border border-red-200 transition-colors cursor-pointer disabled:opacity-50"
                       title="Từ chối hồ sơ"
                     >
-                      <X size={12} className="stroke-[2.5]" />
+                      <X size={12} />
                     </button>
                     <button
                       onClick={() => handleApproveQuick(c)}
                       disabled={actionLoading}
-                      className="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg transition-all cursor-pointer border border-emerald-100/50 active:scale-95 disabled:opacity-50"
+                      className="p-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md transition-colors cursor-pointer border border-emerald-200 disabled:opacity-50"
                       title="Phê duyệt hồ sơ"
                     >
-                      <Check size={12} className="stroke-[2.5]" />
+                      <Check size={12} />
                     </button>
                   </div>
                 </div>

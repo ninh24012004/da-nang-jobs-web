@@ -1,7 +1,7 @@
 import api from "./api";
 import { ApiResponse } from "@/types/apiResponse";
 import { PositionRequest, PositionResponse } from "@/types/position";
-import { getCachedOrFetch } from "@/lib/cache";
+import { getCachedOrFetch, invalidateCache } from "@/lib/cache";
 
 export const positionService = {
   /** GET /positions */
@@ -21,18 +21,21 @@ export const positionService = {
   /** POST /positions */
   createPosition: async (data: PositionRequest): Promise<PositionResponse> => {
     const response = await api.post<ApiResponse<PositionResponse>>("/positions", data);
+    invalidateCache("cache_positions");
     return response.data.data;
   },
 
   /** PUT /positions/:id */
   updatePosition: async (id: number, data: PositionRequest): Promise<PositionResponse> => {
     const response = await api.put<ApiResponse<PositionResponse>>(`/positions/${id}`, data);
+    invalidateCache("cache_positions");
     return response.data.data;
   },
 
   /** DELETE /positions/:id */
   deletePosition: async (id: number): Promise<void> => {
     await api.delete<ApiResponse<void>>(`/positions/${id}`);
+    invalidateCache("cache_positions");
   },
 };
 

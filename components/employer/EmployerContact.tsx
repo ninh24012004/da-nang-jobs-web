@@ -19,7 +19,7 @@ export default function EmployerContact() {
     <section id="contact" className="bg-white py-16 md:py-24 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title elements */}
-        <div className="text-left border-l-4 border-[#006b7a] pl-4 mb-12 space-y-2">
+        <div className="text-left border-l-4 border-[#00B14F] pl-4 mb-12 space-y-2">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 tracking-tight leading-snug">
             Sẵn sàng đồng hành cùng Doanh nghiệp tại Đà Nẵng
           </h2>
@@ -31,10 +31,10 @@ export default function EmployerContact() {
         {/* Support contacts directory cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Hải Châu & Thanh Khê group */}
-          <div className="bg-gray-50/50 border border-gray-150 rounded-2xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+          <div className="bg-gray-50/50 border border-gray-150 rounded-lg p-6 sm:p-8 space-y-6 flex flex-col justify-between">
             <div className="space-y-4 text-left">
               <div className="flex items-center gap-2">
-                <span className="p-1.5 bg-[#006b7a]/10 text-[#006b7a] rounded-lg">
+                <span className="p-1.5 bg-[#00B14F]/10 text-[#00B14F] rounded-lg">
                   <MapPin size={18} />
                 </span>
                 <h3 className="font-extrabold text-gray-800 text-lg tracking-tight">
@@ -50,7 +50,7 @@ export default function EmployerContact() {
                 {haiChauThanhKhe.map((advisor, idx) => (
                   <div
                     key={idx}
-                    className="bg-white p-3 rounded-xl border border-gray-100 hover:border-[#006b7a]/30 transition-colors flex items-center justify-between"
+                    className="bg-white p-3 rounded-lg border border-gray-100 hover:border-[#00B14F]/30 transition-colors flex items-center justify-between"
                   >
                     <div className="text-left">
                       <p className="text-xs font-semibold text-gray-800">{advisor.name}</p>
@@ -58,7 +58,7 @@ export default function EmployerContact() {
                     </div>
                     <a
                       href={`tel:${advisor.phone.replace(/\s+/g, "")}`}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#006b7a]/10 hover:bg-[#006b7a]/15 text-[#006b7a] text-xs font-bold transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#00B14F]/10 hover:bg-[#00B14F]/15 text-[#00B14F] text-xs font-bold transition-colors"
                     >
                       <Phone size={12} />
                       <span>{advisor.phone}</span>
@@ -70,10 +70,10 @@ export default function EmployerContact() {
           </div>
 
           {/* Liên Chiểu & Cẩm Lệ group */}
-          <div className="bg-gray-50/50 border border-gray-150 rounded-2xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+          <div className="bg-gray-50/50 border border-gray-150 rounded-lg p-6 sm:p-8 space-y-6 flex flex-col justify-between">
             <div className="space-y-4 text-left">
               <div className="flex items-center gap-2">
-                <span className="p-1.5 bg-[#006b7a]/10 text-[#006b7a] rounded-lg">
+                <span className="p-1.5 bg-[#00B14F]/10 text-[#00B14F] rounded-lg">
                   <MapPin size={18} />
                 </span>
                 <h3 className="font-extrabold text-gray-800 text-lg tracking-tight">
@@ -89,7 +89,7 @@ export default function EmployerContact() {
                 {lienChieuCamLe.map((advisor, idx) => (
                   <div
                     key={idx}
-                    className="bg-white p-3 rounded-xl border border-gray-100 hover:border-[#006b7a]/30 transition-colors flex items-center justify-between"
+                    className="bg-white p-3 rounded-lg border border-gray-100 hover:border-[#00B14F]/30 transition-colors flex items-center justify-between"
                   >
                     <div className="text-left">
                       <p className="text-xs font-semibold text-gray-800">{advisor.name}</p>
@@ -97,7 +97,7 @@ export default function EmployerContact() {
                     </div>
                     <a
                       href={`tel:${advisor.phone.replace(/\s+/g, "")}`}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#006b7a]/10 hover:bg-[#006b7a]/15 text-[#006b7a] text-xs font-bold transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#00B14F]/10 hover:bg-[#00B14F]/15 text-[#00B14F] text-xs font-bold transition-colors"
                     >
                       <Phone size={12} />
                       <span>{advisor.phone}</span>
@@ -109,10 +109,10 @@ export default function EmployerContact() {
           </div>
 
           {/* Customer Support & Service Quality */}
-          <div className="bg-teal-50/20 border border-gray-150 rounded-2xl p-6 sm:p-8 space-y-6 flex flex-col justify-between lg:col-span-1 md:col-span-2">
+          <div className="bg-[#00B14F]/5 border border-gray-150 rounded-lg p-6 sm:p-8 space-y-6 flex flex-col justify-between lg:col-span-1 md:col-span-2">
             <div className="space-y-6 text-left">
               <div className="flex items-center gap-2">
-                <span className="p-1.5 bg-[#006b7a]/10 text-[#006b7a] rounded-lg">
+                <span className="p-1.5 bg-[#00B14F]/10 text-[#00B14F] rounded-lg">
                   <Headset size={18} />
                 </span>
                 <h3 className="font-extrabold text-gray-800 text-lg tracking-tight">
@@ -124,8 +124,8 @@ export default function EmployerContact() {
               </p>
 
               {/* Prominent Hotline */}
-              <div className="bg-[#006b7a]/5 border border-[#006b7a]/20 rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-3">
-                <span className="p-3 bg-[#006b7a] text-white rounded-full shadow-md animate-pulse">
+              <div className="bg-[#00B14F]/5 border border-[#00B14F]/20 rounded-lg p-6 flex flex-col items-center justify-center text-center space-y-3">
+                <span className="p-3 bg-[#00B14F] text-white rounded-full shadow-sm">
                   <Headset size={28} />
                 </span>
                 <div className="space-y-1">
@@ -134,7 +134,7 @@ export default function EmployerContact() {
                   </p>
                   <a
                     href="tel:1900068889"
-                    className="text-2xl font-black text-[#006b7a] hover:text-[#005a66] transition-colors block"
+                    className="text-2xl font-black text-[#00B14F] hover:text-[#00873D] transition-colors block"
                   >
                     1900 068 889
                   </a>

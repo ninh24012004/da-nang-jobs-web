@@ -12,7 +12,7 @@ export default function MegaMenuTextLink({
     return (
         <Link
             href={href}
-            className="block py-1.5 text-sm font-medium text-gray-800 hover:text-[#006b7a] transition-colors"
+            className="block py-1.5 text-sm font-medium text-gray-800 hover:text-[#00B14F] transition-colors"
         >
             {label}
         </Link>

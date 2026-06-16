@@ -19,13 +19,26 @@ export interface JobResponse {
   needsReapproval: boolean;
   approveStatus: ApproveJobStatus;
   visibilityStatus: VisibilityJobStatus;
+
+  positionId?: number;
   positionName?: string;
+
+  experienceLevelId?: number;
   experienceLevelName?: string;
+
+  wardId?: number;
   wardName?: string;
+
   employerId?: number;
   employerName?: string;
+
+  categoryIds?: number[];
   categoryNames?: string[];
+
+  skillIds?: number[];
   skillNames?: string[];
+
+  tagIds?: number[];
   tagNames?: string[];
 }
 

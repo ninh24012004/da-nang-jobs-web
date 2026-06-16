@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import LogoIcon from "@/components/icons/LogoIcon";
 import Input from "@/components/ui/Input";
@@ -215,7 +216,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
     };
 
     return (
-        <div className="flex min-h-screen w-full bg-white font-sans text-[#1a1a1a]">
+        <div className="flex min-h-screen w-full bg-white font-sans text-slate-800">
             <div className="flex w-full flex-col justify-center px-6 sm:px-12 md:w-1/2 md:px-16 lg:px-24">
                 <div className="mx-auto w-full max-w-md">
                     <div className="mb-4">
@@ -233,10 +234,10 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                     <div className="mb-8">
                         {step === "register" && (
                             <>
-                                <h2 className="text-2xl font-bold text-[#0d1b2a] md:text-3xl">
+                                <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">
                                     {title}
                                 </h2>
-                                <p className="mt-2 text-lg text-gray-500">
+                                <p className="mt-2 text-lg text-slate-500 font-light">
                                     {description}
                                 </p>
                             </>
@@ -244,10 +245,10 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
 
                         {step === "verification" && (
                             <>
-                                <h2 className="text-2xl font-bold text-[#0d1b2a] md:text-3xl">
+                                <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">
                                     Xác thực email
                                 </h2>
-                                <p className="mt-2 text-lg text-gray-500">
+                                <p className="mt-2 text-lg text-slate-500 font-light">
                                     Nhập mã xác thực được gửi đến {email}
                                 </p>
                             </>
@@ -263,6 +264,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                 type="text"
                                 value={fullName}
                                 error={errors.fullName}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     setFullName(e.target.value);
                                     setErrors((prev) => ({
@@ -280,6 +282,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                     type="text"
                                     value={companyName}
                                     error={errors.companyName}
+                                    variant="secondary"
                                     onChange={(e) => {
                                         setCompanyName(e.target.value);
                                         setErrors((prev) => ({
@@ -297,6 +300,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                 type="email"
                                 value={email}
                                 error={errors.email}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     setEmail(e.target.value);
                                     setErrors((prev) => ({
@@ -313,6 +317,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                 type="password"
                                 value={password}
                                 error={errors.password}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     setPassword(e.target.value);
                                     setErrors((prev) => ({
@@ -329,6 +334,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                 type="password"
                                 value={confirmPassword}
                                 error={errors.confirmPassword}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     setConfirmPassword(e.target.value);
                                     setErrors((prev) => ({
@@ -338,7 +344,11 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                 }}
                             />
 
-                            <Button type="submit" isLoading={loading}>
+                            <Button
+                                type="submit"
+                                isLoading={loading}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
+                            >
                                 Đăng ký tài khoản
                             </Button>
                         </form>
@@ -353,6 +363,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                 maxLength={6}
                                 value={code}
                                 error={errors.code}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
                                 onChange={(e) => {
                                     const value = e.target.value.replace(/\D/g, "");
                                     setCode(value);
@@ -363,13 +374,17 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                 }}
                             />
 
-                            <Button type="submit" isLoading={loading}>
+                            <Button
+                                type="submit"
+                                isLoading={loading}
+                                variant={userType === "candidate" ? "primary" : "secondary"}
+                            >
                                 Xác thực mã
                             </Button>
 
                             <div className="text-center">
                                 {countdown > 0 ? (
-                                    <p className="text-sm text-gray-500">
+                                    <p className="text-sm text-slate-500 font-medium">
                                         Gửi lại mã sau {countdown}s
                                     </p>
                                 ) : (
@@ -377,7 +392,10 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                         type="button"
                                         onClick={handleResendCode}
                                         disabled={resendLoading}
-                                        className="text-sm font-medium text-[#006b7a] hover:underline disabled:opacity-50"
+                                        className={cn(
+                                            "text-sm font-medium hover:underline disabled:opacity-50 border-none bg-transparent cursor-pointer",
+                                            userType === "candidate" ? "text-[#00B14F]" : "text-[#0F172A]"
+                                        )}
                                     >
                                         {resendLoading ? "Đang gửi..." : "Gửi lại mã"}
                                     </button>
@@ -391,7 +409,10 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                             <button
                                 type="button"
                                 onClick={handleBack}
-                                className="mb-4 flex items-center gap-2 text-sm font-medium text-[#006b7a] hover:underline"
+                                className={cn(
+                                    "mb-4 flex items-center gap-2 text-sm font-medium hover:underline border-none bg-transparent cursor-pointer",
+                                    userType === "candidate" ? "text-[#00B14F]" : "text-[#0F172A]"
+                                )}
                             >
                                 <ChevronLeft size={16} />
                                 Quay lại
@@ -403,18 +424,21 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                         <Button
                             type="button"
                             variant="outline"
-                            className="flex items-center justify-center gap-3 py-2.5 text-sm font-medium text-[#1a1a1a] hover:bg-gray-100 w-full cursor-pointer"
+                            className="flex items-center justify-center gap-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 w-full cursor-pointer rounded-[6px]"
                         >
                             <GoogleIcon />
                             Google
                         </Button>
 
                         <div className="text-center mt-4">
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-slate-550 font-medium">
                                 Đã có tài khoản?{" "}
                                 <Link
                                     href={loginPath}
-                                    className="font-medium text-[#006b7a] hover:underline"
+                                    className={cn(
+                                        "font-bold hover:underline",
+                                        userType === "candidate" ? "text-[#00B14F]" : "text-[#0F172A]"
+                                    )}
                                 >
                                     Đăng nhập
                                 </Link>
@@ -424,21 +448,29 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                 </div>
             </div>
 
-            <div className="relative hidden overflow-hidden bg-gradient-to-br from-[#006b7a] to-[#004d5a] md:flex md:w-1/2 md:items-center md:justify-center">
+            <div
+                className={cn(
+                    "relative hidden overflow-hidden md:flex md:w-1/2 md:items-center md:justify-center",
+                    userType === "candidate"
+                        ? "bg-gradient-to-br from-[#00B14F] to-[#00873D]"
+                        : "bg-gradient-to-br from-[#0F172A] to-[#1E293B]"
+                )}
+            >
                 <Image
                     src="/images/background/register-bg.png"
                     alt="Register Background"
                     fill
                     priority
+                    sizes="(max-width: 768px) 0vw, 50vw"
                     className="object-cover object-center"
                 />
 
-                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute inset-0 bg-slate-900/50" />
 
-                <div className="relative z-10 text-center text-white">
-                    <h3 className="mb-4 text-3xl font-bold">Đà Nẵng Jobs</h3>
-                    <p className="text-lg opacity-80">
-                        Cơ hội việc làm tại Đà Nẵng
+                <div className="relative z-10 text-center text-white p-8">
+                    <h3 className="mb-4 text-3xl font-extrabold tracking-tight">Đà Nẵng Jobs</h3>
+                    <p className="text-lg opacity-90 font-light">
+                        Cơ hội việc làm tại thành phố Đà Nẵng đáng sống
                     </p>
                 </div>
             </div>
