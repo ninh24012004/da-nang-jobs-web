@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import employerService from "@/services/employerService";
 import {
   EmployerResponse,
-  EmployerUpdateResponse,
   UpdateEmployerRequest,
   UpdateEmployerNowRequest,
   RejectEmployerRequest,
@@ -15,7 +14,6 @@ import { PageResponse } from "@/types/pageResponse";
 export function useEmployers() {
   const [profile, setProfile] = useState<EmployerResponse | null>(null);
   const [companies, setCompanies] = useState<EmployerResponse[]>([]);
-  const [pendingCompanies, setPendingCompanies] = useState<EmployerUpdateResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -61,18 +59,6 @@ export function useEmployers() {
     }
   }, []);
 
-  const fetchUpdateFirstNew = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const data = await employerService.getUpdateFirstNew();
-      return data;
-    } catch (err: any) {
-      console.error(err);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const fetchAllCompanies = useCallback(async (page: number = 0, size: number = 10) => {
     setIsLoading(true);
@@ -88,19 +74,6 @@ export function useEmployers() {
     }
   }, []);
 
-  const fetchPendingCompanies = useCallback(async (page: number = 0, size: number = 10) => {
-    setIsLoading(true);
-    try {
-      const res = await employerService.getPendingCompanies(page, size);
-      setPendingCompanies(res.content || []);
-      return res;
-    } catch (err: any) {
-      console.error(err);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const fetchCompaniesByStatus = useCallback(async (status: EmployerStatus, page: number = 0, size: number = 10) => {
     setIsLoading(true);
@@ -155,15 +128,12 @@ export function useEmployers() {
   return {
     profile,
     companies,
-    pendingCompanies,
     isLoading,
     isSubmitting,
     fetchProfile,
     updateProfile,
     updateProfileNow,
-    fetchUpdateFirstNew,
     fetchAllCompanies,
-    fetchPendingCompanies,
     fetchCompaniesByStatus,
     approveEmployer,
     rejectEmployer,

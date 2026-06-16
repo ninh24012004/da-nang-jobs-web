@@ -13,14 +13,10 @@ export default function EmployerAiFuture() {
 
   return (
     <section className="bg-white py-16 md:py-24 overflow-hidden relative">
-      {/* Decorative gradients */}
-      <div className="absolute right-0 top-1/4 w-72 h-72 bg-[#006b7a]/5 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute left-0 bottom-1/4 w-72 h-72 bg-teal-500/5 rounded-full blur-[100px] pointer-events-none"></div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#006b7a]/10 border border-[#006b7a]/20 text-[#006b7a] text-xs font-bold uppercase tracking-wider">
-            <Brain size={14} className="text-[#006b7a] animate-pulse" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#00B14F]/10 border border-[#00B14F]/20 text-[#00B14F] text-xs font-bold uppercase tracking-wider">
+            <Brain size={14} className="text-[#00B14F]" />
             <span>AI Connection Core</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800">
@@ -35,21 +31,20 @@ export default function EmployerAiFuture() {
           {/* Image Column */}
           <div className="lg:w-1/2 w-full">
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#006b7a]/5 to-teal-500/5 rounded-2xl blur-xl group-hover:scale-105 transition-transform duration-500 pointer-events-none"></div>
               <img
                 src="https://tuyendung.topcv.vn/images/introduction/new-feed.png"
                 alt="Trang web đăng tin tuyển dụng miễn phí"
-                className="relative w-full max-w-md lg:max-w-none mx-auto rounded-2xl shadow-xl border border-gray-100 object-contain transform group-hover:scale-[1.01] transition-transform duration-500"
+                className="relative w-full max-w-md lg:max-w-none mx-auto rounded-lg shadow-sm border border-gray-100 object-contain transition-transform duration-150"
               />
             </div>
           </div>
 
           {/* Text Content Column */}
           <div className="lg:w-1/2 space-y-6 text-left">
-            <div className="inline-flex items-center gap-1 text-xs font-bold text-[#006b7a] uppercase tracking-widest bg-[#006b7a]/10 px-3 py-1.5 rounded-md">
+            <div className="inline-flex items-center gap-1 text-xs font-bold text-[#00B14F] uppercase tracking-widest bg-[#00B14F]/10 px-3 py-1.5 rounded">
               <span>DNJ AI Core</span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-800 border-l-4 border-[#006b7a] pl-4 leading-tight">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-800 border-l-4 border-[#00B14F] pl-4 leading-tight">
               Tương lai kết nối nhân sự thông suốt
             </h3>
             <p className="text-gray-600 text-base font-light leading-relaxed">
@@ -64,7 +59,7 @@ export default function EmployerAiFuture() {
             {/* AI Pillars grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="flex gap-3">
-                <div className="p-2.5 h-fit rounded-lg bg-[#006b7a]/10 text-[#006b7a]">
+                <div className="p-2.5 h-fit rounded-lg bg-[#00B14F]/10 text-[#00B14F]">
                   <Cpu size={20} />
                 </div>
                 <div>
@@ -74,7 +69,7 @@ export default function EmployerAiFuture() {
               </div>
 
               <div className="flex gap-3">
-                <div className="p-2.5 h-fit rounded-lg bg-[#006b7a]/10 text-[#006b7a]">
+                <div className="p-2.5 h-fit rounded-lg bg-[#00B14F]/10 text-[#00B14F]">
                   <TrendingUp size={20} />
                 </div>
                 <div>
@@ -88,7 +83,7 @@ export default function EmployerAiFuture() {
             <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
               <div
                 onClick={(e) => handleScrollTo(e as any, "#banner-form")}
-                className="flex items-center justify-center w-full sm:w-auto border border-[#006b7a] text-[#006b7a] hover:bg-[#006b7a]/5 px-6 py-3 rounded-lg text-sm font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                className="flex items-center justify-center w-full sm:w-auto border border-[#00B14F] text-[#00B14F] hover:bg-[#00B14F]/5 px-6 py-3 rounded-md text-sm font-bold shadow-sm transition-colors duration-150 cursor-pointer"
               >
                 Liên hệ tư vấn
               </div>
@@ -99,7 +94,7 @@ export default function EmployerAiFuture() {
                   const element = document.querySelector("#banner-form");
                   if (element) element.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="flex items-center justify-center w-full sm:w-auto bg-[#006b7a] hover:bg-[#005a66] text-white px-6 py-3 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="flex items-center justify-center w-full sm:w-auto bg-[#00B14F] hover:bg-[#00873D] text-white px-6 py-3 rounded-md text-sm font-bold shadow-sm transition-colors duration-150"
               >
                 Đăng tin ngay
               </a>

@@ -6,7 +6,7 @@ export default function EmployerValues() {
   const values = [
     {
       title: "Đối với Doanh nghiệp",
-      icon: <ShieldCheck className="text-[#006b7a]" size={24} />,
+      icon: <ShieldCheck className="text-[#00B14F]" size={24} />,
       img: "https://tuyendung.topcv.vn/images/service/92836.png",
       bullets: [
         "Lợi thế cạnh tranh vượt trội: Chiêu mộ nhân sự xuất sắc, đẩy nhanh tiến trình chuyển đổi số và phát triển doanh nghiệp.",
@@ -17,7 +17,7 @@ export default function EmployerValues() {
     },
     {
       title: "Đối với Bộ phận Tuyển dụng",
-      icon: <Briefcase className="text-[#006b7a]" size={24} />,
+      icon: <Briefcase className="text-[#00B14F]" size={24} />,
       img: "https://tuyendung.topcv.vn/images/service/17732.png",
       bullets: [
         "Quản lý hồ sơ tập trung: Dễ dàng quản lý toàn bộ hồ sơ ứng viên nhận được theo từng tin tuyển dụng khoa học.",
@@ -33,7 +33,7 @@ export default function EmployerValues() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header content */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#006b7a] uppercase tracking-widest bg-[#006b7a]/10 px-3 py-1.5 rounded-md">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00B14F] uppercase tracking-widest bg-[#00B14F]/10 px-3 py-1.5 rounded">
             <span>Giá trị mang lại</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800">
@@ -49,21 +49,21 @@ export default function EmployerValues() {
           {values.map((val, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 sm:p-10 space-y-8 text-left flex flex-col justify-between"
+              className="bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 sm:p-10 space-y-8 text-left flex flex-col justify-between"
             >
               <div className="space-y-6">
                 {/* Illustration wrapper */}
-                <div className="rounded-xl overflow-hidden bg-gray-50 border border-gray-100/50 p-4 flex justify-center">
+                <div className="rounded-lg overflow-hidden bg-gray-50 border border-gray-100/50 p-4 flex justify-center">
                   <img
                     src={val.img}
                     alt={val.title}
-                    className="max-h-56 w-auto object-contain hover:scale-105 transition-transform duration-500"
+                    className="max-h-56 w-auto object-contain transition-transform duration-150"
                   />
                 </div>
 
                 {/* Section title */}
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#006b7a]/10 rounded-lg">{val.icon}</div>
+                  <div className="p-2 bg-[#00B14F]/10 rounded-lg">{val.icon}</div>
                   <h3 className="text-xl sm:text-2xl font-extrabold text-gray-800 tracking-tight">
                     {val.title}
                   </h3>
@@ -76,7 +76,7 @@ export default function EmployerValues() {
                     const parts = bullet.split(":");
                     return (
                       <li key={bIdx} className="flex items-start gap-3">
-                        <CheckCircle2 size={18} className="text-[#006b7a] mt-0.5 flex-shrink-0" />
+                        <CheckCircle2 size={18} className="text-[#00B14F] mt-0.5 flex-shrink-0" />
                         <span className="text-gray-650 text-sm md:text-base font-light leading-relaxed">
                           {parts.length > 1 ? (
                             <>

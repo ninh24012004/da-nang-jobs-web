@@ -136,7 +136,7 @@ export default function EmployerConsultationForm() {
         </div>
 
         {/* Double column form panel */}
-        <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col md:flex-row max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row max-w-4xl mx-auto">
           {/* Left panel graphic illustration */}
           <div
             className="hidden md:block md:w-1/2 bg-cover bg-center min-h-[450px]"
@@ -144,7 +144,7 @@ export default function EmployerConsultationForm() {
               backgroundImage: 'url("https://tuyendung.topcv.vn/images/banner_form_bg_v2.png")',
             }}
           >
-            <div className="h-full w-full bg-[#006b7a]/15 backdrop-blur-[1px] flex flex-col justify-end p-8 text-white text-left">
+            <div className="h-full w-full bg-[#00B14F]/15 backdrop-blur-[1px] flex flex-col justify-end p-8 text-white text-left">
               <h3 className="text-2xl font-black leading-snug">
                 Tuyển dụng hiệu quả cùng Đà Nẵng Job
               </h3>
@@ -158,7 +158,7 @@ export default function EmployerConsultationForm() {
           <div className="md:w-1/2 p-6 sm:p-10 text-left">
             {isSubmitted ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-10 space-y-4">
-                <div className="p-4 rounded-full bg-teal-50 text-[#006b7a] animate-bounce">
+                <div className="p-4 rounded-full bg-[#00B14F]/10 text-[#00B14F]">
                   <CheckCircle2 size={48} />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-800">Đăng ký thành công!</h3>
@@ -167,7 +167,7 @@ export default function EmployerConsultationForm() {
                 </p>
                 <button
                   onClick={() => setIsSubmitted(false)}
-                  className="px-6 py-2 border border-[#006b7a] text-[#006b7a] rounded-lg text-sm font-semibold hover:bg-teal-50 transition-colors"
+                  className="px-6 py-2 border border-[#00B14F] text-[#00B14F] rounded-md text-sm font-semibold hover:bg-[#00B14F]/5 transition-colors"
                 >
                   Gửi yêu cầu mới
                 </button>
@@ -175,7 +175,7 @@ export default function EmployerConsultationForm() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <h3 className="text-2xl font-extrabold text-[#006b7a] tracking-tight">
+                  <h3 className="text-2xl font-extrabold text-[#00B14F] tracking-tight">
                     Đăng ký nhận tư vấn
                   </h3>
                   <p className="text-xs text-gray-400 font-light">
@@ -189,8 +189,8 @@ export default function EmployerConsultationForm() {
                     Họ và tên *
                   </label>
                   <div
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-2.5 bg-white transition-all ${
-                      errors.fullname ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#006b7a] focus-within:ring-1 focus-within:ring-[#006b7a]"
+                    className={`flex items-center gap-2 border rounded-md px-3 py-2.5 bg-white transition-all ${
+                      errors.fullname ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#00B14F] focus-within:ring-1 focus-within:ring-[#00B14F]"
                     }`}
                   >
                     <User size={16} className="text-gray-400" />
@@ -212,8 +212,8 @@ export default function EmployerConsultationForm() {
                     Địa chỉ Email *
                   </label>
                   <div
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-2.5 bg-white transition-all ${
-                      errors.email ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#006b7a] focus-within:ring-1 focus-within:ring-[#006b7a]"
+                    className={`flex items-center gap-2 border rounded-md px-3 py-2.5 bg-white transition-all ${
+                      errors.email ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#00B14F] focus-within:ring-1 focus-within:ring-[#00B14F]"
                     }`}
                   >
                     <Mail size={16} className="text-gray-400" />
@@ -235,8 +235,8 @@ export default function EmployerConsultationForm() {
                     Số điện thoại *
                   </label>
                   <div
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-2.5 bg-white transition-all ${
-                      errors.phone ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#006b7a] focus-within:ring-1 focus-within:ring-[#006b7a]"
+                    className={`flex items-center gap-2 border rounded-md px-3 py-2.5 bg-white transition-all ${
+                      errors.phone ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#00B14F] focus-within:ring-1 focus-within:ring-[#00B14F]"
                     }`}
                   >
                     <Phone size={16} className="text-gray-400" />
@@ -258,8 +258,8 @@ export default function EmployerConsultationForm() {
                     Tỉnh/Thành phố *
                   </label>
                   <div
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-2.5 bg-white transition-all ${
-                      errors.city ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#006b7a] focus-within:ring-1 focus-within:ring-[#006b7a]"
+                    className={`flex items-center gap-2 border rounded-md px-3 py-2.5 bg-white transition-all ${
+                      errors.city ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#00B14F] focus-within:ring-1 focus-within:ring-[#00B14F]"
                     }`}
                   >
                     <Building size={16} className="text-gray-400" />
@@ -286,8 +286,8 @@ export default function EmployerConsultationForm() {
                     Nhu cầu tư vấn *
                   </label>
                   <div
-                    className={`flex items-center gap-2 border rounded-lg px-3 py-2.5 bg-white transition-all ${
-                      errors.consultingType ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#006b7a] focus-within:ring-1 focus-within:ring-[#006b7a]"
+                    className={`flex items-center gap-2 border rounded-md px-3 py-2.5 bg-white transition-all ${
+                      errors.consultingType ? "border-red-500 ring-1 ring-red-500" : "border-gray-250 focus-within:border-[#00B14F] focus-within:ring-1 focus-within:ring-[#00B14F]"
                     }`}
                   >
                     <HelpCircle size={16} className="text-gray-400" />
@@ -320,8 +320,8 @@ export default function EmployerConsultationForm() {
                       onChange={handleInputChange}
                       placeholder="Mô tả cụ thể thắc mắc hoặc yêu cầu riêng của bạn để chúng tôi chuẩn bị tư vấn tốt nhất..."
                       rows={3}
-                      className={`w-full text-sm font-light text-gray-700 placeholder-gray-350 border rounded-lg p-3 bg-white transition-all focus:outline-none ${
-                        errors.consultingText ? "border-red-500 focus:ring-1 focus:ring-red-500" : "border-gray-250 focus:border-[#006b7a] focus:ring-1 focus:ring-[#006b7a]"
+                      className={`w-full text-sm font-light text-gray-700 placeholder-gray-350 border rounded-md p-3 bg-white transition-all focus:outline-none ${
+                        errors.consultingText ? "border-red-500 focus:ring-1 focus:ring-red-500" : "border-gray-250 focus:border-[#00B14F] focus:ring-1 focus:ring-[#00B14F]"
                       }`}
                     ></textarea>
                     {errors.consultingText && <p className="text-[11px] text-red-500 font-medium pl-1">{errors.consultingText}</p>}
@@ -332,7 +332,7 @@ export default function EmployerConsultationForm() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#006b7a] hover:bg-[#005a66] text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98] disabled:bg-[#006b7a]/70 disabled:cursor-not-allowed pt-4"
+                  className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#00B14F] hover:bg-[#00873D] text-white font-bold rounded-md shadow-sm transition-colors duration-150 disabled:bg-[#00B14F]/70 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>

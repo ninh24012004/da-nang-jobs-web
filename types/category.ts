@@ -2,17 +2,20 @@ export interface CategoryResponse {
   id: number;
   categoryName: string;
   parentId: number | null;
+  parentCategoryId?: number | null;
 }
 
 export interface CategoryRequest {
   categoryName: string;
   parentId: number | null;
+  parentCategoryId?: number | null;
 }
 
 export interface CategoryTreeResponse {
   id: number;
   categoryName: string;
   parentId?: number | null;
+  parentCategoryId?: number | null;
   children?: CategoryTreeResponse[];
 }
 
@@ -23,3 +26,4 @@ export type CategoryFormData = {
   categoryName: string;
   parentId: number | null;
 };
+

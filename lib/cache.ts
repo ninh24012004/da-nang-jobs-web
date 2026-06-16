@@ -26,3 +26,9 @@ export const getCachedOrFetch = async <T>(key: string, fetchFn: () => Promise<T>
 
   return data;
 };
+
+export const invalidateCache = (key: string): void => {
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem(key);
+  }
+};

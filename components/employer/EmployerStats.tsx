@@ -44,21 +44,17 @@ export default function EmployerStats() {
 
   return (
     <section className="bg-gray-900 text-white py-16 md:py-24 relative overflow-hidden">
-      {/* Visual glowing decorators */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#006b7a]/5 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/5 rounded-full blur-[120px] pointer-events-none"></div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header content */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-400 uppercase tracking-widest bg-[#006b7a]/15 border border-[#006b7a]/20 px-3 py-1.5 rounded-full">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00B14F] uppercase tracking-widest bg-[#00B14F]/10 border border-[#00B14F]/20 px-3 py-1.5 rounded">
             <span>Dữ liệu thống kê</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             Những con số bảo chứng hiệu quả tuyển dụng
           </h2>
           <p className="text-gray-400 text-sm md:text-base font-light">
-            Khẳng định vị thế nền tảng công nghệ HR Tech hàng đầu khu vực Đà Nẵng qua dữ liệu hoạt động thực tế.
+            Khẳng định vị thế nền tảm công nghệ HR Tech hàng đầu khu vực Đà Nẵng qua dữ liệu hoạt động thực tế.
           </p>
         </div>
 
@@ -67,16 +63,16 @@ export default function EmployerStats() {
           {stats.map((stat, idx) => (
             <div
               key={idx}
-              className="bg-gray-800/40 border border-gray-800 rounded-2xl p-6 lg:p-8 hover:border-[#006b7a]/30 hover:bg-gray-800/60 transition-all duration-300 group flex flex-col items-center text-center"
+              className="bg-gray-800/40 border border-gray-800 rounded-lg p-6 lg:p-8 hover:border-[#00B14F]/30 hover:bg-gray-800/60 transition-colors duration-150 group flex flex-col items-center text-center"
             >
-              {/* Animated Floating Icon */}
-              <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#006b7a] to-teal-600 shadow-md shadow-teal-950/20 group-hover:scale-110 transition-transform duration-300 mb-6">
+              {/* Icon Container */}
+              <div className="p-3.5 rounded-lg bg-[#00B14F] shadow-sm mb-6 transition-colors duration-150">
                 {stat.icon}
               </div>
 
               {/* Value and descriptions */}
               <div className="space-y-2">
-                <span className="block text-4xl sm:text-5xl font-black bg-gradient-to-r from-teal-400 to-teal-300 bg-clip-text text-transparent tracking-tight">
+                <span className="block text-4xl sm:text-5xl font-black text-[#00B14F] tracking-tight">
                   {stat.value}
                 </span>
                 <h3 className="text-lg font-bold text-gray-200 tracking-wide">
@@ -94,13 +90,13 @@ export default function EmployerStats() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12 max-w-md mx-auto sm:max-w-none">
           <a
             href="#banner-form"
-            className="flex items-center justify-center w-full sm:w-auto border border-[#006b7a] text-teal-400 hover:bg-[#006b7a]/10 px-8 py-3.5 rounded-lg text-sm font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            className="flex items-center justify-center w-full sm:w-auto border border-[#00B14F] text-[#00B14F] hover:bg-[#00B14F]/10 px-8 py-3.5 rounded-md text-sm font-bold shadow-sm transition-colors duration-150 cursor-pointer"
           >
             Liên hệ tư vấn
           </a>
           <a
             href="#banner-form"
-            className="flex items-center justify-center w-full sm:w-auto bg-gradient-to-r from-[#006b7a] to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-8 py-3.5 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="flex items-center justify-center w-full sm:w-auto bg-[#00B14F] hover:bg-[#00873D] text-white px-8 py-3.5 rounded-md text-sm font-bold shadow-sm transition-colors duration-150"
           >
             Đăng tin miễn phí
           </a>

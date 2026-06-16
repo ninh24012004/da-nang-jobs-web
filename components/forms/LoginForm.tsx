@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 import LogoIcon from "@/components/icons/LogoIcon";
 import Input from "@/components/ui/Input";
@@ -236,7 +237,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
     };
 
     return (
-        <div className="flex h-screen w-full bg-white font-sans text-[#1a1a1a]">
+        <div className="flex h-screen w-full bg-white font-sans text-slate-800">
             <div className="flex w-full flex-col justify-center sm:px-12 md:w-1/2 md:px-16 lg:px-24">
                 <div className="mx-auto w-full max-w-md">
                     <div className="mb-4">
@@ -252,11 +253,11 @@ export default function LoginForm({ userType }: LoginFormProps) {
                     </div>
 
                     <div className="mb-8">
-                        <h2 className="text-2xl font-bold text-[#0d1b2a] md:text-3xl">
+                        <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">
                             {config.title}
                         </h2>
 
-                        <p className="mt-2 text-lg text-gray-500">
+                        <p className="mt-2 text-lg text-slate-500 font-light">
                             {config.description}
                         </p>
                     </div>
@@ -270,6 +271,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
                             autoComplete="email"
                             value={email}
                             error={errors.email}
+                            variant={userType === "candidate" ? "primary" : "secondary"}
                             onChange={(e) => {
                                 setEmail(e.target.value);
                                 setErrors((prev) => ({
@@ -287,6 +289,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
                             autoComplete="current-password"
                             value={password}
                             error={errors.password}
+                            variant={userType === "candidate" ? "primary" : "secondary"}
                             onChange={(e) => {
                                 setPassword(e.target.value);
                                 setErrors((prev) => ({
@@ -296,7 +299,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
                             }}
                         />
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between select-none">
                             <Checkbox
                                 id="remember"
                                 label="Ghi nhớ đăng nhập"
@@ -308,13 +311,20 @@ export default function LoginForm({ userType }: LoginFormProps) {
 
                             <Link
                                 href={config.forgotPasswordHref}
-                                className="text-sm font-medium text-[#006b7a] hover:underline"
+                                className={cn(
+                                    "text-sm font-medium hover:underline",
+                                    userType === "candidate" ? "text-[#00B14F]" : "text-[#0F172A]"
+                                )}
                             >
                                 Quên mật khẩu?
                             </Link>
                         </div>
 
-                        <Button type="submit" isLoading={loading}>
+                        <Button 
+                            type="submit" 
+                            isLoading={loading}
+                            variant={userType === "candidate" ? "primary" : "secondary"}
+                        >
                             Đăng nhập
                         </Button>
                     </form>
@@ -327,11 +337,14 @@ export default function LoginForm({ userType }: LoginFormProps) {
                     />
 
                     <div className="mt-10 text-center">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-slate-500">
                             {config.registerText}{" "}
                             <Link
                                 href={config.registerHref}
-                                className="font-bold text-[#006b7a] hover:underline"
+                                className={cn(
+                                    "font-bold hover:underline",
+                                    userType === "candidate" ? "text-[#00B14F]" : "text-[#0F172A]"
+                                )}
                             >
                                 Đăng ký ngay
                             </Link>
@@ -350,18 +363,18 @@ export default function LoginForm({ userType }: LoginFormProps) {
                     priority
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
 
                 <div className="absolute inset-0 flex flex-col justify-end p-8 text-white lg:p-16">
                     <div className="mb-8 max-w-xl">
                         <h2 className="mb-4 text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
                             {config.backgroundTitle}{" "}
-                            <span className="text-[#4fd1ed]">
+                            <span className="text-[#00B14F]">
                                 {config.backgroundHighlight}
                             </span>
                         </h2>
 
-                        <p className="text-lg leading-relaxed text-gray-200">
+                        <p className="text-lg leading-relaxed text-slate-200 font-light">
                             {config.backgroundDescription}
                         </p>
                     </div>
@@ -369,10 +382,10 @@ export default function LoginForm({ userType }: LoginFormProps) {
                     <div className="flex gap-8 border-t border-white/20 pt-8 lg:gap-12">
                         {config.stats.map((item) => (
                             <div key={item.label}>
-                                <p className="text-2xl font-bold lg:text-3xl">
+                                <p className="text-2xl font-bold lg:text-3xl text-white">
                                     {item.value}
                                 </p>
-                                <p className="text-sm text-gray-400">
+                                <p className="text-sm text-slate-400 font-medium">
                                     {item.label}
                                 </p>
                             </div>

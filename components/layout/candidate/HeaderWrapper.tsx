@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import CandidateHeader from "@/components/layout/candidate/CandidateHeader";
 
@@ -49,5 +49,9 @@ export default function HeaderWrapper() {
         return null;
     }
 
-    return <CandidateHeader isAuthenticated={isAuthenticated} user={user || undefined} />;
+    return (
+        <Suspense fallback={<div className="h-[76px] bg-white border-b border-slate-100" />}>
+            <CandidateHeader isAuthenticated={isAuthenticated} user={user || undefined} />
+        </Suspense>
+    );
 }

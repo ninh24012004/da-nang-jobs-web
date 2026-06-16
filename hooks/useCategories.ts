@@ -7,12 +7,16 @@ import { toast } from "sonner";
 
 // Map API Tree to UI Tree helper inside the hook
 const mapTree = (tree: CategoryTreeResponse[], parentId: number | null = null): Category[] => {
-    return tree.map(node => ({
-        id: node.id,
-        categoryName: node.categoryName,
-        parentId: parentId,
-        children: node.children ? mapTree(node.children, node.id) : []
-    }));
+    return tree.map(node => {
+        const actualParentId = parentId ?? node.parentCategoryId ?? node.parentId ?? null;
+        return {
+            id: node.id,
+            categoryName: node.categoryName,
+            parentId: actualParentId,
+            parentCategoryId: node.parentCategoryId ?? actualParentId,
+            children: node.children ? mapTree(node.children, node.id) : []
+        };
+    });
 };
 
 export function useCategories() {
@@ -78,7 +82,8 @@ export function useCategories() {
             setIsSubmitting(true);
             const requestData = {
                 categoryName: data.categoryName,
-                parentId: data.parentId
+                parentId: data.parentId,
+                parentCategoryId: data.parentId
             };
             const response = await categoryService.createCategory(requestData);
             toast.success("Thêm danh mục thành công!");
@@ -98,7 +103,8 @@ export function useCategories() {
             setIsSubmitting(true);
             const requestData = {
                 categoryName: data.categoryName,
-                parentId: data.parentId
+                parentId: data.parentId,
+                parentCategoryId: data.parentId
             };
             const response = await categoryService.updateCategory(id, requestData);
             toast.success("Cập nhật danh mục thành công!");

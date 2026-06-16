@@ -15,14 +15,14 @@ export default function HeaderButton({
     ...props
 }: HeaderButtonProps) {
     const base =
-        "px-5 py-2.5 rounded-lg font-bold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#006b7a]/50 active:scale-[0.98] cursor-pointer inline-flex items-center justify-center";
+        "px-4 py-2 rounded-md font-bold text-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[#00B14F]/50 cursor-pointer inline-flex items-center justify-center";
 
     const style =
         variant === "solid"
-            ? "bg-[#006b7a] text-white hover:bg-[#005a66] shadow-sm hover:shadow"
+            ? "bg-[#00B14F] text-white hover:bg-[#00873D] shadow-sm"
             : variant === "outline"
-                ? "border border-[#006b7a] text-[#006b7a] bg-white hover:bg-[#006b7a]/5"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-250";
+                ? "border border-[#00B14F] text-[#00B14F] bg-white hover:bg-[#00B14F]/5"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200";
 
     if (href) {
         return (
