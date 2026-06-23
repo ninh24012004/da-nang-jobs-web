@@ -140,10 +140,10 @@ export default function EmployerHeader() {
   }, []);
 
   useEffect(() => {
-    if (notiOpen && !notiFetched) {
+    if (isAuthenticated) {
       fetchNotifications();
     }
-  }, [notiOpen, notiFetched, fetchNotifications]);
+  }, [isAuthenticated, fetchNotifications]);
 
   const guestLinks = [
     { label: "Giới thiệu", href: "#introduction-hero" },
@@ -468,8 +468,15 @@ export default function EmployerHeader() {
               /* Guest Options */
               <>
                 <Link
+                  href="/employer/register"
+                  className="text-sm font-bold text-[#00B14F] border border-[#00B14F] hover:bg-[#00B14F]/5 transition-colors px-3.5 py-2 rounded-[6px]"
+                >
+                  Đăng ký
+                </Link>
+
+                <Link
                   href="/employer/login"
-                  className="text-sm font-bold text-slate-700 hover:text-[#00B14F] transition-colors px-3 py-2 rounded-[6px] hover:bg-slate-50"
+                  className="text-sm font-bold text-slate-700 hover:text-[#00B14F] transition-colors px-3.5 py-2 rounded-[6px] hover:bg-slate-50"
                 >
                   Đăng nhập
                 </Link>
@@ -603,7 +610,16 @@ export default function EmployerHeader() {
               ) : (
                 <>
                   <Link
-                    href="/employer/dashboard"
+                    href="/employer/register"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full border border-[#00B14F] text-[#00B14F] hover:bg-[#00B14F]/5 py-2.5 rounded-[6px] font-bold transition-colors"
+                  >
+                    <User size={16} />
+                    <span>Đăng ký</span>
+                  </Link>
+
+                  <Link
+                    href="/employer/login"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center justify-center gap-2 w-full border border-slate-200 py-2.5 rounded-[6px] text-slate-700 font-bold hover:bg-slate-50 transition-colors"
                   >

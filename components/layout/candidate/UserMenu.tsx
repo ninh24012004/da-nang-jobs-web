@@ -50,12 +50,9 @@ export default function UserMenu({ user }: Props) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
  
-  // Lazy fetch: chỉ gọi API khi panel mở lần đầu
   useEffect(() => {
-    if (notiOpen && !notiFetched) {
-      fetchNotifications();
-    }
-  }, [notiOpen, notiFetched, fetchNotifications]);
+    fetchNotifications();
+  }, [fetchNotifications]);
  
   const getInitials = (name: string) => {
     if (!name) return "JD";

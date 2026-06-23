@@ -3,6 +3,7 @@ export type VisibilityJobStatus = "ACTIVE" | "HIDDEN";
 
 export interface JobResponse {
   id: number;
+  logoUrl?: string;
   jobTitle: string;
   jobDescription: string;
   jobRequirements: string;

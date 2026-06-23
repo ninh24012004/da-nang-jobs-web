@@ -25,7 +25,7 @@ export default function EmployerOnboardingPage() {
   const [isEditing, setIsEditing] = useState(true);
 
   // Initialize hooks
-  const { fetchProfile, updateProfile, updateProfileNow, fetchUpdateFirstNew } = useEmployers();
+  const { fetchProfile, updateProfile, updateProfileNow } = useEmployers();
   const { fetchDistricts, fetchWards, fetchWardById } = useLocations();
   const { uploadLogo, uploadLicense } = useCloudinary();
 
@@ -46,6 +46,7 @@ export default function EmployerOnboardingPage() {
     address: "",
     about: "",
     phoneNumber: "",
+    emailCompany: "",
     businessLicense: "",
     logoUrl: ""
   });
@@ -156,16 +157,6 @@ export default function EmployerOnboardingPage() {
         setStatus(cached.status || "INCOMPLETE");
         setIsEditing(cached.status === "REJECTED" || !cached.status || cached.status === "INCOMPLETE" || cached.status === "APPROVED");
 
-        if (cached.status === "REJECTED") {
-          fetchUpdateFirstNew()
-            .then((updateData: any) => {
-              if (updateData && updateData.reason) {
-                setRejectionReason(updateData.reason);
-              }
-            })
-            .catch((err: any) => console.warn("Không lấy được lý do từ chối từ cache update-first-new:", err));
-        }
-
         setCompanyDetails({
           name: cached.companyName || "",
           taxCode: cached.taxCode || "",
@@ -176,6 +167,7 @@ export default function EmployerOnboardingPage() {
           address: cached.address || "",
           about: cached.description || "",
           phoneNumber: cached.phoneNumber || "",
+          emailCompany: cached.emailCompany || "",
           businessLicense: cached.businessLicense || "",
           logoUrl: cached.logoUrl || ""
         });
@@ -206,16 +198,6 @@ export default function EmployerOnboardingPage() {
           setStatus(data.status);
           setIsEditing(data.status === "REJECTED" || data.status === "INCOMPLETE" || data.status === "APPROVED");
 
-          if (data.status === "REJECTED") {
-            fetchUpdateFirstNew()
-              .then((updateData: any) => {
-                if (updateData && updateData.reason) {
-                  setRejectionReason(updateData.reason);
-                }
-              })
-              .catch((err: any) => console.warn("Không lấy được lý do từ chối từ API update-first-new:", err));
-          }
-
           setCompanyDetails({
             name: data.companyName || "",
             taxCode: data.taxCode || "",
@@ -226,6 +208,7 @@ export default function EmployerOnboardingPage() {
             address: data.address || "",
             about: data.description || "",
             phoneNumber: data.phoneNumber || "",
+            emailCompany: data.emailCompany || "",
             businessLicense: data.businessLicense || "",
             logoUrl: data.logoUrl || ""
           });
@@ -258,7 +241,7 @@ export default function EmployerOnboardingPage() {
         setIsEditing(true);
         setLoading(false);
       });
-  }, [router, fetchProfile, fetchUpdateFirstNew, fetchWardById]);
+  }, [router, fetchProfile, fetchWardById]);
 
   const hasLegalChanges = !!(
     originalProfile &&
@@ -292,6 +275,7 @@ export default function EmployerOnboardingPage() {
           address: companyDetails.address,
           description: companyDetails.about,
           phoneNumber: companyDetails.phoneNumber,
+          emailCompany: companyDetails.emailCompany,
           logoUrl: companyDetails.logoUrl
         })
       } else {
@@ -304,6 +288,7 @@ export default function EmployerOnboardingPage() {
           address: companyDetails.address,
           description: companyDetails.about,
           phoneNumber: companyDetails.phoneNumber,
+          emailCompany: companyDetails.emailCompany,
           businessLicense: companyDetails.businessLicense,
           logoUrl: companyDetails.logoUrl
         });
@@ -548,65 +533,43 @@ export default function EmployerOnboardingPage() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-gray-500 uppercase tracking-wider block">Giấy phép ĐKKD (PDF) <span className="text-red-500">*</span></label>
-                        {companyDetails.businessLicense && companyDetails.businessLicense.startsWith("http") ? (
-                          <div className="flex items-center justify-between p-3 rounded-xl border border-teal-150 bg-teal-50/20 text-teal-900">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="p-2 bg-red-50 text-red-500 rounded-lg flex-shrink-0">
-                                <FileText size={18} />
-                              </div>
-                              <div className="min-w-0">
-                                <p className="font-extrabold text-[11px] text-gray-700 truncate leading-tight">Giấy phép đăng ký kinh doanh.pdf</p>
-                                <a
-                                  href={companyDetails.businessLicense}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-[10px] text-[#006b7a] font-bold hover:underline flex items-center gap-0.5 mt-0.5"
-                                >
-                                  <Eye size={11} />
-                                  <span>Xem chi tiết file PDF</span>
-                                </a>
-                              </div>
+                        <label className="text-gray-500 uppercase tracking-wider block">Email liên hệ <span className="text-red-500">*</span></label>
+                        <input
+                          type="email"
+                          placeholder="Ví dụ: contact@mycompany.vn"
+                          value={companyDetails.emailCompany || ""}
+                          onChange={(e) => setCompanyDetails({ ...companyDetails, emailCompany: e.target.value })}
+                          className="w-full bg-white border border-gray-200 focus:border-[#006b7a] focus:ring-1 focus:ring-[#006b7a] rounded-xl px-4 py-2.5 text-gray-700 outline-none transition-all"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-gray-500 uppercase tracking-wider block">Giấy phép ĐKKD (PDF) <span className="text-red-500">*</span></label>
+                      {companyDetails.businessLicense && companyDetails.businessLicense.startsWith("http") ? (
+                        <div className="flex items-center justify-between p-3 rounded-xl border border-teal-150 bg-teal-50/20 text-teal-900">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="p-2 bg-red-50 text-red-500 rounded-lg flex-shrink-0">
+                              <FileText size={18} />
                             </div>
-                            <div className="flex gap-1.5 flex-shrink-0">
-                              <label className="cursor-pointer bg-white hover:bg-gray-50 border border-gray-200 px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-gray-600 shadow-sm transition-all active:scale-[0.98] inline-flex items-center gap-1">
-                                <UploadCloud size={12} />
-                                <span>Thay thế</span>
-                                <input
-                                  type="file"
-                                  accept=".pdf"
-                                  onChange={handleLicenseUpload}
-                                  disabled={uploadingLicense}
-                                  className="hidden"
-                                />
-                              </label>
-                              <button
-                                type="button"
-                                onClick={() => setCompanyDetails((prev) => ({ ...prev, businessLicense: "" }))}
-                                className="bg-red-50 hover:bg-red-100 text-red-650 px-2 py-1.5 rounded-lg text-[10px] font-bold transition-all active:scale-[0.98] inline-flex items-center gap-1"
+                            <div className="min-w-0">
+                              <p className="font-extrabold text-[11px] text-gray-700 truncate leading-tight">Giấy phép đăng ký kinh doanh.pdf</p>
+                              <a
+                                href={companyDetails.businessLicense}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] text-[#006b7a] font-bold hover:underline flex items-center gap-0.5 mt-0.5"
                               >
-                                <Trash2 size={12} />
-                                <span>Xóa</span>
-                              </button>
+                                <Eye size={11} />
+                                <span>Xem chi tiết file PDF</span>
+                              </a>
                             </div>
                           </div>
-                        ) : (
-                          <div className="relative">
-                            <label className="flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl border border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50/80 hover:border-gray-300 transition-all cursor-pointer text-center">
-                              {uploadingLicense ? (
-                                <>
-                                  <Loader2 className="h-6 w-6 animate-spin text-[#006b7a]" />
-                                  <span className="text-[10px] font-bold text-[#006b7a]">Đang tải tài liệu lên Cloudinary...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <UploadCloud className="h-6 w-6 text-gray-400" />
-                                  <div>
-                                    <span className="text-[10px] font-bold text-gray-700 block">Nhấp để tải Giấy phép ĐKKD (PDF) lên</span>
-                                    <span className="text-[9px] text-gray-400 font-light mt-0.5 block">File duy nhất định dạng PDF. Tối đa 10MB.</span>
-                                  </div>
-                                </>
-                              )}
+                          <div className="flex gap-1.5 flex-shrink-0">
+                            <label className="cursor-pointer bg-white hover:bg-gray-50 border border-gray-200 px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-gray-600 shadow-sm transition-all active:scale-[0.98] inline-flex items-center gap-1">
+                              <UploadCloud size={12} />
+                              <span>Thay thế</span>
                               <input
                                 type="file"
                                 accept=".pdf"
@@ -615,9 +578,43 @@ export default function EmployerOnboardingPage() {
                                 className="hidden"
                               />
                             </label>
+                            <button
+                              type="button"
+                              onClick={() => setCompanyDetails((prev) => ({ ...prev, businessLicense: "" }))}
+                              className="bg-red-50 hover:bg-red-100 text-red-650 px-2 py-1.5 rounded-lg text-[10px] font-bold transition-all active:scale-[0.98] inline-flex items-center gap-1"
+                            >
+                              <Trash2 size={12} />
+                              <span>Xóa</span>
+                            </button>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <label className="flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl border border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50/80 hover:border-gray-300 transition-all cursor-pointer text-center">
+                            {uploadingLicense ? (
+                              <>
+                                <Loader2 className="h-6 w-6 animate-spin text-[#006b7a]" />
+                                <span className="text-[10px] font-bold text-[#006b7a]">Đang tải tài liệu lên Cloudinary...</span>
+                              </>
+                            ) : (
+                              <>
+                                <UploadCloud className="h-6 w-6 text-gray-400" />
+                                <div>
+                                  <span className="text-[10px] font-bold text-gray-700 block">Nhấp để tải Giấy phép ĐKKD (PDF) lên</span>
+                                  <span className="text-[9px] text-gray-400 font-light mt-0.5 block">File duy nhất định dạng PDF. Tối đa 10MB.</span>
+                                </div>
+                              </>
+                            )}
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              onChange={handleLicenseUpload}
+                              disabled={uploadingLicense}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -840,6 +837,11 @@ export default function EmployerOnboardingPage() {
                       </div>
 
                       <div className="space-y-1">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Email liên hệ</p>
+                        <p className="font-bold text-gray-800">{companyDetails.emailCompany || "—"}</p>
+                      </div>
+
+                      <div className="space-y-1">
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tài liệu Giấy phép ĐKKD (PDF)</p>
                         {companyDetails.businessLicense && companyDetails.businessLicense.startsWith("http") ? (
                           <a
@@ -860,10 +862,10 @@ export default function EmployerOnboardingPage() {
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Website doanh nghiệp</p>
                         <p className="font-bold text-[#006b7a] text-sm">
                           {companyDetails.website ? (
-                            <a 
-                              href={companyDetails.website.startsWith('http') ? companyDetails.website : `https://${companyDetails.website}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
+                            <a
+                              href={companyDetails.website.startsWith('http') ? companyDetails.website : `https://${companyDetails.website}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="hover:underline inline-flex items-center gap-1 max-w-full"
                             >
                               <Globe size={13} className="flex-shrink-0" />

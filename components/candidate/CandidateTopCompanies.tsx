@@ -14,26 +14,12 @@ export default function CandidateTopCompanies() {
     const fetchTopCompanies = async () => {
       setIsLoading(true);
       try {
-        let cachedCompanies = null;
-        if (typeof window !== "undefined") {
-          try {
-            const cached = sessionStorage.getItem("topCompanies");
-            if (cached) cachedCompanies = JSON.parse(cached);
-          } catch (e) {
-            console.warn("Failed to parse cached top companies:", e);
-          }
-        }
- 
-        if (cachedCompanies) {
-          setCompanies(cachedCompanies);
-        } else {
-          const res = await employerService.getCompaniesForPublic(0, 8);
-          if (res && res.content) {
-            setCompanies(res.content);
-            if (typeof window !== "undefined") {
-              sessionStorage.setItem("topCompanies", JSON.stringify(res.content));
-            }
-          }
+        const res = await employerService.getCompaniesForPublic(0, 8);
+        if (res && res.content) {
+          const sortedCompanies = [...res.content].sort(
+            (a, b) => (b.totalActiveJobs || 0) - (a.totalActiveJobs || 0)
+          );
+          setCompanies(sortedCompanies);
         }
       } catch (err) {
         console.error("Error loading top companies:", err);

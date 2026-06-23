@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search, MapPin, Briefcase, Sparkles, Loader2, List, ChevronDown, X, Check, Building2, Users } from "lucide-react";
@@ -7,30 +7,30 @@ import { categoryService } from "@/services/categoryService";
 import { locationService } from "@/services/locationService";
 import { CategoryTreeResponse } from "@/types/category";
 import { DistrictResponse } from "@/types/location";
- 
+
 export default function CandidateHero() {
   const router = useRouter();
- 
+
   // Search parameters
   const [keyword, setKeyword] = useState("");
   const [district, setDistrict] = useState("");
- 
+
   // Dropdown lists
   const [districts, setDistricts] = useState<DistrictResponse[]>([]);
   const [rawCategories, setRawCategories] = useState<CategoryTreeResponse[]>([]);
   const [flatCategories, setFlatCategories] = useState<{ id: number; name: string; level: number }[]>([]);
   const [loading, setLoading] = useState(true);
- 
+
   // Custom Selector UI States
   const [isOpenCategoryModal, setIsOpenCategoryModal] = useState(false);
   const [isOpenLocationDropdown, setIsOpenLocationDropdown] = useState(false);
   const [activeParentCategoryId, setActiveParentCategoryId] = useState<number | null>(null);
   const [modalSearchQuery, setModalSearchQuery] = useState("");
- 
+
   // Confirmed vs. Temporary selections for category IDs
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
   const [tempSelectedCategoryIds, setTempSelectedCategoryIds] = useState<number[]>([]);
- 
+
   // Utility to flatten categories tree
   const flattenCategories = (nodes: CategoryTreeResponse[], level = 0): { id: number; name: string; level: number }[] => {
     let result: { id: number; name: string; level: number }[] = [];
@@ -46,7 +46,7 @@ export default function CandidateHero() {
     }
     return result;
   };
- 
+
   useEffect(() => {
     const fetchHeroData = async () => {
       try {
@@ -70,9 +70,9 @@ export default function CandidateHero() {
     };
     fetchHeroData();
   }, []);
- 
+
   const popularKeywords = ["ReactJS", "Marketing", "Lễ tân", "Kế toán", "Design", "Bán hàng"];
- 
+
   // Search execution - passes multiple category IDs matching /jobs API expectations
   const executeSearch = (kw: string, distId: string, catIds: number[]) => {
     const params = new URLSearchParams();
@@ -83,17 +83,17 @@ export default function CandidateHero() {
     }
     router.push(`/jobs?${params.toString()}`);
   };
- 
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     executeSearch(keyword, district, selectedCategoryIds);
   };
- 
+
   const handlePopularKeywordClick = (kw: string) => {
     setKeyword(kw);
     executeSearch(kw, district, selectedCategoryIds);
   };
- 
+
   // Helper: get descendant IDs recursively for group toggling
   const getDescendantIds = (node: CategoryTreeResponse): number[] => {
     let ids = [node.id];
@@ -104,12 +104,12 @@ export default function CandidateHero() {
     }
     return ids;
   };
- 
+
   // Helper: toggle select all descendants
   const handleToggleCategory = (node: CategoryTreeResponse) => {
     const descendantIds = getDescendantIds(node);
     const allSelected = descendantIds.every(id => tempSelectedCategoryIds.includes(id));
- 
+
     if (allSelected) {
       setTempSelectedCategoryIds(prev => prev.filter(id => !descendantIds.includes(id)));
     } else {
@@ -122,7 +122,7 @@ export default function CandidateHero() {
       });
     }
   };
- 
+
   // Helper: check selection level of a category
   const getCategorySelectionStatus = (node: CategoryTreeResponse, selectedList: number[]): "none" | "partial" | "all" => {
     const descendantIds = getDescendantIds(node);
@@ -131,13 +131,13 @@ export default function CandidateHero() {
     if (selectedCount === descendantIds.length) return "all";
     return "partial";
   };
- 
+
   // Helper: recursive keyword search within categories
   const getMatchingCategories = (nodes: CategoryTreeResponse[], query: string, path: string[] = []): { id: number; name: string; path: string }[] => {
     let matches: { id: number; name: string; path: string }[] = [];
     const lowerQuery = query.toLowerCase().trim();
     if (!lowerQuery) return [];
- 
+
     for (const node of nodes) {
       const currentPath = [...path, node.categoryName];
       if (node.categoryName.toLowerCase().includes(lowerQuery)) {
@@ -153,7 +153,7 @@ export default function CandidateHero() {
     }
     return matches;
   };
- 
+
   // Render text inside the main search button based on selection count
   const getCategoryButtonText = () => {
     if (selectedCategoryIds.length === 0) return "Danh mục Nghề";
@@ -163,7 +163,7 @@ export default function CandidateHero() {
     }
     return `Danh mục Nghề (${selectedCategoryIds.length})`;
   };
- 
+
   return (
     <section className="relative min-h-[500px] md:min-h-[580px] flex items-center justify-center bg-[#F8FAFC] text-slate-800 py-16 px-4 overflow-hidden border-b border-slate-200">
       <div className="relative max-w-5xl mx-auto text-center z-10 space-y-8 w-full">
@@ -172,22 +172,22 @@ export default function CandidateHero() {
           <Sparkles size={14} className="text-[#00B14F]" />
           <span>Cơ hội việc làm mới nhất hôm nay</span>
         </div>
- 
+
         {/* Headlines */}
         <div className="space-y-3">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight text-[#0F172A] select-none">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-[#0F172A] select-none">
             Tìm Việc Làm Mơ Ước Tại{" "}
-            <span className="text-[#00B14F]">ĐÀ NẴNG</span> 
+            <span className="text-[#00B14F]">ĐÀ NẴNG</span>
           </h1>
           <p className="text-[#475569] text-xs sm:text-base max-w-2xl mx-auto font-normal leading-relaxed select-none">
-            Hơn 5.000+ tin tuyển dụng chất lượng cao, xác thực uy tín được cập nhật liên tục từ các doanh nghiệp hàng đầu tại thành phố đáng sống.
+            Hơn 1.000+ tin tuyển dụng chất lượng cao, xác thực uy tín được cập nhật liên tục từ các doanh nghiệp hàng đầu tại thành phố đáng sống.
           </p>
         </div>
- 
+
         {/* Main Search Panel - Clean Rectangular Design */}
         <div className="bg-white rounded-[8px] p-4 shadow-sm max-w-4xl mx-auto border border-slate-200 text-slate-850 relative z-20">
           <form onSubmit={handleSearch} className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
- 
+
             {/* 1. BUTTON: Danh mục Nghề */}
             <div className="relative flex-1">
               <button
@@ -206,7 +206,7 @@ export default function CandidateHero() {
                 <ChevronDown size={12} className="text-slate-400 flex-shrink-0" />
               </button>
             </div>
- 
+
             {/* 2. INPUT: Keywords */}
             <div className="flex-1 flex items-center gap-2 px-4 py-3 border border-slate-200 rounded-[6px] bg-white">
               <Search size={16} className="text-slate-400 flex-shrink-0" />
@@ -218,7 +218,7 @@ export default function CandidateHero() {
                 className="w-full text-xs font-semibold placeholder-slate-400 focus:outline-none bg-transparent"
               />
             </div>
- 
+
             {/* 3. DROPDOWN: Địa điểm (Custom District Dropdown) */}
             <div className="relative flex-1">
               <button
@@ -237,13 +237,13 @@ export default function CandidateHero() {
                 </div>
                 <ChevronDown size={12} className="text-slate-400 flex-shrink-0" />
               </button>
- 
+
               {/* District Popover Dropdown Panel */}
               {isOpenLocationDropdown && (
                 <>
                   {/* Backdrop overlay for clicks outside */}
                   <div className="fixed inset-0 z-10" onClick={() => setIsOpenLocationDropdown(false)}></div>
- 
+
                   <div className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-[8px] shadow-md overflow-hidden z-20 transition-opacity duration-150 text-left max-h-60 overflow-y-auto custom-scrollbar">
                     <button
                       type="button"
@@ -277,7 +277,7 @@ export default function CandidateHero() {
                 </>
               )}
             </div>
- 
+
             {/* 4. BUTTON: Submit Search */}
             <button
               type="submit"
@@ -291,10 +291,10 @@ export default function CandidateHero() {
               )}
               <span>Tìm kiếm</span>
             </button>
- 
+
           </form>
         </div>
- 
+
         {/* Quick keywords list */}
         <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs text-slate-500 font-light select-none">
           <span className="font-semibold text-slate-600">Từ khóa phổ biến:</span>
@@ -308,34 +308,20 @@ export default function CandidateHero() {
             </button>
           ))}
         </div>
- 
-        {/* Statistical figures */}
-        <div className="pt-6 border-t border-slate-200/60 max-w-3xl mx-auto grid grid-cols-3 gap-4 text-center select-none">
-          <div className="space-y-1">
-            <span className="block text-xl md:text-2xl font-black text-[#00B14F]">5.000+</span>
-            <span className="text-[10px] md:text-xs text-slate-500 font-medium">Việc làm hoạt động</span>
-          </div>
-          <div className="space-y-1 border-x border-slate-200">
-            <span className="block text-xl md:text-2xl font-black text-[#0F172A]">1.200+</span>
-            <span className="text-[10px] md:text-xs text-slate-500 font-medium">Doanh nghiệp đăng tuyển</span>
-          </div>
-          <div className="space-y-1">
-            <span className="block text-xl md:text-2xl font-black text-[#0F172A]">150.000+</span>
-            <span className="text-[10px] md:text-xs text-slate-500 font-medium">Ứng viên sẵn sàng</span>
-          </div>
-        </div>
+
+
       </div>
- 
+
       {/* ==================== MULTI-LEVEL CATEGORY SELECTOR MODAL ==================== */}
       {isOpenCategoryModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
- 
+
           {/* Backdrop overlay to close when clicking outside of the modal */}
           <div className="fixed inset-0 z-0" onClick={() => setIsOpenCategoryModal(false)}></div>
- 
+
           {/* Modal Card container */}
           <div className="relative bg-white w-full max-w-5xl rounded-[8px] shadow-md overflow-hidden border border-slate-200 flex flex-col h-[85vh] max-h-[700px] text-slate-800 z-10">
- 
+
             {/* A. Modal Header */}
             <div className="p-5 md:p-6 border-b border-gray-100 flex items-center justify-between gap-4 bg-gray-50/50">
               <h3 className="text-sm md:text-base font-black tracking-tight text-slate-800 select-none">
@@ -349,7 +335,7 @@ export default function CandidateHero() {
                 <X size={18} />
               </button>
             </div>
- 
+
             {/* B. Internal Search Bar */}
             <div className="px-5 py-3.5 md:px-6 border-b border-gray-100 bg-white">
               <div className="relative">
@@ -372,10 +358,10 @@ export default function CandidateHero() {
                 )}
               </div>
             </div>
- 
+
             {/* C. Split Layout Content Area */}
             <div className="flex-1 flex overflow-hidden bg-white">
- 
+
               {/* Scenario 1: Modal Search Query Active */}
               {modalSearchQuery.trim() !== "" ? (
                 <div className="flex-1 overflow-y-auto p-5 md:p-6 space-y-3">
@@ -423,7 +409,7 @@ export default function CandidateHero() {
                       {rawCategories.map((catGroup) => {
                         const status = getCategorySelectionStatus(catGroup, tempSelectedCategoryIds);
                         const isActive = activeParentCategoryId === catGroup.id;
- 
+
                         return (
                           <div
                             key={catGroup.id}
@@ -456,7 +442,7 @@ export default function CandidateHero() {
                       })}
                     </div>
                   </div>
- 
+
                   {/* Right Column: NGHỀ & VỊ TRÍ CHUYÊN MÔN */}
                   <div className="w-2/3 overflow-y-auto custom-scrollbar bg-white p-5 md:p-6 text-left">
                     {!activeParentCategoryId ? (
@@ -478,7 +464,7 @@ export default function CandidateHero() {
                         {(() => {
                           const activeGroup = rawCategories.find(c => c.id === activeParentCategoryId);
                           if (!activeGroup) return null;
- 
+
                           return (
                             <>
                               <div className="border-b border-gray-100 pb-2.5 select-none">
@@ -487,7 +473,7 @@ export default function CandidateHero() {
                                 </h4>
                                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-0.5">NGHỀ & VỊ TRÍ CHUYÊN MÔN</p>
                               </div>
- 
+
                               {!activeGroup.children || activeGroup.children.length === 0 ? (
                                 <div className="text-center py-16 text-slate-400 text-xs font-light">
                                   Chưa có danh mục ngành nghề chi tiết cho nhóm này
@@ -497,7 +483,7 @@ export default function CandidateHero() {
                                   {activeGroup.children.map((subcat) => {
                                     const hasLevel3 = subcat.children && subcat.children.length > 0;
                                     const subcatStatus = getCategorySelectionStatus(subcat, tempSelectedCategoryIds);
- 
+
                                     if (hasLevel3) {
                                       return (
                                         <div key={subcat.id} className="bg-gray-50/50 rounded-[8px] p-4 border border-slate-200 space-y-3 col-span-full">
@@ -518,7 +504,7 @@ export default function CandidateHero() {
                                             </button>
                                             <span className="text-xs font-black text-[#00B14F] uppercase tracking-wider">{subcat.categoryName}</span>
                                           </div>
- 
+
                                           {/* Level 3 Grid */}
                                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                             {subcat.children!.map((level3Node) => {
@@ -547,7 +533,7 @@ export default function CandidateHero() {
                                         </div>
                                       );
                                     }
- 
+
                                     // Standalone Level 2 node with no children
                                     const isChecked = subcatStatus === "all";
                                     return (
@@ -576,9 +562,9 @@ export default function CandidateHero() {
                   </div>
                 </>
               )}
- 
+
             </div>
- 
+
             {/* D. Modal Footer */}
             <div className="p-4 border-t border-gray-150 bg-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4 px-5 md:px-6">
               <span className="text-[10px] text-slate-400 font-bold select-none">
@@ -612,7 +598,7 @@ export default function CandidateHero() {
                 </button>
               </div>
             </div>
- 
+
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,15 +19,15 @@ import {
   Code,
   Loader2
 } from "lucide-react";
- 
+
 import { categoryService } from "@/services/categoryService";
 import { CategoryTreeResponse } from "@/types/category";
- 
+
 export default function CandidateCategories() {
   const router = useRouter();
   const [categories, setCategories] = useState<CategoryTreeResponse[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
- 
+
   useEffect(() => {
     const loadCategories = async () => {
       setLoadingCategories(true);
@@ -42,13 +42,13 @@ export default function CandidateCategories() {
         setLoadingCategories(false);
       }
     };
- 
+
     loadCategories();
   }, []);
- 
+
   const getCategoryIcon = (name: string) => {
     const lower = name.toLowerCase();
- 
+
     if (
       lower.includes("công nghệ") ||
       lower.includes("tin học") ||
@@ -58,7 +58,7 @@ export default function CandidateCategories() {
     ) {
       return <Code size={24} className="text-[#00B14F]" />;
     }
- 
+
     if (
       lower.includes("du lịch") ||
       lower.includes("khách sạn") ||
@@ -68,7 +68,7 @@ export default function CandidateCategories() {
     ) {
       return <Palmtree size={24} className="text-amber-600" />;
     }
- 
+
     if (
       lower.includes("bán hàng") ||
       lower.includes("marketing") ||
@@ -79,7 +79,7 @@ export default function CandidateCategories() {
     ) {
       return <Megaphone size={24} className="text-indigo-650" />;
     }
- 
+
     if (
       lower.includes("kế toán") ||
       lower.includes("tài chính") ||
@@ -89,7 +89,7 @@ export default function CandidateCategories() {
     ) {
       return <Calculator size={24} className="text-emerald-650" />;
     }
- 
+
     if (
       lower.includes("ngoại ngữ") ||
       lower.includes("giáo dục") ||
@@ -99,7 +99,7 @@ export default function CandidateCategories() {
     ) {
       return <Languages size={24} className="text-purple-600" />;
     }
- 
+
     if (
       lower.includes("xây dựng") ||
       lower.includes("kỹ thuật") ||
@@ -109,7 +109,7 @@ export default function CandidateCategories() {
     ) {
       return <Hammer size={24} className="text-slate-600" />;
     }
- 
+
     if (
       lower.includes("y tế") ||
       lower.includes("sức khỏe") ||
@@ -119,7 +119,7 @@ export default function CandidateCategories() {
     ) {
       return <HeartPulse size={24} className="text-rose-600" />;
     }
- 
+
     if (
       lower.includes("nhân sự") ||
       lower.includes("hành chính") ||
@@ -128,11 +128,11 @@ export default function CandidateCategories() {
     ) {
       return <Users size={24} className="text-sky-600" />;
     }
- 
+
     if (lower.includes("luật") || lower.includes("pháp lý")) {
       return <Scale size={24} className="text-yellow-600" />;
     }
- 
+
     if (
       lower.includes("thiết kế") ||
       lower.includes("mỹ thuật") ||
@@ -140,7 +140,7 @@ export default function CandidateCategories() {
     ) {
       return <Paintbrush size={24} className="text-pink-650" />;
     }
- 
+
     if (
       lower.includes("vận tải") ||
       lower.includes("giao nhận") ||
@@ -149,13 +149,13 @@ export default function CandidateCategories() {
     ) {
       return <Truck size={24} className="text-orange-600" />;
     }
- 
+
     return <Briefcase size={24} className="text-[#00B14F]" />;
   };
- 
+
   const getCategoryBg = (name: string) => {
     const lower = name.toLowerCase();
- 
+
     if (
       lower.includes("công nghệ") ||
       lower.includes("tin học") ||
@@ -165,7 +165,7 @@ export default function CandidateCategories() {
     ) {
       return "bg-emerald-50/50";
     }
- 
+
     if (
       lower.includes("du lịch") ||
       lower.includes("khách sạn") ||
@@ -175,7 +175,7 @@ export default function CandidateCategories() {
     ) {
       return "bg-amber-50/50";
     }
- 
+
     if (
       lower.includes("bán hàng") ||
       lower.includes("marketing") ||
@@ -186,7 +186,7 @@ export default function CandidateCategories() {
     ) {
       return "bg-indigo-50/50";
     }
- 
+
     if (
       lower.includes("kế toán") ||
       lower.includes("tài chính") ||
@@ -196,7 +196,7 @@ export default function CandidateCategories() {
     ) {
       return "bg-emerald-50/50";
     }
- 
+
     if (
       lower.includes("ngoại ngữ") ||
       lower.includes("giáo dục") ||
@@ -206,7 +206,7 @@ export default function CandidateCategories() {
     ) {
       return "bg-purple-50/50";
     }
- 
+
     if (
       lower.includes("xây dựng") ||
       lower.includes("kỹ thuật") ||
@@ -216,7 +216,7 @@ export default function CandidateCategories() {
     ) {
       return "bg-slate-50";
     }
- 
+
     if (
       lower.includes("y tế") ||
       lower.includes("sức khỏe") ||
@@ -226,7 +226,7 @@ export default function CandidateCategories() {
     ) {
       return "bg-rose-50/50";
     }
- 
+
     if (
       lower.includes("nhân sự") ||
       lower.includes("hành chính") ||
@@ -235,11 +235,11 @@ export default function CandidateCategories() {
     ) {
       return "bg-sky-50/50";
     }
- 
+
     if (lower.includes("luật") || lower.includes("pháp lý")) {
       return "bg-yellow-50/50";
     }
- 
+
     if (
       lower.includes("thiết kế") ||
       lower.includes("mỹ thuật") ||
@@ -247,7 +247,7 @@ export default function CandidateCategories() {
     ) {
       return "bg-pink-50/50";
     }
- 
+
     if (
       lower.includes("vận tải") ||
       lower.includes("giao nhận") ||
@@ -256,24 +256,24 @@ export default function CandidateCategories() {
     ) {
       return "bg-orange-50/50";
     }
- 
+
     return "bg-[#00B14F]/5";
   };
- 
+
   const visibleCategories = categories.slice(0, 8);
- 
+
   const getDescendantIds = (node: CategoryTreeResponse): number[] => {
     let ids = [node.id];
- 
+
     if (node.children) {
       for (const child of node.children) {
         ids = [...ids, ...getDescendantIds(child)];
       }
     }
- 
+
     return ids;
   };
- 
+
   if (loadingCategories) {
     return (
       <section className="bg-white py-16">
@@ -282,7 +282,7 @@ export default function CandidateCategories() {
             <div className="h-6 w-32 bg-gray-100 rounded animate-pulse mx-auto"></div>
             <div className="h-8 w-64 bg-gray-100 rounded animate-pulse mx-auto"></div>
           </div>
- 
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, idx) => (
               <div
@@ -300,7 +300,7 @@ export default function CandidateCategories() {
       </section>
     );
   }
- 
+
   return (
     <section className="bg-white py-16 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -308,23 +308,23 @@ export default function CandidateCategories() {
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00B14F] uppercase tracking-widest bg-[#00B14F]/10 px-3 py-1 rounded-[4px]">
             <span>Ngành nghề nổi bật</span>
           </div>
- 
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">
+
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
             Top Ngành Nghề Nổi Bật Tại Đà Nẵng
           </h2>
- 
+
           <p className="text-slate-500 text-xs sm:text-sm font-normal">
             Khám phá và đón đầu cơ hội thăng tiến sự nghiệp của bạn qua các nhóm ngành có nhu cầu tuyển dụng lớn nhất.
           </p>
         </div>
- 
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {visibleCategories.map((cat) => {
             const allIds = getDescendantIds(cat);
             const queryParams = allIds
               .map((id) => `categoryIds=${id}`)
               .join("&");
- 
+
             return (
               <div
                 key={cat.id}
@@ -345,7 +345,7 @@ export default function CandidateCategories() {
                   >
                     {getCategoryIcon(cat.categoryName)}
                   </div>
- 
+
                   <div className="flex-1 overflow-hidden">
                     <h3
                       className="
@@ -363,7 +363,7 @@ export default function CandidateCategories() {
             );
           })}
         </div>
- 
+
         {categories.length > 8 && (
           <div className="flex justify-center mt-10">
             <Link

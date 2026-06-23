@@ -38,6 +38,7 @@ import { CategoryTreeResponse } from "@/types/category";
 import { PositionResponse } from "@/types/position";
 import { ExperienceLevelResponse } from "@/types/experienceLevel";
 import { formatTime } from "@/lib/utils";
+import EmployerFooter from "@/components/layout/employer/EmployerFooter";
 
 function SearchPageContent() {
   const router = useRouter();
@@ -863,7 +864,8 @@ function SearchPageContent() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-20">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
+      <div className="flex-grow pb-20">
 
       {/* Decorative Top Banner */}
       <div className="relative bg-[#0F172A] text-white overflow-hidden py-12 border-b border-slate-800">
@@ -1230,7 +1232,11 @@ function SearchPageContent() {
                     <div className="flex gap-4 items-start">
                       {/* Logo Frame */}
                       <div className="h-12 w-12 rounded-[6px] border border-slate-200 bg-slate-50 text-slate-600 flex items-center justify-center overflow-hidden font-bold text-xs select-none flex-shrink-0">
-                        {getCompanyInitials(job.employerName)}
+                        {job.logoUrl ? (
+                          <img src={job.logoUrl} alt={job.employerName} className="h-full w-full object-cover" />
+                        ) : (
+                          getCompanyInitials(job.employerName)
+                        )}
                       </div>
 
                       {/* Title & Stats */}
@@ -1684,7 +1690,8 @@ function SearchPageContent() {
           </div>
         </div>
       )}
-
+      </div>
+      <EmployerFooter />
     </div>
   );
 }
