@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" className="h-full antialiased">
-      <body className="min-h-full flex flex-col" style={{ fontFamily: '"Be Vietnam Pro", sans-serif' }}>
+      <body className="min-h-full flex flex-col">
         <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
         <HeaderWrapper />
         {children}

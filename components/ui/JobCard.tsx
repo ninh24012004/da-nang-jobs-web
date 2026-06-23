@@ -7,6 +7,7 @@ import { formatTime } from "@/lib/utils";
 interface JobCardProps {
   job: {
     id: number;
+    logoUrl: string;
     jobTitle: string;
     employerName?: string;
     salaryType?: string;
@@ -54,8 +55,16 @@ export default function JobCard({
       {/* Job Details Left Side */}
       <div className="flex gap-4 items-start flex-grow">
         {/* Logo Frame */}
-        <div className="h-12 w-12 rounded-md border border-slate-200 bg-slate-50 text-slate-650 flex items-center justify-center overflow-hidden font-bold text-xs select-none flex-shrink-0">
-          {getCompanyInitials(job.employerName)}
+        <div className="h-12 w-12 rounded-md border border-slate-200 bg-slate-50 text-slate-600 flex items-center justify-center overflow-hidden font-bold text-xs select-none flex-shrink-0">
+          {job.logoUrl ? (
+            <img
+              src={job.logoUrl}
+              alt={job.employerName}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            getCompanyInitials(job.employerName)
+          )}
         </div>
 
         {/* Title & Stats */}
@@ -125,9 +134,8 @@ export default function JobCard({
             {onSaveToggle && (
               <button
                 onClick={onSaveToggle}
-                className={`p-1.5 rounded-md border border-slate-200 hover:border-red-200 hover:bg-red-50/50 transition-colors cursor-pointer bg-white ${
-                  isSaved ? "text-red-500 fill-red-500/10 border-red-200" : "text-slate-400"
-                }`}
+                className={`p-1.5 rounded-md border border-slate-200 hover:border-red-200 hover:bg-red-50/50 transition-colors cursor-pointer bg-white ${isSaved ? "text-red-500 fill-red-500/10 border-red-200" : "text-slate-400"
+                  }`}
                 title={isSaved ? "Bỏ lưu việc làm" : "Lưu việc làm"}
               >
                 <Heart size={14} />

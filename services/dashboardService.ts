@@ -1,8 +1,14 @@
 import api from "./api";
-import { DashboardSummaryResponse, DailyTrendResponse } from "@/types/dashboard";
+import { 
+  DashboardSummaryResponse, 
+  DailyTrendResponse,
+  EmployerDashboardSummaryResponse,
+  EmployerDailyTrendResponse
+} from "@/types/dashboard";
 import { ApiResponse } from "@/types/apiResponse";
 
 export const dashboardService = {
+  // Admin dashboard endpoints
   getSummary: async (): Promise<DashboardSummaryResponse> => {
     const response = await api.get<ApiResponse<DashboardSummaryResponse>>("admin/dashboard/summary");
     return response.data.data;
@@ -14,4 +20,19 @@ export const dashboardService = {
     });
     return response.data.data;
   },
+
+  // Employer dashboard endpoints
+  getEmployerSummary: async (): Promise<EmployerDashboardSummaryResponse> => {
+    const response = await api.get<ApiResponse<EmployerDashboardSummaryResponse>>("employer/dashboard/summary");
+    return response.data.data;
+  },
+
+  getEmployerTrends: async (days: number = 30): Promise<EmployerDailyTrendResponse[]> => {
+    const response = await api.get<ApiResponse<EmployerDailyTrendResponse[]>>("employer/dashboard/trends", {
+      params: { days },
+    });
+    return response.data.data;
+  }
 };
+
+export default dashboardService;

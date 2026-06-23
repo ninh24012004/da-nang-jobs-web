@@ -430,7 +430,7 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                             Google
                         </Button>
 
-                        <div className="text-center mt-4">
+                        <div className="text-center mt-4 space-y-2">
                             <p className="text-sm text-slate-550 font-medium">
                                 Đã có tài khoản?{" "}
                                 <Link
@@ -443,6 +443,31 @@ export default function RegisterForm({ userType }: RegisterFormProps) {
                                     Đăng nhập
                                 </Link>
                             </p>
+                            {step === "register" && (
+                                <p className="text-sm text-slate-550 font-medium">
+                                    {userType === "candidate" ? (
+                                        <>
+                                            Bạn là nhà tuyển dụng?{" "}
+                                            <Link
+                                                href="/employer/register"
+                                                className="font-bold hover:underline text-[#00B14F]"
+                                            >
+                                                Đăng ký tại đây
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            Bạn là người tìm việc?{" "}
+                                            <Link
+                                                href="/candidate/register"
+                                                className="font-bold hover:underline text-[#0F172A]"
+                                            >
+                                                Đăng ký tại đây
+                                            </Link>
+                                        </>
+                                    )}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>

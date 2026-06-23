@@ -10,6 +10,7 @@ import {
   FileText,
   Search,
   Globe,
+  Mail,
   MapPin,
   Users,
   X,
@@ -331,19 +332,30 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                     <td className="p-3">
                       <div>
                         <p className="font-semibold text-slate-900 text-xs leading-snug">{c.companyName}</p>
-                        {c.website && (
-                          <a
-                            href={c.website.startsWith('http') ? c.website : `https://${c.website}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[10px] text-slate-600 hover:text-slate-900 hover:underline inline-flex items-center gap-1 mt-1 font-semibold max-w-full"
-                          >
-                            <Globe size={11} className="flex-shrink-0" />
-                            <span className="truncate max-w-[140px] inline-block">
-                              {c.website.replace(/^(https?:\/\/)?(www\.)?/, '')}
-                            </span>
-                          </a>
-                        )}
+                        <div className="flex flex-col gap-0.5 mt-1 text-[10px] text-slate-600 font-semibold">
+                          {c.website && (
+                            <a
+                              href={c.website.startsWith('http') ? c.website : `https://${c.website}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:text-slate-900 hover:underline inline-flex items-center gap-1 max-w-full"
+                            >
+                              <Globe size={11} className="flex-shrink-0" />
+                              <span className="truncate max-w-[140px] inline-block">
+                                {c.website.replace(/^(https?:\/\/)?(www\.)?/, '')}
+                              </span>
+                            </a>
+                          )}
+                          {c.emailCompany && (
+                            <a
+                              href={`mailto:${c.emailCompany}`}
+                              className="hover:text-slate-900 hover:underline inline-flex items-center gap-1 max-w-full text-slate-500"
+                            >
+                              <Mail size={11} className="flex-shrink-0 text-slate-400" />
+                              <span className="truncate max-w-[140px] inline-block">{c.emailCompany}</span>
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </td>
 
@@ -538,6 +550,25 @@ export default function AdminEmployerTable({ mode = "ALL" }: { mode?: "ALL" | "P
                     <Users size={13} className="text-slate-400" />
                     <span>{selectedCompany.companySize || "Chưa cập nhật"}</span>
                   </p>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Email liên hệ</p>
+                  <div className="font-bold text-slate-800 text-xs">
+                    {selectedCompany.emailCompany ? (
+                      <a
+                        href={`mailto:${selectedCompany.emailCompany}`}
+                        className="hover:underline inline-flex items-center gap-1 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 max-w-full"
+                      >
+                        <Mail size={13} className="flex-shrink-0" />
+                        <span className="truncate max-w-[200px] sm:max-w-[260px] inline-block">
+                          {selectedCompany.emailCompany}
+                        </span>
+                      </a>
+                    ) : (
+                      <span className="text-slate-400 italic bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 inline-block">Chưa có email</span>
+                    )}
+                  </div>
                 </div>
               </div>
 
