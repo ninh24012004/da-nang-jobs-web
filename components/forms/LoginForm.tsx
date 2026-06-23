@@ -63,11 +63,7 @@ const loginConfig = {
         backgroundTitle: "Tuyển dụng",
         backgroundHighlight: "hiệu quả.",
         backgroundDescription:
-            "Kết nối với hàng ngàn ứng viên chất lượng và phát triển đội ngũ mạnh mẽ cho doanh nghiệp của bạn.",
-        stats: [
-            { value: "10K+", label: "Ứng viên" },
-            { value: "500+", label: "Doanh nghiệp" },
-        ],
+            "Kết nối với hàng ngàn ứng viên chất lượng và phát triển đội ngũ mạnh mẽ cho doanh nghiệp của bạn."
     },
 };
 
@@ -320,8 +316,8 @@ export default function LoginForm({ userType }: LoginFormProps) {
                             </Link>
                         </div>
 
-                        <Button 
-                            type="submit" 
+                        <Button
+                            type="submit"
                             isLoading={loading}
                             variant={userType === "candidate" ? "primary" : "secondary"}
                         >
@@ -336,7 +332,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
                         className="flex w-full justify-center"
                     />
 
-                    <div className="mt-10 text-center">
+                    <div className="mt-10 text-center space-y-2">
                         <p className="text-sm text-slate-500">
                             {config.registerText}{" "}
                             <Link
@@ -348,6 +344,29 @@ export default function LoginForm({ userType }: LoginFormProps) {
                             >
                                 Đăng ký ngay
                             </Link>
+                        </p>
+                        <p className="text-sm text-slate-500">
+                            {userType === "candidate" ? (
+                                <>
+                                    Bạn là nhà tuyển dụng?{" "}
+                                    <Link
+                                        href="/employer/login"
+                                        className="font-bold hover:underline text-[#00B14F]"
+                                    >
+                                        Đăng nhập tại đây
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    Bạn là người tìm việc?{" "}
+                                    <Link
+                                        href="/candidate/login"
+                                        className="font-bold hover:underline text-[#0F172A]"
+                                    >
+                                        Đăng nhập tại đây
+                                    </Link>
+                                </>
+                            )}
                         </p>
                     </div>
                 </div>
@@ -377,19 +396,6 @@ export default function LoginForm({ userType }: LoginFormProps) {
                         <p className="text-lg leading-relaxed text-slate-200 font-light">
                             {config.backgroundDescription}
                         </p>
-                    </div>
-
-                    <div className="flex gap-8 border-t border-white/20 pt-8 lg:gap-12">
-                        {config.stats.map((item) => (
-                            <div key={item.label}>
-                                <p className="text-2xl font-bold lg:text-3xl text-white">
-                                    {item.value}
-                                </p>
-                                <p className="text-sm text-slate-400 font-medium">
-                                    {item.label}
-                                </p>
-                            </div>
-                        ))}
                     </div>
                 </div>
             </div>

@@ -251,7 +251,11 @@ export default function CandidateRecommendedJobs() {
                   {/* Header card: logo and time */}
                   <div className="flex items-center justify-between gap-4">
                     <div className="h-12 w-12 rounded-[6px] border border-slate-200 bg-slate-50 text-[#00B14F] flex items-center justify-center overflow-hidden font-extrabold text-xs select-none">
-                      {getCompanyInitials(job.employerName)}
+                      {job.logoUrl ? (
+                        <img src={job.logoUrl} alt={job.employerName} className="h-full w-full object-cover" />
+                      ) : (
+                        getCompanyInitials(job.employerName)
+                      )}
                     </div>
                     <div className="text-right">
                       <span className="flex items-center gap-1 text-[10px] text-slate-400 font-light">

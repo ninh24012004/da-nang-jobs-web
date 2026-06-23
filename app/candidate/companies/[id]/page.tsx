@@ -298,6 +298,23 @@ export default function CompanyDetailPage() {
 
               <div>
                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <Mail size={11} className="text-slate-350" />
+                  <span>Email liên hệ</span>
+                </p>
+                {company.emailCompany ? (
+                  <a
+                    href={`mailto:${company.emailCompany}`}
+                    className="text-[#00B14F] hover:underline font-bold break-all flex items-center gap-0.5"
+                  >
+                    <span>{company.emailCompany}</span>
+                  </a>
+                ) : (
+                  <p className="text-slate-400 font-medium">Chưa cập nhật</p>
+                )}
+              </div>
+
+              <div>
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
                   <MapPin size={11} className="text-slate-350" />
                   <span>Địa chỉ trụ sở</span>
                 </p>

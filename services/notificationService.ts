@@ -21,14 +21,12 @@ const notificationService = {
 
   /**
    * Đánh dấu đã đọc theo danh sách id
-   * GET /api/notifications/read?notificationIds=1,2,3
-   * Backend nhận List<Long> notificationIds qua @RequestParam
+   * POST /api/notifications/read
+   * Backend nhận List<Long> notificationIds qua @RequestBody
    */
   markAsRead: async (notificationIds: number[]): Promise<void> => {
     if (notificationIds.length === 0) return;
-    await api.get<ApiResponse<void>>("notifications/read", {
-      params: { notificationIds: notificationIds.join(",") },
-    });
+    await api.post<ApiResponse<void>>("notifications/read", notificationIds);
   },
 };
 

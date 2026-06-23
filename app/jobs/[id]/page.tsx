@@ -33,6 +33,7 @@ import { useResumes } from "@/hooks/useResumes";
 import { useCloudinary } from "@/hooks/useCloudinary";
 import { JobResponse } from "@/types/job";
 import { EmployerPublicResponse } from "@/types/employer";
+import EmployerFooter from "@/components/layout/employer/EmployerFooter";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -334,7 +335,8 @@ export default function JobDetailPage({ params }: PageProps) {
   }
 
   return (
-    <div className="bg-[#F8FAFC] min-h-screen pb-20 font-sans text-slate-800">
+    <div className="bg-[#F8FAFC] min-h-screen flex flex-col font-sans text-slate-800">
+      <div className="flex-grow pb-20">
       
       {/* 1. BREADCRUMBS BAR */}
       <div className="max-w-6xl mx-auto px-4 py-4 select-none">
@@ -596,6 +598,16 @@ export default function JobDetailPage({ params }: PageProps) {
                       <p className="text-slate-700 font-bold leading-normal">{company.address}</p>
                     </div>
                   )}
+                  {company.emailCompany && (
+                    <div className="space-y-0.5">
+                      <span>Email liên hệ:</span>
+                      <p className="text-slate-700 font-bold leading-normal">
+                        <a href={`mailto:${company.emailCompany}`} className="hover:text-[#00B14F] hover:underline">
+                          {company.emailCompany}
+                        </a>
+                      </p>
+                    </div>
+                  )}
                   {company.description && (
                     <div className="space-y-0.5 pt-1.5 border-t border-slate-50">
                       <span>Giới thiệu:</span>
@@ -650,7 +662,11 @@ export default function JobDetailPage({ params }: PageProps) {
                   {/* Company Initials and date */}
                   <div className="flex items-start justify-between gap-4">
                     <div className="h-10 w-10 rounded-[6px] border border-slate-200 bg-slate-50 text-slate-600 flex items-center justify-center font-bold text-xs overflow-hidden flex-shrink-0">
-                      {getCompanyInitials(sj.employerName)}
+                      {sj.logoUrl ? (
+                        <img src={sj.logoUrl} alt={sj.employerName} className="h-full w-full object-cover" />
+                      ) : (
+                        getCompanyInitials(sj.employerName)
+                      )}
                     </div>
                     <div className="text-right">
                       <span className="flex items-center gap-0.5 text-[9px] text-slate-400 font-semibold justify-end">
@@ -742,8 +758,12 @@ export default function JobDetailPage({ params }: PageProps) {
               
               {/* Brief Job overview inside modal */}
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-[6px] flex items-center gap-3 text-left">
-                <div className="h-9 w-9 rounded-[4px] bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  {getCompanyInitials(job.employerName)}
+                <div className="h-9 w-9 rounded-[4px] bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs flex-shrink-0 overflow-hidden">
+                  {job.logoUrl ? (
+                    <img src={job.logoUrl} alt={job.employerName} className="h-full w-full object-cover" />
+                  ) : (
+                    getCompanyInitials(job.employerName)
+                  )}
                 </div>
                 <div className="space-y-0.5 truncate leading-tight flex-grow">
                   <p className="font-bold text-slate-800 text-[11px] line-clamp-1">{job.jobTitle}</p>
@@ -964,7 +984,8 @@ export default function JobDetailPage({ params }: PageProps) {
           </div>
         </div>
       )}
-
+      </div>
+      <EmployerFooter />
     </div>
   );
 }

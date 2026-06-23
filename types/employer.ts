@@ -28,6 +28,7 @@ export interface EmployerPublicResponse {
   wardId?: number | string;
   address?: string;
   website?: string;
+  emailCompany?: string;
   totalActiveJobs?: number;
   companySize?: string;
   description?: string;

@@ -24,8 +24,8 @@ const navGroups = [
     {
         label: "Quản lý người dùng",
         items: [
-            { name: "Ứng viên & Tài khoản", href: "/admin/users", icon: Users },
-            { name: "Nhà tuyển dụng", href: "/admin/employer", icon: Building },
+            { name: "Quản lý tài khoản", href: "/admin/users", icon: Users },
+            { name: "Quản lý nhà tuyển dụng", href: "/admin/employer", icon: Building },
         ]
     },
     {
@@ -54,9 +54,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     };
 
     return (
-        <aside className={`fixed left-0 top-0 z-40 h-screen w-64 bg-white border-r border-slate-200 flex flex-col select-none transition-transform duration-150 ease-in-out lg:translate-x-0 ${
-            isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}>
+        <aside className={`fixed left-0 top-0 z-40 h-screen w-64 bg-white border-r border-slate-200 flex flex-col select-none transition-transform duration-150 ease-in-out lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+            }`}>
             {/* Brand Logo */}
             <div className="px-4 py-4 border-b border-slate-200 flex items-center gap-3">
                 <Link href="/admin/dashboard" className="flex items-center gap-2 hover:opacity-90 transition-opacity" onClick={onClose}>
@@ -66,7 +65,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 <span className="text-[9px] font-bold uppercase tracking-widest text-slate-450 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                     ADMIN
                 </span>
-                
+
                 {/* Mobile Close Button */}
                 <button
                     onClick={onClose}
@@ -92,16 +91,14 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                                         key={item.name}
                                         href={item.href}
                                         onClick={onClose}
-                                        className={`group relative flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors duration-150 ${
-                                            isActive
-                                                ? "text-slate-900 bg-slate-100"
-                                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-                                        }`}
+                                        className={`group relative flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors duration-150 ${isActive
+                                            ? "text-slate-900 bg-slate-100"
+                                            : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                                            }`}
                                     >
                                         <Icon
-                                            className={`h-4 w-4 flex-shrink-0 transition-colors ${
-                                                isActive ? "text-slate-900" : "text-slate-400 group-hover:text-slate-600"
-                                            }`}
+                                            className={`h-4 w-4 flex-shrink-0 transition-colors ${isActive ? "text-slate-900" : "text-slate-400 group-hover:text-slate-600"
+                                                }`}
                                         />
                                         <span className="flex-1 min-w-0 truncate">{item.name}</span>
 
